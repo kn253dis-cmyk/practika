@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        xmlns:local="clr-namespace:Banking_system.Windows"
         mc:Ignorable="d"
         Title="RegisterWindow" Height="650" Width="450"
         WindowStartupLocation="CenterScreen"
@@ -23,25 +22,11 @@
         </Border.Background>
 
         <Grid>
-            <Button x:Name="BtnClose" 
-                    HorizontalAlignment="Right" 
-                    VerticalAlignment="Top" 
-                    Margin="2" 
-                    Style="{StaticResource MaterialDesignIconForegroundButton}" 
-                    Foreground="#BDBDBD"
-                    ToolTip="Закрити"
-                    Click="BtnClose_Click">
+            <Button x:Name="BtnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="2" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#BDBDBD" ToolTip="Закрити" Click="BtnClose_Click">
                 <materialDesign:PackIcon Kind="WindowClose" Width="24" Height="24" />
             </Button>
 
-            <materialDesign:Card UniformCornerRadius="20" 
-                                 Background="#1A2235" 
-                                 VerticalAlignment="Center" 
-                                 HorizontalAlignment="Center" 
-                                 Padding="25,30,25,30" 
-                                 Width="360"
-                                 materialDesign:ElevationAssist.Elevation="Dp8">
-
+            <materialDesign:Card UniformCornerRadius="20" Background="#1A2235" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="25,30,25,30" Width="360" materialDesign:ElevationAssist.Elevation="Dp8">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" MaxHeight="540">
                     <StackPanel Margin="5,0,5,0">
 
@@ -49,123 +34,48 @@
                         <TextBlock Text="Національний Банк" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" Foreground="White" Margin="0,0,0,3" />
                         <TextBlock Text="Відкриття рахунку" FontSize="14" HorizontalAlignment="Center" Foreground="#A0A0A0" Margin="0,0,0,25" />
 
-                        <TextBox x:Name="TxtFullName" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:HintAssist.Hint="Прізвище,  Ім'я,  По батькові" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:TextFieldAssist.HasClearButton="True" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
+                        <TextBox x:Name="TxtFullName" Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="15,10" materialDesign:HintAssist.Hint="ПІБ" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
+                        <TextBox x:Name="TxtPhone" Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="15,10" materialDesign:HintAssist.Hint="Телефон" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
+                        <TextBox x:Name="TxtIpn" Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="15,10" materialDesign:HintAssist.Hint="ІПН" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
 
-                        <TextBox x:Name="TxtPhone" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:HintAssist.Hint="Номер телефону" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:TextFieldAssist.HasClearButton="True" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
-
-                        <TextBox x:Name="TxtIpn" Style="{StaticResource MaterialDesignOutlinedTextBox}" materialDesign:HintAssist.Hint="ІПН (РНОКПП)" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:TextFieldAssist.HasClearButton="True" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
-
-                        <ComboBox x:Name="CmbCardType" 
-                                  Foreground="White"
-                                  BorderBrush="#BDBDBD"
-                                  FontSize="15"
-                                  Margin="0,0,0,15"
-                                  Height="50"
-                                  VerticalContentAlignment="Center">
-                            <ComboBox.Resources>
-                                <Style TargetType="ComboBoxItem">
-                                    <Setter Property="Background" Value="#1A2235"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="Padding" Value="12,10"/>
-                                    <Style.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Background" Value="#0F3460"/>
-                                        </Trigger>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter Property="Background" Value="#0F3460"/>
-                                            <Setter Property="FontWeight" Value="Bold"/>
-                                        </Trigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ComboBox.Resources>
-
-                            <ComboBox.Template>
-                                <ControlTemplate TargetType="ComboBox">
-                                    <Grid>
-                                        <Border x:Name="MainBorder" 
-                                                BorderBrush="{TemplateBinding BorderBrush}" 
-                                                BorderThickness="1" 
-                                                CornerRadius="10" 
-                                                Background="#1A2235"/>
-
-                                        <Grid Margin="14,0">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-
-                                            <ContentPresenter x:Name="ContentSite"
-                                                              IsHitTestVisible="False" 
-                                                              Content="{TemplateBinding SelectionBoxItem}"
-                                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                                                              VerticalAlignment="Center"
-                                                              HorizontalAlignment="Left"/>
-
-                                            <Path x:Name="Arrow" 
-                                                  Grid.Column="1" 
-                                                  Fill="#BDBDBD" 
-                                                  HorizontalAlignment="Right" 
-                                                  VerticalAlignment="Center" 
-                                                  Data="M 0 0 L 4 4 L 8 0 Z" 
-                                                  Margin="5,0,0,0"
-                                                  Width="9"
-                                                  Stretch="Fill"/>
-
-                                            <ToggleButton Grid.ColumnSpan="2" 
-                                                          Background="Transparent" 
-                                                          BorderThickness="0"
-                                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                        <Border BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Background="#1A2235" Margin="0,0,0,15">
+                            <ComboBox x:Name="CmbCardType" Foreground="White" Background="Transparent" BorderThickness="0" FontSize="15">
+                                <ComboBox.Template>
+                                    <ControlTemplate TargetType="ComboBox">
+                                        <Grid>
+                                            <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
                                                 <ToggleButton.Template>
                                                     <ControlTemplate TargetType="ToggleButton">
-                                                        <Border Background="Transparent"/>
+                                                        <Grid Background="Transparent">
+                                                            <materialDesign:PackIcon Kind="ChevronDown" Foreground="#BDBDBD" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                        </Grid>
                                                     </ControlTemplate>
                                                 </ToggleButton.Template>
                                             </ToggleButton>
+
+                                            <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" Margin="15,10,30,10" VerticalAlignment="Center" HorizontalAlignment="Left" />
+
+                                            <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                                <Border x:Name="DropDownBorder" Background="#1A2235" BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Margin="0,2,0,0" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                                    <ScrollViewer SnapsToDevicePixels="True">
+                                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                                    </ScrollViewer>
+                                                </Border>
+                                            </Popup>
                                         </Grid>
+                                    </ControlTemplate>
+                                </ComboBox.Template>
 
-                                        <Popup x:Name="Popup" 
-                                               Placement="Bottom" 
-                                               IsOpen="{TemplateBinding IsDropDownOpen}" 
-                                               AllowsTransparency="True" 
-                                               Focusable="False" 
-                                               PopupAnimation="Slide">
-                                            <Border x:Name="DropDownBorder" 
-                                                    Background="#1A2235" 
-                                                    BorderBrush="#BDBDBD" 
-                                                    BorderThickness="1" 
-                                                    CornerRadius="10"
-                                                    Margin="0,4,0,0"
-                                                    MinWidth="{TemplateBinding ActualWidth}" 
-                                                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                                <ScrollViewer SnapsToDevicePixels="True" MaxHeight="200">
-                                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained"/>
-                                                </ScrollViewer>
-                                            </Border>
-                                        </Popup>
-                                    </Grid>
+                                <ComboBoxItem Content="Дебетова" IsSelected="True" Foreground="White" Background="#1A2235" Padding="15,10"/>
+                                <ComboBoxItem Content="Кредитна" Foreground="White" Background="#1A2235" Padding="15,10"/>
+                                <ComboBoxItem Content="Юніорська" Foreground="White" Background="#1A2235" Padding="15,10"/>
+                            </ComboBox>
+                        </Border>
 
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="MainBorder" Property="BorderBrush" Value="White"/>
-                                        </Trigger>
-                                        <Trigger Property="IsDropDownOpen" Value="True">
-                                            <Setter TargetName="MainBorder" Property="BorderBrush" Value="White"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </ComboBox.Template>
+                        <PasswordBox x:Name="TxtPassword" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Padding="15,10" materialDesign:HintAssist.Hint="Пароль" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
+                        <PasswordBox x:Name="TxtConfirmPassword" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Padding="15,10" materialDesign:HintAssist.Hint="Підтвердження" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,25" />
 
-                            <ComboBoxItem Content="Дебетова картка" IsSelected="True"/>
-                            <ComboBoxItem Content="Кредитна картка"/>
-                            <ComboBoxItem Content="Юніорська картка"/>
-                        </ComboBox>
-
-                        <PasswordBox x:Name="TxtPassword" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" materialDesign:HintAssist.Hint="Придумайте пароль" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.HasClearButton="True" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
-
-                        <PasswordBox x:Name="TxtConfirmPassword" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" materialDesign:HintAssist.Hint="Підтвердіть пароль" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.HasClearButton="True" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,25" />
-
-                        <Button x:Name="BtnRegister" Content="ЗАРЕЄСТРУВАТИСЯ" Height="50" FontSize="16" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="15" Margin="0,0,0,20" Click="BtnRegister_Click" />
+                        <Button x:Name="BtnRegister" Content="ЗАРЕЄСТРУВАТИСЯ" Height="45" FontSize="16" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,0,20" Click="BtnRegister_Click" />
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,5">
                             <TextBlock Text="Вже є рахунок?" Foreground="#A0A0A0" VerticalAlignment="Center" />
