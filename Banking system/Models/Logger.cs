@@ -6,5 +6,6 @@ namespace Banking_system.Models
 {
     internal class Logger
     {
+
     }
 }

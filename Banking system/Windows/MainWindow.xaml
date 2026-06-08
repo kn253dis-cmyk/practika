@@ -23,25 +23,29 @@
         </Border.Background>
 
         <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="43*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
             <Button x:Name="BtnClose" 
                 HorizontalAlignment="Right" 
                 VerticalAlignment="Top" 
-                Margin="2" 
+                Margin="0,2,2,0" 
                 Style="{StaticResource MaterialDesignIconForegroundButton}" 
                 Foreground="#BDBDBD"
                 ToolTip="Закрити"
-                Click="BtnClose_Click">
-                
+                Click="BtnClose_Click" Grid.ColumnSpan="2">
+
                 <materialDesign:PackIcon Kind="WindowClose" Width="24" Height="24" />
             </Button>
 
             <materialDesign:Card UniformCornerRadius="20" 
                              Background="#1A2235" 
                              VerticalAlignment="Center" 
-                             HorizontalAlignment="Center" 
+                             HorizontalAlignment="Left" 
                              Padding="30,40" 
                              Width="360"
-                             materialDesign:ElevationAssist.Elevation="Dp8">
+                             materialDesign:ElevationAssist.Elevation="Dp8" Margin="45,0,0,0">
                 <StackPanel>
 
                     <materialDesign:PackIcon Kind="Bank" 
