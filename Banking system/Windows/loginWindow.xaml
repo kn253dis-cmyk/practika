@@ -34,15 +34,16 @@
                     <TextBlock Text="Національний Банк" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Foreground="White" Margin="0,0,0,5" />
                     <TextBlock Text="Безпечний вхід у систему" FontSize="14" HorizontalAlignment="Center" Foreground="#A0A0A0" Margin="0,0,0,30" />
 
-                    <TextBox x:Name="TxtLogin" Style="{StaticResource MaterialDesignOutlinedTextBox}" Padding="15,10" materialDesign:HintAssist.Hint="Номер телефону або Логін" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
-                    <PasswordBox x:Name="TxtPassword" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Padding="15,10" materialDesign:HintAssist.Hint="Ваш пароль" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
+                    <TextBox x:Name="LoginBox" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Email" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
+
+                    <PasswordBox x:Name="PassBox" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Ваш пароль" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235"  materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
 
                     <Grid Margin="0,5,0,25">
                         <CheckBox Content="Запам'ятати мене" Foreground="#BDBDBD" HorizontalAlignment="Left" />
                         <Button Content="Забули пароль?" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" HorizontalAlignment="Right" Padding="0" Height="Auto" />
                     </Grid>
 
-                    <Button Content="УВІЙТИ" Height="45" FontSize="16" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,0,20" />
+                    <Button Content="УВІЙТИ" Height="45" FontSize="16" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,0,20" Click="logInButt_Click" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBlock Text="Стати клієнтом банку?" Foreground="#A0A0A0" VerticalAlignment="Center" />
