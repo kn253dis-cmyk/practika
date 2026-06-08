@@ -6,7 +6,7 @@ using System.Net.Mail;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace PraktikaSmtp.Helpers
+namespace Banking_system.Service // Виправлено старий простір імен
 {
     public class EmailService
     {
@@ -14,10 +14,9 @@ namespace PraktikaSmtp.Helpers
 
         public EmailService()
         {
-            _templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "email_templates.json");
+            _templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HTMLTemplates", "email_templates.json");
         }
 
-        // Збирає HTML-текст квитанції, підставляючи наші дані
         public string PrepareReceiptHtml(string templateName, Dictionary<string, string> data)
         {
             if (!File.Exists(_templatesPath))
@@ -35,7 +34,6 @@ namespace PraktikaSmtp.Helpers
 
             string html = templates[templateName];
 
-            // Замінюємо мітки (наприклад [Amount]) на реальні дані
             foreach (var item in data)
             {
                 html = html.Replace($"[{item.Key}]", item.Value);
@@ -44,7 +42,6 @@ namespace PraktikaSmtp.Helpers
             return html;
         }
 
-        // Метод для надсилання листа
         public async Task SendEmailAsync(string targetEmail, string subject, string htmlContent)
         {
             if (string.IsNullOrWhiteSpace(targetEmail))
@@ -61,7 +58,6 @@ namespace PraktikaSmtp.Helpers
 
             try
             {
-                // Використовуємо using для правильного звільнення пам'яті
                 using (var client = new SmtpClient(settings.Host, settings.Port))
                 {
                     client.EnableSsl = settings.UseSsl;
@@ -81,7 +77,6 @@ namespace PraktikaSmtp.Helpers
             }
             catch (Exception ex)
             {
-                // Перехоплюємо системну помилку мережі і віддаємо зрозумілою мовою
                 throw new Exception($"Не вдалося надіслати лист. Деталі: {ex.Message}");
             }
         }

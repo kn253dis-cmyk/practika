@@ -2,14 +2,16 @@
 using System.IO;
 using System.Text.Json;
 
-namespace PraktikaSmtp.Helpers
+namespace Banking_system.Service
 {
     public class SmtpSettings
     {
         private string _host = "smtp.gmail.com";
         private int _port = 587;
-        private string _user = "";
-        private string _password = "";
+
+        private string _user = "mal4enko2000@gmail.com";
+        private string _password = "ulgpbtpbigurdomh"; 
+
         private string _senderName = "Національний Банк";
         private bool _useSsl = true;
 
@@ -24,19 +26,7 @@ namespace PraktikaSmtp.Helpers
 
         public static SmtpSettings Load()
         {
-            if (!File.Exists(_filePath))
-            {
-                return new SmtpSettings(); 
-            }
-            try
-            {
-                string json = File.ReadAllText(_filePath);
-                return JsonSerializer.Deserialize<SmtpSettings>(json) ?? new SmtpSettings();
-            }
-            catch
-            {
-                return new SmtpSettings();
-            }
+            return new SmtpSettings();
         }
 
         public void Save()
