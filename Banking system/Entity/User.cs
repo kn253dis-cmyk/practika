@@ -16,16 +16,18 @@ namespace Banking_system.Entity
         private string Name { get; set; } = string.Empty;
         private string Surname { get; set; } = string.Empty;
         private string MiddleName { get; set; } = string.Empty;
+        private string CardNumber { get; set; } = string.Empty;
 
         public User() { }
 
-        public User(string password, string email, string name, string surname, string middleName)
+        public User(string password, string email, string name, string surname, string middleName,string cardNumber)
         {
             Password = password;
             Email = email;
             Name = name;
             Surname = surname;
             MiddleName = middleName;
+            CardNumber = cardNumber;
         }
     }
 }
