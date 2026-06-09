@@ -1,4 +1,5 @@
 ﻿using Banking_system.Entity;
+using Banking_system.Views;
 using Banking_system.Windows;
 using System.Text;
 using System.Windows;
@@ -95,7 +96,30 @@ namespace Banking_system
                 MessageBox.Show("Невірний Email або пароль. Спробуйте ще раз.", "Помилка входу", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+        private void BtnTestHistory_Click(object sender, RoutedEventArgs e)
+        {
+            // Створюємо нове тимчасове вікно, яке буде контейнером для сторінки
+            Window testWindow = new Window
+            {
+                Title = "Тестування історії транзакцій",
+                Width = 500,  // Можеш налаштувати розміри під свій дизайн
+                Height = 700,
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
 
+            // Створюємо Frame і навігуємося на твою сторінку
+            Frame mainFrame = new Frame();
+
+            // Передаємо пошту користувача, чиї логи ми хочемо побачити
+            mainFrame.Navigate(new TransactionHistoryPage("client@gmail.com"));
+
+            // Поміщаємо фрейм у вікно та відображаємо його
+            testWindow.Content = mainFrame;
+            testWindow.Show();
+
+            // Закриваємо поточне вікно логіну
+            this.Close();
+        }
 
     }
 

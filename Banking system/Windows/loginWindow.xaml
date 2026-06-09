@@ -46,7 +46,22 @@
                     <Button Content="УВІЙТИ" Height="45" FontSize="16" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,0,20" Click="logInButt_Click" />
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        
+                        <Button Content="УВІЙТИ" 
+                                Height="50" 
+                                FontSize="16" 
+                                FontWeight="Bold"
+                                materialDesign:ButtonAssist.CornerRadius="15"
+                                Margin="0,0,0,20" />
+
+                                                    <Button Content="ТЕСТ: ДО ІСТОРІЇ ОПЕРАЦІЙ" 
+                                Height="45" 
+                                FontSize="14" 
+                                FontWeight="Bold"
+                                Background="#E74C3C"
+                                BorderThickness="0"
+                                materialDesign:ButtonAssist.CornerRadius="15"
+                                Margin="0,0,0,20"
+                                Click="BtnTestHistory_Click"/>
                         <TextBlock Text="Стати клієнтом банку?" Foreground="#A0A0A0" VerticalAlignment="Center" />
                         <Button x:Name="BtnOpenRegister" Content="Відкрити рахунок" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" FontWeight="Bold" Padding="5,0,0,0" Height="Auto" Click="BtnOpenRegister_Click" />
                     </StackPanel>
