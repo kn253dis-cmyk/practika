@@ -2,25 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Banking_system.Models
+namespace Banking_system.Models.Transactions
 {
-    abstract class AbstractTransaction
+    internal abstract class AbstractTransaction
     {
+        public Guid TransactionId { get; protected set; }
+        public DateTime Date { get; protected set; }
+        public decimal Amount { get; protected set; }
 
-        protected decimal amount { get; set; } = decimal.Zero;
-        public string description { get; set; } = string.Empty;
-        protected string fromAccount { get; set; } = string.Empty;
-        protected string toAccount { get; set; } = string.Empty;
-        public DateTime date { get; set; } = DateTime.Now;
-        public string transactionId { get; set; } = Guid.NewGuid().ToString();
-        protected void Transfer(AbstractCard FromCard , AbstractCard ToCard , decimal amount) {
-            if (FromCard.Balance >= amount)
-            {
-                FromCard.Withdraw(-amount);
-                ToCard.Withdraw(amount);
-            }
-            else
-                throw new InvalidOperationException("Insufficient funds in the source account.");
+        public AbstractTransaction(decimal amount)
+        {
+            TransactionId = Guid.NewGuid();
+            Date = DateTime.Now;
+            Amount = amount;
         }
+        public abstract bool Execute();
     }
 }
