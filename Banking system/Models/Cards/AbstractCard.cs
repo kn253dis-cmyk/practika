@@ -23,6 +23,8 @@ namespace Banking_system.Models
 
         public short GetCVV() => CVV;
         public DateTime GetExpirationDate() => ExpirationDate;
+        public decimal GetBalance() => Balance;
+        public string GetCardNumber() => CardNumber;
 
         public virtual void Deposit(decimal amount)
         {
