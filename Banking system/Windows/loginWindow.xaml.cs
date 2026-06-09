@@ -95,6 +95,8 @@ namespace Banking_system
                 MessageBox.Show("Невірний Email або пароль. Спробуйте ще раз.", "Помилка входу", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
+
+
     }
 
 }

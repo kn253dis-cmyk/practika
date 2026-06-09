@@ -1,4 +1,5 @@
-﻿namespace Banking_system.Models
+﻿
+namespace Banking_system.Models
 {
     internal class UniorCard : AbstractCard
     {
