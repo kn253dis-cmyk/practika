@@ -1,5 +1,7 @@
 ﻿using Banking_system.Entity;
 using Banking_system.Windows;
+using System;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,16 +22,16 @@ namespace Banking_system
             InitializeComponent();
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)=>Application.Current.Shutdown();
-        
+        private void BtnClose_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ButtonState == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
                 DragMove();
             }
         }
+
         private void BtnOpenRegister_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -48,6 +50,7 @@ namespace Banking_system
                 this.Show();
             }
         }
+
         private void logInButt_Click(object sender, RoutedEventArgs e)
         {
             string login = LoginBox.Text.Trim();
@@ -59,23 +62,17 @@ namespace Banking_system
                 return;
             }
 
-            if (login == "1" && password == "1")
-            {
-                MainWindow mainWindow = new MainWindow();
-                mainWindow.Show();
-                this.Close();
-                return;
-            }
-
             User? user = null;
 
             try
             {
+                // Підключаємося до БД і шукаємо користувача
                 using (var db = new Banking_system.Database.Database())
                 {
                     db.Database.EnsureCreated();
                     string hashPassword = db.HashPassword(password);
 
+                    // Шукаємо збіг по Email та хешованому паролю
                     user = db.Users.FirstOrDefault(u => u.Email == login && u.Password == hashPassword);
                 }
             }
@@ -85,18 +82,18 @@ namespace Banking_system
                 return;
             }
 
+            // Якщо користувача знайдено — пускаємо в головне вікно
             if (user != null)
             {
-                MainWindow mainForm = new MainWindow();
+                MainWindow mainForm = new MainWindow(user);
                 mainForm.Show();
                 this.Close();
             }
             else
+            {
+                // Якщо такого користувача немає або пароль невірний
                 MessageBox.Show("Невірний Email або пароль. Спробуйте ще раз.", "Помилка входу", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-
-
-
     }
-
 }

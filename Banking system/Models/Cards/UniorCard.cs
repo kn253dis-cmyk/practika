@@ -1,7 +1,7 @@
 ﻿
 namespace Banking_system.Models
 {
-    internal class UniorCard : AbstractCard
+    public class UniorCard : AbstractCard
     {
         public decimal TransactionLimit { get; set; } = 1000m;
         public UniorCard() : base("20")
