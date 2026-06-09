@@ -6,7 +6,7 @@ using System.Net.Mail;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Banking_system.Service // Виправлено старий простір імен
+namespace Banking_system.Service
 {
     public class EmailService
     {
@@ -25,7 +25,15 @@ namespace Banking_system.Service // Виправлено старий прост
             }
 
             string json = File.ReadAllText(_templatesPath);
-            var templates = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+
+            // Налаштування для безпечного та гнучкого читання JSON-файлу
+            var jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+                AllowTrailingCommas = true
+            };
+
+            var templates = JsonSerializer.Deserialize<Dictionary<string, string>>(json, jsonOptions);
 
             if (templates == null || !templates.ContainsKey(templateName))
             {
@@ -34,7 +42,18 @@ namespace Banking_system.Service // Виправлено старий прост
 
             string html = templates[templateName];
 
-            foreach (var item in data)
+            // Створюємо копію словника з ігноруванням регістру символів (сума/Сума/Amount/amount)
+            var enrichedData = new Dictionary<string, string>(data, StringComparer.OrdinalIgnoreCase);
+
+            // Автоматично додаємо назву банку з конфігурації SMTP, якщо її не передали в логах
+            if (!enrichedData.ContainsKey("BankName"))
+            {
+                var settings = SmtpSettings.Load();
+                enrichedData["BankName"] = settings.SenderName;
+            }
+
+            // Почергово замінюємо всі знайдені плейсхолдери [Ключ] на реальні значення
+            foreach (var item in enrichedData)
             {
                 html = html.Replace($"[{item.Key}]", item.Value);
             }

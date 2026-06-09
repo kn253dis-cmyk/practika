@@ -6,6 +6,9 @@ namespace Banking_system.Models
 {
     internal class DebitCard : AbstractCard
     {
-        double Balance { get; set; } = double.MaxValue;
+        public DebitCard() : base("10")
+        {
+            Logger.Log($"Ініціалізовано дебетову картку {CardNumber}.");
+        }
     }
 }

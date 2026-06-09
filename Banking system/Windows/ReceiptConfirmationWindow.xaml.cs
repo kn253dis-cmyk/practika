@@ -7,50 +7,49 @@ namespace Banking_system.Views
 {
     public partial class ReceiptConfirmationWindow : Window
     {
-        private readonly JsonLog.LogEntry _transactionData;
+        private readonly JsonLog.LogEntry _transactionLog;
+        private readonly EmailService _emailService;
 
-        public ReceiptConfirmationWindow(JsonLog.LogEntry transactionData)
+        public ReceiptConfirmationWindow(JsonLog.LogEntry transactionLog)
         {
             InitializeComponent();
-            _transactionData = transactionData;
+            _transactionLog = transactionLog;
+            _emailService = new EmailService();
 
-            TxtInfo.Text = $"Операція: {_transactionData.Text}\nДата: {_transactionData.Date:dd.MM.yyyy HH:mm}";
-
-            // За замовчуванням підставляємо пошту користувача
-            TxtEmail.Text = _transactionData.UserEmail;
+            // Підставляємо дані з логу в текстові поля XAML
+            TxtEmail.Text = _transactionLog.UserEmail;
+            TxtInfo.Text = $"Тип операції: {_transactionLog.TemplateName}\nДеталі: {_transactionLog.Text}";
         }
 
+        // Кнопка Скасувати
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        // Кнопка Надіслати
         private async void BtnSend_Click(object sender, RoutedEventArgs e)
         {
-            string email = TxtEmail.Text.Trim();
-
-            if (string.IsNullOrWhiteSpace(email) || !email.Contains("@"))
-            {
-                MessageBox.Show("Будь ласка, введіть коректну адресу.", "Перевірка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
             try
             {
-                // TODO: В майбутньому тут можна додати перевірку наявності транзакції в БД
-                var emailService = new EmailService();
-                string htmlContent = emailService.PrepareReceiptHtml(_transactionData.TemplateName, _transactionData.ReceiptData);
-                string emailSubject = $"Квитанція: {_transactionData.Text}";
+                string targetEmail = TxtEmail.Text; // Беремо пошту з текстового поля, якщо користувач її змінив
 
-                await emailService.SendEmailAsync(email, emailSubject, htmlContent);
+                string htmlContent = _emailService.PrepareReceiptHtml(
+                    _transactionLog.TemplateName,
+                    _transactionLog.ReceiptData
+                );
+
+                string subject = $"Квитанція за операцією: {_transactionLog.Id}";
+
+                await _emailService.SendEmailAsync(targetEmail, subject, htmlContent);
 
                 MessageBox.Show("Квитанцію успішно надіслано!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Помилка при відправці: {ex.Message}", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
         }
     }
 }
