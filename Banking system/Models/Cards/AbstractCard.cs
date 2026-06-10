@@ -2,7 +2,7 @@
 
 namespace Banking_system.Models
 {
-    internal abstract class AbstractCard
+    public abstract class AbstractCard
     {
         public string CardNumber { get; protected set; } = string.Empty;
         public decimal Balance { get; protected set; } = 0m;
@@ -23,6 +23,8 @@ namespace Banking_system.Models
 
         public short GetCVV() => CVV;
         public DateTime GetExpirationDate() => ExpirationDate;
+        public decimal GetBalance() => Balance;
+        public string GetCardNumber() => CardNumber;
 
         public virtual void Deposit(decimal amount)
         {

@@ -2,7 +2,7 @@
 
 namespace Banking_system.Models
 {
-    internal class CreditCard : AbstractCard
+    public class CreditCard : AbstractCard
     {
         public int CreditLimit { get; set; } = 50000;
         public string CreditType { get; set; } = "Універсальна";
