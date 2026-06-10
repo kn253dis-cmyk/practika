@@ -72,11 +72,13 @@ namespace Banking_system.Windows
                 }
 
                 string? selectedCard = ((ComboBoxItem)CmbCardType.SelectedItem).Content.ToString();
-                AbstractCard newCard = null;
+                AbstractCard? newCard = null;
 
                 if (selectedCard == "Дебетова") newCard = new DebitCard();
                 else if (selectedCard == "Кредитна") newCard = new CreditCard();
                 else if (selectedCard == "Юніорська") newCard = new UniorCard();
+
+                if (newCard == null) return;
 
                 User newUser = new User
                 {
@@ -86,19 +88,17 @@ namespace Banking_system.Windows
                     Phone = phone,
                     Email = email,
                     Ipn = ipn,
-                    Password = db.HashPassword(password),
-                    Cards.Add(newCard)
+                    Password = db.HashPassword(password)
                 };
 
                 db.Users.Add(newUser);
+                db.SaveCard(newCard); 
                 db.SaveChanges();
 
-                MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newUser.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newCard.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
         }
-
-
         private void CmbCardType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }

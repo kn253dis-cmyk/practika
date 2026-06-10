@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Banking_system.Entity;
+using Banking_system.Models;
+using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
-using Banking_system.Entity;
-using Banking_system.Models;
 
 namespace Banking_system.Windows
 {
@@ -11,8 +13,8 @@ namespace Banking_system.Windows
     {
         private User _currentUser;
 
-        // Список карток користувача та індекс поточної картки на екрані
-        private List<AbstractCard> _userCards = new List<AbstractCard>;
+        // Виправляємо синтаксичну помилку (додаємо дужки)
+        private List<AbstractCard> _userCards = new List<AbstractCard>();
         private int _currentCardIndex = 0;
 
         public MainWindow(User authenticatedUser)
@@ -20,47 +22,18 @@ namespace Banking_system.Windows
             InitializeComponent();
             _currentUser = authenticatedUser;
             LoadUserData(_currentUser);
+            if (_currentUser.Cards != null)
+                _userCards = _currentUser.Cards.ToList();
 
-            using (var db = new Banking_system.Database.Database())
-            {
-                db.Database.EnsureCreated();
-                foreach (var card in _userCards)
-                {
-                    
-                }
-            }
-
-            //// Ініціалізуємо список карток (У майбутньому це буде завантажуватись з БД)
-            //_userCards = new List<AbstractCard>();
-
-            //// Створюємо три різні картки для демонстрації перемикання
-            //DebitCard debitCard = new DebitCard();
-            //debitCard.Deposit(15420.50m); // Поповнюємо на певну суму
-
-            //CreditCard creditCard = new CreditCard();
-            //creditCard.Deposit(2500.00m); // Свої кошти на кредитці
-
-            //UniorCard uniorCard = new UniorCard();
-            //uniorCard.Deposit(840.00m); // Кишенькові гроші
-
-            //// Додаємо картки в наш "гаманець"
-            //_userCards.Add(debitCard);
-            //_userCards.Add(creditCard);
-            //_userCards.Add(uniorCard);
-
-            //// Виводимо першу картку на екран
-
+            // Оновлюємо UI для показу поточної картки
             UpdateCardUI();
         }
-        }
-
         // Метод, який оновлює екран залежно від того, яка картка зараз обрана
         private void UpdateCardUI()
         {
             if (_userCards.Count == 0) return;
 
             AbstractCard currentCard = _userCards[_currentCardIndex];
-
             // Визначаємо назву типу картки
             string cardName = "Дебетова картка";
             if (currentCard is CreditCard) cardName = "Кредитна картка";
@@ -121,7 +94,6 @@ namespace Banking_system.Windows
 
             // Беремо ПОВНИЙ номер поточної картки без зірочок
             string fullNumber = _userCards[_currentCardIndex].GetCardNumber();
-
             // Копіюємо в буфер обміну Windows
             Clipboard.SetText(fullNumber);
 
@@ -140,9 +112,6 @@ namespace Banking_system.Windows
             if (e.LeftButton == MouseButtonState.Pressed) DragMove();
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
+        private void BtnClose_Click(object sender, RoutedEventArgs e)=>Application.Current.Shutdown();
     }
 }

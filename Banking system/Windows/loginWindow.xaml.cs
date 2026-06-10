@@ -1,5 +1,6 @@
 ﻿using Banking_system.Entity;
 using Banking_system.Windows;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Text;
@@ -70,7 +71,9 @@ namespace Banking_system
                     db.Database.EnsureCreated();
                     string hashPassword = db.HashPassword(password);
                     // Шукаємо збіг по Email та хешованому паролю
-                    user = db.Users.FirstOrDefault(u => u.Email == login && u.Password == hashPassword);
+                    user = db.Users
+                        .Include(u => u.Cards)
+                        .FirstOrDefault(u => u.Email == login && u.Password == hashPassword);
                 }
             }
             catch (Exception ex)
