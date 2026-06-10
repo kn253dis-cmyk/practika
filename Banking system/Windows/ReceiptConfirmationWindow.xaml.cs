@@ -7,41 +7,46 @@ namespace Banking_system.Views
 {
     public partial class ReceiptConfirmationWindow : Window
     {
-        private readonly JsonLog.LogEntry _transactionLog;
-        private readonly EmailService _emailService;
+        JsonLog.LogEntry transactionLog;
+        EmailService emailService;
 
-        public ReceiptConfirmationWindow(JsonLog.LogEntry transactionLog)
+        public ReceiptConfirmationWindow(JsonLog.LogEntry log)
         {
             InitializeComponent();
-            _transactionLog = transactionLog;
-            _emailService = new EmailService();
 
-            // Підставляємо дані з логу в текстові поля XAML
-            TxtEmail.Text = _transactionLog.UserEmail;
-            TxtInfo.Text = $"Тип операції: {_transactionLog.TemplateName}\nДеталі: {_transactionLog.Text}";
+            transactionLog = log;
+            emailService = new EmailService();
+
+            TxtEmail.Text = SessionManager.CurrentUser?.Email ?? "";
+
+            TxtInfo.Text = $"Тип операції: {transactionLog.TemplateName}\nДеталі: {transactionLog.Text}";
         }
 
-        // Кнопка Скасувати
+     
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Close(); 
         }
 
-        // Кнопка Надіслати
+  
         private async void BtnSend_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                string targetEmail = TxtEmail.Text; // Беремо пошту з текстового поля, якщо користувач її змінив
 
-                string htmlContent = _emailService.PrepareReceiptHtml(
-                    _transactionLog.TemplateName,
-                    _transactionLog.ReceiptData
+                string targetEmail = TxtEmail.Text;
+
+
+                string htmlContent = emailService.PrepareReceiptHtml(
+                    transactionLog.TemplateName,
+                    transactionLog.ReceiptData
                 );
 
-                string subject = $"Квитанція за операцією: {_transactionLog.Id}";
 
-                await _emailService.SendEmailAsync(targetEmail, subject, htmlContent);
+                string subject = $"Квитанція за операцією: {transactionLog.Id}";
+
+
+                await emailService.SendEmailAsync(targetEmail, subject, htmlContent);
 
                 MessageBox.Show("Квитанцію успішно надіслано!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();

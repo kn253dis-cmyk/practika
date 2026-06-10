@@ -25,18 +25,38 @@ namespace Banking_system.Windows
             InitializeComponent();
             _currentUser = authenticatedUser;
             LoadUserData(_currentUser);
-            if (_currentUser.Cards != null) { 
+            if (_currentUser.Cards != null)
+            {
                 _userCards = _currentUser.Cards.ToList();
                 UpdateCardUI();
             }
         }
+
         private void UpdateCardUI()
         {
-            if (_userCards == null || _userCards.Count == 0)
+            if (_userCards.Count == 0) return;
+
+            AbstractCard currentCard = _userCards[_currentCardIndex];
+            string cardName = "Дебетова картка";
+            if (currentCard is CreditCard)
             {
                 _currentCardIndex = 0;
                 ShowAddCardUI();
                 return;
+            }
+            else if (currentCard is UniorCard)
+            {
+                cardName = "Картка Юніора";
+                Card.Background = Brushes.LightGreen;
+            }
+            else if (currentCard is DebitCard)
+            {
+                var converter = new BrushConverter();
+                var brush = converter.ConvertFrom("#2C2C2C") as SolidColorBrush;
+                if (brush != null)
+                {
+                    Card.Background = brush;
+                }
             }
 
             // Якщо індекс дійшов до кінця (кількість карток), показуємо "Додати картку"
@@ -278,6 +298,50 @@ namespace Banking_system.Windows
             if (e.LeftButton == MouseButtonState.Pressed) DragMove();
         }
 
-        private void BtnClose_Click(object sender, RoutedEventArgs e)=>Application.Current.Shutdown();
+        private void BtnHistory_Click(object sender, RoutedEventArgs e)
+        {
+            string safeEmail = Banking_system.Service.SessionManager.CurrentUser?.Email ?? string.Empty;
+
+            Window historyForm = new Window
+            {
+                Title = "Історія транзакцій",
+                Width = 520,
+                Height = 650,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                Content = new Banking_system.Views.TransactionHistoryPage(safeEmail)
+            };
+
+            historyForm.ShowDialog();
+        }
+
+        private void BtnTransfer_Click(object sender, RoutedEventArgs e)
+        {
+            string currentCardNum = _userCards[_currentCardIndex].GetCardNumber();
+
+            Window transferForm = new Window
+            {
+                Title = "Новий переказ коштів",
+                Width = 600,
+                Height = 520,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                Content = new Banking_system.Views.TransferPage(currentCardNum) // Передаємо номер картки туди
+            };
+
+            transferForm.ShowDialog();
+
+            using (var db = new Database.Database())
+            {
+                var updatedCard = db.Cards.FirstOrDefault(c => c.CardNumber == currentCardNum);
+                if (updatedCard != null)
+                {
+                    _userCards[_currentCardIndex].Balance = updatedCard.Balance;
+                    UpdateCardUI();
+                }
+            }
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
     }
 }
