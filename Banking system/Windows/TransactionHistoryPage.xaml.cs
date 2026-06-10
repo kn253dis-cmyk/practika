@@ -9,7 +9,6 @@ namespace Banking_system.Views
     {
         private readonly string _currentUserEmail;
 
-        // Тепер сторінка очікує пошту при створенні
         public TransactionHistoryPage(string userEmail)
         {
             InitializeComponent();
@@ -19,7 +18,7 @@ namespace Banking_system.Views
 
         private void LoadTransactions()
         {
-            // Витягуємо логи виключно для поточної пошти
+
             TransactionsList.ItemsSource = Logger.ReadUserLogs(_currentUserEmail);
         }
 
@@ -27,7 +26,7 @@ namespace Banking_system.Views
         {
             if (TransactionsList.SelectedItem is JsonLog.LogEntry selectedTransaction)
             {
-                // Якщо це системне повідомлення — показуємо просте вікно та перериваємо метод
+                
                 if (selectedTransaction.TemplateName == "SystemLog")
                 {
                     MessageBox.Show("Для цієї системної дії електронна квитанція недоступна.", "Інформація", MessageBoxButton.OK, MessageBoxImage.Information);

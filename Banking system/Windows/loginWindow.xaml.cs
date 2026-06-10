@@ -22,6 +22,39 @@ namespace Banking_system
         public loginWindow()
         {
             InitializeComponent();
+            SeedDatabase();
+        }
+
+        private void SeedDatabase()
+        {
+            try
+            {
+                using (var db = new Banking_system.Database.Database())
+                {
+                    db.Database.EnsureCreated();
+
+                    // 1. Шукаємо в базі акаунт адміна, який ти зареєструєш сам через форму
+                    var adminUser = db.Users
+                        .Include(u => u.Cards) // Підвантажуємо його картки з бази
+                        .FirstOrDefault(u => u.Email == "admin@gmail.com");
+
+                    // 2. Якщо ти його вже створив, і на карті ще 0 грн — нараховуємо кошти один раз
+                    if (adminUser != null && adminUser.Cards != null && adminUser.Cards.Count > 0)
+                    {
+                        var adminCard = adminUser.Cards.First();
+
+                        if (adminCard.Balance == 0m)
+                        {
+                            adminCard.Balance = 50000.00m; // Нараховуємо 50 тисяч для тестів
+                            db.SaveChanges(); // Зберігаємо в базу
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Помилка сідування адміна: {ex.Message}");
+            }
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
@@ -91,36 +124,6 @@ namespace Banking_system
             }
             else
                 MessageBox.Show("Невірний Email або пароль. Спробуйте ще раз.", "Помилка входу", MessageBoxButton.OK, MessageBoxImage.Error);
-<<<<<<< HEAD
-=======
-            }
         }
-
-        private void BtnTestHistory_Click(object sender, RoutedEventArgs e)
-        {
-            // Створюємо нове тимчасове вікно, яке буде контейнером для сторінки
-            Window testWindow = new Window
-            {
-                Title = "Тестування історії транзакцій",
-                Width = 500,  // Можеш налаштувати розміри під свій дизайн
-                Height = 700,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen
-            };
-
-            // Створюємо Frame і навігуємося на твою сторінку
-            Frame mainFrame = new Frame();
-
-            // Передаємо пошту користувача, чиї логи ми хочемо побачити
-            mainFrame.Navigate(new TransactionHistoryPage("client@gmail.com"));
-
-            // Поміщаємо фрейм у вікно та відображаємо його
-            testWindow.Content = mainFrame;
-            testWindow.Show();
-
-            // Закриваємо поточне вікно логіну
-            this.Close();
->>>>>>> d972da79f1bd1208a12e4f6f4d18797ae1d5fa31
-        }
-
     }
 }
