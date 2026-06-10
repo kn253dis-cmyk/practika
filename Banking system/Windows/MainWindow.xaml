@@ -77,37 +77,69 @@
                             </LinearGradientBrush>
                         </materialDesign:Card.Background>
 
-                        <Grid Margin="30">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid x:Name="GridCardInfo" Margin="30">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                            <Grid Grid.Row="0">
-                                <TextBlock x:Name="TxtCardType" Text="Дебетова картка" FontSize="18" Foreground="#E0E0E0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                                <materialDesign:PackIcon Kind="ContactlessPayment" Width="35" Height="35" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                <Grid Grid.Row="0">
+                                    <TextBlock x:Name="TxtCardType" Text="Дебетова картка" FontSize="18" Foreground="#E0E0E0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <materialDesign:PackIcon Kind="ContactlessPayment" Width="35" Height="35" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+                                </Grid>
+
+                                <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,20">
+                                    <TextBlock Text="Доступний залишок" FontSize="14" Foreground="#BDBDBD"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="TxtBalance" Text="0.00" FontSize="42" FontWeight="Bold" Foreground="White"/>
+                                        <TextBlock Text=" ₴" FontSize="36" FontWeight="Bold" Foreground="#BDBDBD" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <Grid Grid.Row="2" VerticalAlignment="Bottom">
+                                    <StackPanel HorizontalAlignment="Left" Cursor="Hand" Background="Transparent" ToolTip="Натисніть, щоб скопіювати повний номер" MouseLeftButtonDown="TxtCardNumber_MouseLeftButtonDown">
+                                        <TextBlock Text="Номер картки" FontSize="12" Foreground="#BDBDBD"/>
+                                        <TextBlock x:Name="TxtCardNumber" Text="**** **** **** 0000" FontSize="20" Foreground="White" Margin="0,5,0,0" FontFamily="Consolas"/>
+                                    </StackPanel>
+
+                                    <StackPanel HorizontalAlignment="Right">
+                                        <TextBlock Text="Діє до" FontSize="12" Foreground="#BDBDBD"/>
+                                        <TextBlock x:Name="TxtExpiryDate" Text="00/00" FontSize="20" Foreground="White" Margin="0,5,0,0" HorizontalAlignment="Right" FontFamily="Consolas"/>
+                                    </StackPanel>
+                                </Grid>
                             </Grid>
 
-                            <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,20">
-                                <TextBlock Text="Доступний залишок" FontSize="14" Foreground="#BDBDBD"/>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock x:Name="TxtBalance" Text="0.00" FontSize="42" FontWeight="Bold" Foreground="White"/>
-                                    <TextBlock Text=" ₴" FontSize="36" FontWeight="Bold" Foreground="#BDBDBD" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
-                                </StackPanel>
-                            </StackPanel>
+                            <Grid x:Name="GridAddCard" Visibility="Collapsed">
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                            <Grid Grid.Row="2" VerticalAlignment="Bottom">
-                                <StackPanel HorizontalAlignment="Left" Cursor="Hand" Background="Transparent" ToolTip="Натисніть, щоб скопіювати повний номер" MouseLeftButtonDown="TxtCardNumber_MouseLeftButtonDown">
-                                    <TextBlock Text="Номер картки" FontSize="12" Foreground="#BDBDBD"/>
-                                    <TextBlock x:Name="TxtCardNumber" Text="**** **** **** 0000" FontSize="20" Foreground="White" Margin="0,5,0,0" FontFamily="Consolas"/>
-                                </StackPanel>
+                                    <materialDesign:PopupBox 
+                                        PlacementMode="BottomAndAlignCentres" 
+                                        StaysOpen="False"
+                                        ToolTip="Відкрити нову карту"
+                                        HorizontalAlignment="Center">
 
-                                <StackPanel HorizontalAlignment="Right">
-                                    <TextBlock Text="Діє до" FontSize="12" Foreground="#BDBDBD"/>
-                                    <TextBlock x:Name="TxtExpiryDate" Text="00/00" FontSize="20" Foreground="White" Margin="0,5,0,0" HorizontalAlignment="Right" FontFamily="Consolas"/>
+                                        <materialDesign:PopupBox.ToggleContent>
+                                            <Border Width="75" Height="75" Background="White" CornerRadius="40" Cursor="Hand">
+                                                <materialDesign:PackIcon Kind="PlusBold" Width="40" Height="40" Foreground="#203A43" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </materialDesign:PopupBox.ToggleContent>
+
+                                        <StackPanel Margin="0,10" Background="#1A2235">
+                                            <TextBlock Text="ОБЕРІТЬ ТИП КАРТКИ" Foreground="#A0A0A0" FontSize="12" FontWeight="Bold" Margin="15,10,15,5" HorizontalAlignment="Center"/>
+                                            <Separator Background="#333" Margin="10,0,10,5"/>
+                                            <Button Content="💳 Дебетова картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateDebit_Click"/>
+                                            <Button Content="🔥 Кредитна картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateCredit_Click"/>
+                                            <Button Content="🌱 Картка Юніора" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateJunior_Click"/>
+                                        </StackPanel>
+
+                                    </materialDesign:PopupBox>
+
+                                    <TextBlock Text="Відкрити нову картку" FontSize="18" FontWeight="Medium" Foreground="White" Margin="0,15,0,0" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
+                           
                         </Grid>
                     </materialDesign:Card>
 
@@ -121,12 +153,6 @@
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="SwapHorizontal" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center"/>
                             <TextBlock Text="ПЕРЕКАЗ" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-
-                    <Button x:Name="BtnCreateCard" Width="50" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,20,0" Background="White" BorderThickness="0" ToolTip="Відкрити нову карту" Padding="0">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <materialDesign:PackIcon Kind="PlusBold" Width="30" Height="30" Margin="0,0,0,0" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
 

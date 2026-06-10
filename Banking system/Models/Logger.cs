@@ -18,8 +18,11 @@ namespace Banking_system.Models
             // Можна просто виводити в консоль відлагодження або ігнорувати.
             System.Diagnostics.Debug.WriteLine($"[Card System]: {message}");
         }
-
-        // Твій основний метод для логування дій конкретного користувача в JSON
+        public static void LogUserAction(string userEmail, string message)
+        {
+            AppendLog(userEmail, "General", message, new Dictionary<string, string>());
+        }
+        //  основний метод для логування дій конкретного користувача в JSON
         public static void AppendLog(string userEmail, string templateName, string text, Dictionary<string, string> data)
         {
             try

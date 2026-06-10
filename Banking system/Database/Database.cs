@@ -22,8 +22,10 @@ namespace Banking_system.Database
                 .HasDiscriminator<string>("CardType")
                 .HasValue<DebitCard>("Debit")
                 .HasValue<CreditCard>("Credit")
-                .HasValue<UniorCard>("Unior"); 
+                .HasValue<JuniorCard>("Unior"); 
         }
+        public List<AbstractCard> FindAllCardsByUserId(int userId) =>Cards.Where(c => c.UserId == userId).ToList();
+
         public string HashPassword(string password)
         {
             using (SHA256 sha256Hash = SHA256.Create())
