@@ -41,7 +41,6 @@ namespace Banking_system.Windows
                 return;
             }
 
-            // Проста перевірка формату Email (наявність @ та крапки)
             if (!email.Contains("@") || !email.Contains("."))
             {
                 MessageBox.Show("Будь ласка, введіть коректний Email!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -72,11 +71,13 @@ namespace Banking_system.Windows
                 }
 
                 string? selectedCard = ((ComboBoxItem)CmbCardType.SelectedItem).Content.ToString();
-                AbstractCard newCard = null;
+                AbstractCard? newCard = null;
 
                 if (selectedCard == "Дебетова") newCard = new DebitCard();
                 else if (selectedCard == "Кредитна") newCard = new CreditCard();
                 else if (selectedCard == "Юніорська") newCard = new UniorCard();
+
+                if (newCard == null) return;
 
                 User newUser = new User
                 {
@@ -86,19 +87,18 @@ namespace Banking_system.Windows
                     Phone = phone,
                     Email = email,
                     Ipn = ipn,
-                    Password = db.HashPassword(password),
-                    CardNumber = newCard != null ? newCard.CardNumber : "Помилка генерації"
+                    Password = db.HashPassword(password)
                 };
 
+                // ВАЖЛИВО: Додаємо картку до колекції користувача
+                newUser.Cards.Add(newCard);
                 db.Users.Add(newUser);
-                db.SaveChanges();
+                db.SaveChanges(); 
 
-                MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newUser.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newCard.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
         }
-
-
         private void CmbCardType_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }

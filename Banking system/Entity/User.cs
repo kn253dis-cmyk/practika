@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Banking_system.Models;
 
 
 namespace Banking_system.Entity
@@ -19,11 +20,12 @@ namespace Banking_system.Entity
         public string Name { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
         public string MiddleName { get; set; } = string.Empty;
-        public string CardNumber { get; set; } = string.Empty;
+        //public string CardNumber { get; set; } = string.Empty;
+        public ICollection<AbstractCard> Cards { get; set; } = new List<AbstractCard>();
 
         public User() { }
 
-        public User(string password, string phone, string email, string ipn, string name, string surname, string middleName, string cardNumber)
+        public User(string password, string phone, string email, string ipn, string name, string surname, string middleName , AbstractCard Card)
         {
             Password = password;
             Phone = phone;
@@ -32,7 +34,7 @@ namespace Banking_system.Entity
             Name = name;
             Surname = surname;
             MiddleName = middleName;
-            CardNumber = cardNumber;
+            Cards.Add(Card);
         }
     }
 }
