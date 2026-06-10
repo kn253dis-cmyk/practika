@@ -87,7 +87,7 @@ namespace Banking_system.Windows
                     Email = email,
                     Ipn = ipn,
                     Password = db.HashPassword(password),
-                    CardNumber = newCard != null ? newCard.CardNumber : "Помилка генерації"
+                    Cards.Add(newCard)
                 };
 
                 db.Users.Add(newUser);

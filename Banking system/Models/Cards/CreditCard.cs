@@ -5,12 +5,13 @@ namespace Banking_system.Models
     public class CreditCard : AbstractCard
     {
         public int CreditLimit { get; set; } = 50000;
-        public string CreditType { get; set; } = "Універсальна";
+        public string CreditType { get; set; } = "Credit";
         public DateTime CreditEndDate { get; set; } = DateTime.Now.AddYears(1);
-        public decimal Percentage { get; set; } = 3.5m; // Відсотки краще тримати в decimal
+        public decimal Percentage { get; set; } = 3.5m; 
 
         public CreditCard() : base("30")
         {
+
             Logger.Log($"Ініціалізовано кредитну картку {CardNumber} з лімітом {CreditLimit:C}.");
         }
 

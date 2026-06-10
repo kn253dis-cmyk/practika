@@ -27,9 +27,7 @@ namespace Banking_system
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.LeftButton == MouseButtonState.Pressed)
-            {
                 DragMove();
-            }
         }
 
         private void BtnOpenRegister_Click(object sender, RoutedEventArgs e)
@@ -71,7 +69,6 @@ namespace Banking_system
                 {
                     db.Database.EnsureCreated();
                     string hashPassword = db.HashPassword(password);
-
                     // Шукаємо збіг по Email та хешованому паролю
                     user = db.Users.FirstOrDefault(u => u.Email == login && u.Password == hashPassword);
                 }
@@ -81,8 +78,6 @@ namespace Banking_system
                 MessageBox.Show("Помилка бази даних під час входу: " + ex.Message, "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-
-            // Якщо користувача знайдено — пускаємо в головне вікно
             if (user != null)
             {
                 MainWindow mainForm = new MainWindow(user);
@@ -90,10 +85,7 @@ namespace Banking_system
                 this.Close();
             }
             else
-            {
-                // Якщо такого користувача немає або пароль невірний
                 MessageBox.Show("Невірний Email або пароль. Спробуйте ще раз.", "Помилка входу", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
     }
 }

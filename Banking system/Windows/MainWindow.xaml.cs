@@ -12,7 +12,7 @@ namespace Banking_system.Windows
         private User _currentUser;
 
         // Список карток користувача та індекс поточної картки на екрані
-        private List<AbstractCard> _userCards;
+        private List<AbstractCard> _userCards = new List<AbstractCard>;
         private int _currentCardIndex = 0;
 
         public MainWindow(User authenticatedUser)
@@ -21,26 +21,37 @@ namespace Banking_system.Windows
             _currentUser = authenticatedUser;
             LoadUserData(_currentUser);
 
-            // Ініціалізуємо список карток (У майбутньому це буде завантажуватись з БД)
-            _userCards = new List<AbstractCard>();
+            using (var db = new Banking_system.Database.Database())
+            {
+                db.Database.EnsureCreated();
+                foreach (var card in _userCards)
+                {
+                    
+                }
+            }
 
-            // Створюємо три різні картки для демонстрації перемикання
-            DebitCard debitCard = new DebitCard();
-            debitCard.Deposit(15420.50m); // Поповнюємо на певну суму
+            //// Ініціалізуємо список карток (У майбутньому це буде завантажуватись з БД)
+            //_userCards = new List<AbstractCard>();
 
-            CreditCard creditCard = new CreditCard();
-            creditCard.Deposit(2500.00m); // Свої кошти на кредитці
+            //// Створюємо три різні картки для демонстрації перемикання
+            //DebitCard debitCard = new DebitCard();
+            //debitCard.Deposit(15420.50m); // Поповнюємо на певну суму
 
-            UniorCard uniorCard = new UniorCard();
-            uniorCard.Deposit(840.00m); // Кишенькові гроші
+            //CreditCard creditCard = new CreditCard();
+            //creditCard.Deposit(2500.00m); // Свої кошти на кредитці
 
-            // Додаємо картки в наш "гаманець"
-            _userCards.Add(debitCard);
-            _userCards.Add(creditCard);
-            _userCards.Add(uniorCard);
+            //UniorCard uniorCard = new UniorCard();
+            //uniorCard.Deposit(840.00m); // Кишенькові гроші
 
-            // Виводимо першу картку на екран
+            //// Додаємо картки в наш "гаманець"
+            //_userCards.Add(debitCard);
+            //_userCards.Add(creditCard);
+            //_userCards.Add(uniorCard);
+
+            //// Виводимо першу картку на екран
+
             UpdateCardUI();
+        }
         }
 
         // Метод, який оновлює екран залежно від того, яка картка зараз обрана

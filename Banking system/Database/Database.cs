@@ -1,4 +1,5 @@
 ﻿using Banking_system.Entity;
+using Banking_system.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,18 @@ namespace Banking_system.Database
     {
 
         public Microsoft.EntityFrameworkCore.DbSet<User> Users { get; set; } = null!;
+        public Microsoft.EntityFrameworkCore.DbSet<AbstractCard> Cards { get; set; } = null!;
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("Data Source=Users.db");
         }
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AbstractCard>()
+                .HasDiscriminator<string>("CardType")
+                .HasValue<DebitCard>("Debit")
+                .HasValue<CreditCard>("Credit");
+        }
         public string HashPassword(string password)
         {
             using (SHA256 sha256Hash = SHA256.Create())
