@@ -41,7 +41,6 @@ namespace Banking_system.Windows
                 return;
             }
 
-            // Проста перевірка формату Email (наявність @ та крапки)
             if (!email.Contains("@") || !email.Contains("."))
             {
                 MessageBox.Show("Будь ласка, введіть коректний Email!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -91,9 +90,10 @@ namespace Banking_system.Windows
                     Password = db.HashPassword(password)
                 };
 
+                // ВАЖЛИВО: Додаємо картку до колекції користувача
+                newUser.Cards.Add(newCard);
                 db.Users.Add(newUser);
-                db.SaveCard(newCard); 
-                db.SaveChanges();
+                db.SaveChanges(); 
 
                 MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newCard.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();

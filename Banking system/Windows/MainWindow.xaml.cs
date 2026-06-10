@@ -4,7 +4,9 @@ using Microsoft.Data.Sqlite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Input;
 
 namespace Banking_system.Windows
@@ -13,7 +15,6 @@ namespace Banking_system.Windows
     {
         private User _currentUser;
 
-        // Виправляємо синтаксичну помилку (додаємо дужки)
         private List<AbstractCard> _userCards = new List<AbstractCard>();
         private int _currentCardIndex = 0;
 
@@ -22,22 +23,29 @@ namespace Banking_system.Windows
             InitializeComponent();
             _currentUser = authenticatedUser;
             LoadUserData(_currentUser);
-            if (_currentUser.Cards != null)
+            if (_currentUser.Cards != null) { 
                 _userCards = _currentUser.Cards.ToList();
-
-            // Оновлюємо UI для показу поточної картки
-            UpdateCardUI();
+                UpdateCardUI();
+            }
         }
-        // Метод, який оновлює екран залежно від того, яка картка зараз обрана
         private void UpdateCardUI()
         {
             if (_userCards.Count == 0) return;
 
             AbstractCard currentCard = _userCards[_currentCardIndex];
-            // Визначаємо назву типу картки
             string cardName = "Дебетова картка";
-            if (currentCard is CreditCard) cardName = "Кредитна картка";
-            else if (currentCard is UniorCard) cardName = "Картка Юніора";
+            if (currentCard is CreditCard) 
+            {
+                cardName = "Кредитна картка";
+                Card.Background = Brushes.DarkRed;
+            }
+            else if (currentCard is UniorCard) 
+            {
+                cardName = "Картка Юніора";
+                Card.Background = Brushes.LightGreen;
+            }
+            else if (currentCard is DebitCard)
+                Card.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#2C2C2C"); 
 
             LoadCardData(currentCard, cardName);
         }
@@ -62,16 +70,11 @@ namespace Banking_system.Windows
             TxtExpiryDate.Text = card.GetExpirationDate().ToString("MM/yy");
         }
 
-        // ==========================================
-        // ОБРОБНИКИ СТРІЛОЧОК ТА КОПІЮВАННЯ
-        // ==========================================
-
         private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
         {
             if (_userCards.Count == 0) return;
 
             _currentCardIndex--;
-            // Якщо дійшли до початку - перекидаємо в кінець (циклічність)
             if (_currentCardIndex < 0) _currentCardIndex = _userCards.Count - 1;
 
             UpdateCardUI();
@@ -82,7 +85,6 @@ namespace Banking_system.Windows
             if (_userCards.Count == 0) return;
 
             _currentCardIndex++;
-            // Якщо дійшли до кінця - перекидаємо на початок (циклічність)
             if (_currentCardIndex >= _userCards.Count) _currentCardIndex = 0;
 
             UpdateCardUI();
@@ -92,9 +94,7 @@ namespace Banking_system.Windows
         {
             if (_userCards.Count == 0) return;
 
-            // Беремо ПОВНИЙ номер поточної картки без зірочок
             string fullNumber = _userCards[_currentCardIndex].GetCardNumber();
-            // Копіюємо в буфер обміну Windows
             Clipboard.SetText(fullNumber);
 
             MessageBox.Show($"Номер картки\n{fullNumber}\nуспішно скопійовано в буфер обміну!",
@@ -102,10 +102,6 @@ namespace Banking_system.Windows
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
         }
-
-        // ==========================================
-        // КЕРУВАННЯ ВІКНОМ
-        // ==========================================
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
