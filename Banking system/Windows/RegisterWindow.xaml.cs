@@ -75,7 +75,7 @@ namespace Banking_system.Windows
 
                 if (selectedCard == "Дебетова") newCard = new DebitCard();
                 else if (selectedCard == "Кредитна") newCard = new CreditCard();
-                else if (selectedCard == "Юніорська") newCard = new UniorCard();
+                else if (selectedCard == "Юніорська") newCard = new JuniorCard();
 
                 if (newCard == null) return;
 

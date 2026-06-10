@@ -1,10 +1,10 @@
 ﻿
 namespace Banking_system.Models
 {
-    public class UniorCard : AbstractCard
+    public class JuniorCard : AbstractCard
     {
         public decimal TransactionLimit { get; set; } = 1000m;
-        public UniorCard() : base("20")
+        public JuniorCard() : base("20")
         {
             Logger.Log($"Ініціалізовано картку юніора {CardNumber} з лімітом операцій {TransactionLimit:C}.");
         }
