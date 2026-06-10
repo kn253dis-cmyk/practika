@@ -48,6 +48,12 @@ namespace Banking_system.Models
             }
         }
 
+        public static void AppendSystemLog(string userEmail, string text)
+        {
+            // Передаємо порожній словник, бо для інформаційних логів дані для квитанції не потрібні
+            AppendLog(userEmail, "SystemLog", text, new Dictionary<string, string>());
+        }
+
         public static List<JsonLog.LogEntry> ReadUserLogs(string userEmail)
         {
             var allLogs = ReadAllLogsFromDisk();

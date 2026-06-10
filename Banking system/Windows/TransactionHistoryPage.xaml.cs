@@ -25,9 +25,15 @@ namespace Banking_system.Views
 
         private void TransactionsList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // Якщо клікнули на лог, відкриваємо вікно квитанції
             if (TransactionsList.SelectedItem is JsonLog.LogEntry selectedTransaction)
             {
+                // Якщо це системне повідомлення — показуємо просте вікно та перериваємо метод
+                if (selectedTransaction.TemplateName == "SystemLog")
+                {
+                    MessageBox.Show("Для цієї системної дії електронна квитанція недоступна.", "Інформація", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
+
                 var confirmationWindow = new ReceiptConfirmationWindow(selectedTransaction);
                 confirmationWindow.ShowDialog();
             }
