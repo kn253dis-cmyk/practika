@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Banking_system.Models
 {
-    internal class DebitCard : AbstractCard
+    public class DebitCard : AbstractCard
     {
         public DebitCard() : base("10")
         {
