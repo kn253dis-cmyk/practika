@@ -1,13 +1,15 @@
-﻿
-namespace Banking_system.Models
+﻿namespace Banking_system.Models
 {
     public class JuniorCard : AbstractCard
     {
-        public decimal TransactionLimit { get; set; } = 1000m;
+      
+        public decimal TransactionLimit { get; set; } = 5000m;
+
         public JuniorCard() : base("20")
         {
             Logger.Log($"Ініціалізовано картку юніора {CardNumber} з лімітом операцій {TransactionLimit:C}.");
         }
+
         public override bool Withdraw(decimal amount)
         {
             if (amount > TransactionLimit)
