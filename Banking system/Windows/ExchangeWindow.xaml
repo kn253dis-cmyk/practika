@@ -1,0 +1,52 @@
+﻿<Window x:Class="Banking_system.Windows.ExchangeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Курс валют" Height="450" Width="450"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+
+    <Border CornerRadius="15" Background="#141E30" BorderBrush="#FFD700" BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="60"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <materialDesign:PackIcon Kind="CashMultiple" Width="24" Height="24" Foreground="#FFD700" Margin="0,0,10,0"/>
+                <TextBlock Text="Актуальний курс валют" FontSize="18" FontWeight="Bold" Foreground="White"/>
+            </StackPanel>
+
+            <DataGrid x:Name="CurrencyGrid" Grid.Row="1" Margin="20,0,20,0" 
+                      AutoGenerateColumns="False" IsReadOnly="True" 
+                      Background="Transparent" RowBackground="#1A2235" 
+                      AlternatingRowBackground="#101525" Foreground="White"
+                      BorderBrush="#333" BorderThickness="1"
+                      HeadersVisibility="Column" HorizontalGridLinesBrush="#333" VerticalGridLinesBrush="Transparent">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#FFD700"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="10,5"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Код" Binding="{Binding cc}" Width="Auto" FontWeight="Bold"/>
+                    <DataGridTextColumn Header="Назва валюти" Binding="{Binding txt}" Width="*"/>
+                    <DataGridTextColumn Header="Курс (₴)" Binding="{Binding rate, StringFormat={}{0:F2}}" Width="Auto"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Button Grid.Row="2" Content="ЗАКРИТИ" Width="120" Height="40" 
+                    Style="{StaticResource MaterialDesignFlatDarkBgButton}" 
+                    Background="#2A050A" Foreground="White"
+                    Click="BtnClose_Click"/>
+        </Grid>
+    </Border>
+</Window>

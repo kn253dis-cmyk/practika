@@ -1,6 +1,9 @@
 ﻿using Banking_system.Entity;
 using Banking_system.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,6 +16,11 @@ namespace Banking_system.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            // ====================================================================
+            // ТИМЧАСОВО ЗАКОМЕНТОВАНО: Підключення до хмарної бази Neon PostgreSQL 
+            // (Сервер наразі відхиляє запити або база була видалена)
+            // ====================================================================
+            /*
             string connectionString = "Host=ep-shiny-snow-ab7wu607-pooler.eu-west-2.aws.neon.tech; Database=neondb; Username=neondb_owner; Password=npg_DCNKer4OZdg3; SSL Mode=VerifyFull; Channel Binding=Require;Timeout=60;Command Timeout=60;";
             optionsBuilder.UseNpgsql(connectionString, builder =>
             {
@@ -22,6 +30,12 @@ namespace Banking_system.Database
                     errorCodesToAdd: null);
             });
             optionsBuilder.UseNpgsql(connectionString);
+            */
+
+            // ====================================================================
+            // АКТИВНО: Локальне підключення до бази SQLite 
+            // ====================================================================
+            optionsBuilder.UseSqlite("Data Source=BankingSystem.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,7 +46,8 @@ namespace Banking_system.Database
                 .HasValue<CreditCard>("Credit")
                 .HasValue<JuniorCard>("Unior");
         }
-        public List<AbstractCard> FindAllCardsByUserId(int userId) =>Cards.Where(c => c.UserId == userId).ToList();
+
+        public List<AbstractCard> FindAllCardsByUserId(int userId) => Cards.Where(c => c.UserId == userId).ToList();
 
         public string HashPassword(string password)
         {
