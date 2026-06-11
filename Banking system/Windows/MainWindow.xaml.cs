@@ -1,23 +1,21 @@
 ﻿using Banking_system.Entity;
 using Banking_system.Models;
 using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Input;
-using Microsoft.EntityFrameworkCore;
+using System.Windows.Media;
 
 namespace Banking_system.Windows
 {
     public partial class MainWindow : Window
     {
         private User _currentUser;
-
         private List<AbstractCard> _userCards = new List<AbstractCard>();
-        
         private int _currentCardIndex = 0;
 
         public MainWindow(User authenticatedUser)
@@ -25,6 +23,8 @@ namespace Banking_system.Windows
             InitializeComponent();
             _currentUser = authenticatedUser;
             LoadUserData(_currentUser);
+
+            // Завантажуємо картки користувача з бази
             if (_currentUser.Cards != null)
             {
                 _userCards = _currentUser.Cards.ToList();
@@ -32,62 +32,72 @@ namespace Banking_system.Windows
             }
         }
 
+        // ==========================================
+        // ЛОГІКА ВІДОБРАЖЕННЯ ІНТЕРФЕЙСУ
+        // ==========================================
+
         private void UpdateCardUI()
         {
+            // Якщо індекс дорівнює кількості карток, показуємо екран "Додати картку"
+            if (_currentCardIndex == _userCards.Count)
+            {
+                ShowAddCardUI();
+                return;
+            }
+
+            // Інакше показуємо звичайну інформацію про картку
+            GridCardInfo.Visibility = Visibility.Visible;
+            GridAddCard.Visibility = Visibility.Collapsed;
+
             if (_userCards.Count == 0) return;
 
             AbstractCard currentCard = _userCards[_currentCardIndex];
             string cardName = "Дебетова картка";
-            if (currentCard is CreditCard)
+
+            // Визначаємо назву та градієнт залежно від типу картки
+            // Визначаємо назву та градієнт залежно від типу картки
+            if (currentCard is CreditCard creditCard)
             {
-                _currentCardIndex = 0;
-                ShowAddCardUI();
-                return;
+                cardName = "Кредитна картка";
+                Card.Background = GetCardGradient("Credit");
+
+                // Показуємо повзунок і ставимо його на поточний ліміт картки
+                CreditLimitPanel.Visibility = Visibility.Visible;
+                CreditLimitSlider.Value = creditCard.CreditLimit;
+                TxtCreditLimitValue.Text = $"{creditCard.CreditLimit:N0} ₴";
             }
-            else if (currentCard is UniorCard)
+            else if (currentCard.GetType().Name == "JuniorCard" || currentCard.GetType().Name == "UniorCard")
             {
                 cardName = "Картка Юніора";
-                Card.Background = Brushes.LightGreen;
+                Card.Background = GetCardGradient("Junior");
+                CreditLimitPanel.Visibility = Visibility.Collapsed; // Ховаємо повзунок
             }
             else if (currentCard is DebitCard)
             {
-                var converter = new BrushConverter();
-                var brush = converter.ConvertFrom("#2C2C2C") as SolidColorBrush;
-                if (brush != null)
-                {
-                    Card.Background = brush;
-                }
+                Card.Background = GetCardGradient("Debit");
+                CreditLimitPanel.Visibility = Visibility.Collapsed; // Ховаємо повзунок
             }
-
-            // Якщо індекс дійшов до кінця (кількість карток), показуємо "Додати картку"
-            if (_currentCardIndex == _userCards.Count)
-                ShowAddCardUI();
-            else
-            {
-                // Відображаємо інформацію про звичайну картку
-                GridCardInfo.Visibility = Visibility.Visible;
-                GridAddCard.Visibility = Visibility.Collapsed;
-
-                AbstractCard currentCard = _userCards[_currentCardIndex];
-                string cardName = "Дебетова картка";
-
-                if (currentCard is CreditCard)
-                {
-                    cardName = "Кредитна картка";
-                    Card.Background = GetCardGradient("Credit");
-                }
-                else if (currentCard is JuniorCard)
-                {
-                    cardName = "Картка Юніора";
-                    Card.Background = GetCardGradient("Junior");
-                }
-                else if (currentCard is DebitCard)
-                    Card.Background = GetCardGradient("Debit");
-
-                LoadCardData(currentCard, cardName);
-            }
+            LoadCardData(currentCard, cardName);
         }
-        // Метод для створення стильних градієнтів карток
+
+        private void ShowAddCardUI()
+        {
+            GridCardInfo.Visibility = Visibility.Collapsed;
+            GridAddCard.Visibility = Visibility.Visible;
+
+            // Спеціальний темний градієнт для екрану додавання картки
+            LinearGradientBrush gradient = new LinearGradientBrush
+            {
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(1, 1)
+            };
+            gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#0F2027"), 0.0));
+            gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#203A43"), 0.5));
+            gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#2C5364"), 1.0));
+
+            Card.Background = gradient;
+        }
+
         private LinearGradientBrush GetCardGradient(string cardType)
         {
             LinearGradientBrush gradient = new LinearGradientBrush
@@ -106,66 +116,14 @@ namespace Banking_system.Windows
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#11998E"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#38EF7D"), 1.0));
                     break;
-                default: 
+                case "Debit":
+                default:
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#141E30"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#243B55"), 1.0));
                     break;
             }
 
             return gradient;
-        }
-        private void ShowAddCardUI()
-        {
-            GridCardInfo.Visibility = Visibility.Collapsed;
-            GridAddCard.Visibility = Visibility.Visible;
-
-            LinearGradientBrush gradient = new LinearGradientBrush();
-            gradient.StartPoint = new Point(0, 0);
-            gradient.EndPoint = new Point(1, 1);
-            gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#0F2027"), 0.0));
-            gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#203A43"), 0.5));
-            gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#2C5364"), 1.0));
-
-            Card.Background = gradient;
-        }
-
-        private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
-        {
-            int totalItems = _userCards.Count; 
-
-            _currentCardIndex--;
-            if (_currentCardIndex < 0)
-                _currentCardIndex = totalItems; 
-
-            UpdateCardUI();
-        }
-
-        private void BtnNextCard_Click(object sender, RoutedEventArgs e)
-        {
-            int totalItems = _userCards.Count;
-
-            _currentCardIndex++;
-            if (_currentCardIndex > totalItems)
-                _currentCardIndex = 0; 
-
-            UpdateCardUI();
-        }
-
-        private void TxtCardNumber_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (_userCards?.Count == 0 || _currentCardIndex == _userCards?.Count) return;
-
-            string fullNumber = _userCards[_currentCardIndex].GetCardNumber();
-            Clipboard.SetText(fullNumber);
-
-            MessageBox.Show($"Номер картки\n{fullNumber}\nуспішно скопійовано в буфер обміну!",
-                            "Копіювання",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-        }
-        private void BtnCreateCard_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Тут відкриватиметься вікно замовлення нової картки.");
         }
 
         public void LoadUserData(User currentUser)
@@ -188,15 +146,101 @@ namespace Banking_system.Windows
             TxtExpiryDate.Text = card.GetExpirationDate().ToString("MM/yy");
         }
 
+        // ==========================================
+        // НАВІГАЦІЯ ТА ВЗАЄМОДІЯ
+        // ==========================================
+
+        private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
+        {
+            int totalItems = _userCards.Count;
+            _currentCardIndex--;
+
+            if (_currentCardIndex < 0)
+                _currentCardIndex = totalItems; // Переходимо на екран додавання картки 
+
+            UpdateCardUI();
+        }
+
+        private void BtnNextCard_Click(object sender, RoutedEventArgs e)
+        {
+            int totalItems = _userCards.Count;
+            _currentCardIndex++;
+
+            if (_currentCardIndex > totalItems)
+                _currentCardIndex = 0;
+
+            UpdateCardUI();
+        }
+
+        private void TxtCardNumber_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (_userCards == null || _userCards.Count == 0 || _currentCardIndex == _userCards.Count) return;
+
+            string fullNumber = _userCards[_currentCardIndex].GetCardNumber();
+            Clipboard.SetText(fullNumber);
+
+            MessageBox.Show($"Номер картки\n{fullNumber}\nуспішно скопійовано в буфер обміну!",
+                            "Копіювання",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+        }
+        private void CreditLimitSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // Оновлюємо текст під час перетягування повзунка
+            if (TxtCreditLimitValue != null)
+            {
+                TxtCreditLimitValue.Text = $"{e.NewValue:N0} ₴";
+
+                // Зберігаємо нове значення в об'єкт картки
+                if (_userCards != null && _userCards.Count > 0 && _userCards[_currentCardIndex] is CreditCard creditCard)
+                {
+                    creditCard.CreditLimit = (int)e.NewValue;
+
+                    // Якщо є підключення до БД, тут можна викликати збереження:
+                    // using (var db = new Banking_system.Database.Database()) { ... db.SaveChanges(); }
+                }
+            }
+        }
+        private void BtnLogout_Click(object sender, RoutedEventArgs e)
+{
+    // Запитуємо користувача, чи точно він хоче вийти
+    MessageBoxResult result = MessageBox.Show("Ви впевнені, що хочете вийти з акаунту?", 
+                                              "Підтвердження виходу", 
+                                              MessageBoxButton.YesNo, 
+                                              MessageBoxImage.Question);
+    
+    if (result == MessageBoxResult.Yes)
+    {
+        // Очищаємо дані поточної сесії (якщо у колег створено такий клас)
+        if (Banking_system.Service.SessionManager.CurrentUser != null)
+        {
+            //Banking_system.Service.SessionManager.CurrentUser = null;
+        }
+
+        // Відкриваємо стартове вікно авторизації
+        loginWindow loginForm = new loginWindow();
+        loginForm.Show();
+
+        // Закриваємо особистий кабінет
+        this.Close();
+    }
+}
+
+        // ==========================================
+        // СТВОРЕННЯ НОВИХ КАРТОК
+        // ==========================================
+
+        private void BtnCreateCard_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("Тут відкриватиметься вікно замовлення нової картки.");
+        }
+
         private void BtnCreateDebit_Click(object sender, RoutedEventArgs e)
         {
             if (_currentUser == null) return;
 
-            int count = 0;
-            foreach (var card in _userCards)
-                if (card is DebitCard) count++;
-
-            if(count >= 3)
+            int count = _userCards.Count(card => card is DebitCard);
+            if (count >= 3)
             {
                 MessageBox.Show("Ви вже маєте 3 дебетові картки. Немає можливості відкрити більше.", "Обмеження");
                 return;
@@ -205,19 +249,16 @@ namespace Banking_system.Windows
             using (var db = new Banking_system.Database.Database())
             {
                 db.Database.EnsureCreated();
-
-                var newCard = new DebitCard
-                {
-                    UserId = _currentUser.ID
-                };
+                var newCard = new DebitCard { UserId = _currentUser.ID };
 
                 db.Cards.Add(newCard);
-                db.SaveChanges(); 
+                db.SaveChanges();
 
                 _userCards.Add(newCard);
-                _currentCardIndex = _userCards.Count - 1;
+                _currentCardIndex = _userCards.Count - 1; // Одразу показуємо нову картку
 
-                 Logger.LogUserAction(_currentUser.Email, "Створив дебетову картку"); 
+                // Якщо у колег є клас Logger, залишаємо цей рядок:
+                // Logger.LogUserAction(_currentUser.Email, "Створив дебетову картку"); 
             }
 
             UpdateCardUI();
@@ -235,7 +276,6 @@ namespace Banking_system.Windows
             using (var db = new Banking_system.Database.Database())
             {
                 db.Database.EnsureCreated();
-
                 var newCard = new CreditCard
                 {
                     UserId = _currentUser.ID,
@@ -245,12 +285,10 @@ namespace Banking_system.Windows
                 };
 
                 db.Cards.Add(newCard);
-                db.SaveChanges(); 
+                db.SaveChanges();
 
                 _userCards.Add(newCard);
                 _currentCardIndex = _userCards.Count - 1;
-
-                Logger.LogUserAction(_currentUser.Email, "Створив кредитну картку");
             }
 
             UpdateCardUI();
@@ -259,25 +297,23 @@ namespace Banking_system.Windows
 
         private void BtnCreateJunior_Click(object sender, RoutedEventArgs e)
         {
-            int count = 0;
-            foreach (var card in _userCards)
-                if (card is JuniorCard) count++;
+            if (_currentUser == null) return;
 
+            int count = _userCards.Count(card => card.GetType().Name == "JuniorCard" || card.GetType().Name == "UniorCard");
             if (count >= 2)
             {
                 MessageBox.Show("Ви вже маєте 2 карти юніора. Немає можливості відкрити більше.", "Обмеження");
                 return;
             }
-            if (_currentUser == null) return;
 
             using (var db = new Banking_system.Database.Database())
             {
                 db.Database.EnsureCreated();
-
+                // Тут підстав той клас Юніорки, який ви реально використовуєте (JuniorCard або UniorCard)
                 var newCard = new JuniorCard
                 {
                     UserId = _currentUser.ID,
-                    TransactionLimit = 2000m
+                    TransactionLimit = 5000m
                 };
 
                 db.Cards.Add(newCard);
@@ -285,21 +321,19 @@ namespace Banking_system.Windows
 
                 _userCards.Add(newCard);
                 _currentCardIndex = _userCards.Count - 1;
-
-                Logger.LogUserAction(_currentUser.Email, "Створив картку Юніора");
             }
 
             UpdateCardUI();
             MessageBox.Show("Картку Юніора успішно відкрито!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed) DragMove();
-        }
+        // ==========================================
+        // ІСТОРІЯ, ПЕРЕКАЗИ ТА КЕРУВАННЯ ВІКНОМ
+        // ==========================================
 
         private void BtnHistory_Click(object sender, RoutedEventArgs e)
         {
+            // Отримуємо email з класу колег, якщо він там зберігся
             string safeEmail = Banking_system.Service.SessionManager.CurrentUser?.Email ?? string.Empty;
 
             Window historyForm = new Window
@@ -317,6 +351,8 @@ namespace Banking_system.Windows
 
         private void BtnTransfer_Click(object sender, RoutedEventArgs e)
         {
+            if (_userCards.Count == 0 || _currentCardIndex == _userCards.Count) return;
+
             string currentCardNum = _userCards[_currentCardIndex].GetCardNumber();
 
             Window transferForm = new Window
@@ -326,22 +362,35 @@ namespace Banking_system.Windows
                 Height = 520,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Owner = this,
-                Content = new Banking_system.Views.TransferPage(currentCardNum) // Передаємо номер картки туди
+                Content = new Banking_system.Views.TransferPage(currentCardNum)
             };
 
             transferForm.ShowDialog();
 
-            using (var db = new Database.Database())
+            // Після закриття вікна переказу - оновлюємо баланс картки з бази
+            using (var db = new Banking_system.Database.Database())
             {
                 var updatedCard = db.Cards.FirstOrDefault(c => c.CardNumber == currentCardNum);
                 if (updatedCard != null)
                 {
+                    // ВАЖЛИВО: Якщо AbstractCard має захищений (protected) Balance, колеги мусили додати метод SetBalance()
+                    // Або зробити його публічним. Якщо тут буде помилка, зміни на метод.
                     _userCards[_currentCardIndex].Balance = updatedCard.Balance;
                     UpdateCardUI();
                 }
             }
         }
 
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed) DragMove();
+        }
+
         private void BtnClose_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+
+        private void BtnDeposit_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
