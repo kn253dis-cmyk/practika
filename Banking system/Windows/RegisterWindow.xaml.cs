@@ -60,10 +60,10 @@ namespace Banking_system.Windows
                 return;
             }
 
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
-                db.Database.EnsureCreated();
 
+                //db.Database.Migrate();
                 if (db.Users.Any(u => u.Email == email || u.Ipn == ipn))
                 {
                     MessageBox.Show("Користувач з таким Email або ІПН вже існує!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -99,9 +99,6 @@ namespace Banking_system.Windows
                 MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newCard.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
-        }
-        private void CmbCardType_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
         }
     }
 }

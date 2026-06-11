@@ -12,11 +12,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -210,7 +205,7 @@ namespace Banking_system.Windows
                     creditCard.CreditLimit = (int)e.NewValue;
 
                     // Якщо є підключення до БД, тут можна викликати збереження:
-                    // using (var db = new Banking_system.Database.Database()) { ... db.SaveChanges(); }
+                    // using (var db = new Banking_system.DataBase.DataBase()) { .. db.SaveChanges(); }
                 }
             }
         }
@@ -259,9 +254,9 @@ namespace Banking_system.Windows
                 return;
             }
 
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
-                db.Database.EnsureCreated();
+                 
                 var newCard = new DebitCard { UserId = _currentUser.ID };
 
                 db.Cards.Add(newCard);
@@ -271,7 +266,7 @@ namespace Banking_system.Windows
                 _currentCardIndex = _userCards.Count - 1; // Одразу показуємо нову картку
 
                 // Якщо у колег є клас Logger, залишаємо цей рядок:
-                // Logger.LogUserAction(_currentUser.Email, "Створив дебетову картку"); 
+                //Logger.LogUserAction(_currentUser.Email, "Створив дебетову картку"); 
             }
 
             UpdateCardUI();
@@ -289,9 +284,9 @@ namespace Banking_system.Windows
             {
                 return;
             }
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
-                db.Database.EnsureCreated();
+                 
                 var newCard = new CreditCard
                 {
                     UserId = _currentUser.ID,
@@ -305,6 +300,7 @@ namespace Banking_system.Windows
 
                 _userCards.Add(newCard);
                 _currentCardIndex = _userCards.Count - 1;
+                
             }
 
             UpdateCardUI();
@@ -322,10 +318,10 @@ namespace Banking_system.Windows
                 return;
             }
 
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
-                db.Database.EnsureCreated();
                 // Тут підстав той клас Юніорки, який ви реально використовуєте (JuniorCard або UniorCard)
+                 
                 var newCard = new JuniorCard
                 {
                     UserId = _currentUser.ID,
@@ -383,8 +379,9 @@ namespace Banking_system.Windows
             };
             transferForm.ShowDialog();
 
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
+                 
                 _userCards = db.FindAllCardsByUserId(_currentUser.ID);
 
                 UpdateCardUI();
