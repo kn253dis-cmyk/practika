@@ -25,7 +25,7 @@ namespace Banking_system.Models.Transactions
                 return false;
             }
 
-            using (var db = new Database.Database())
+            using (var db = new DataBase.Database())
             {
                 var sourceCard = db.Cards.FirstOrDefault(c => c.CardNumber == _sourceCardNumber);
                 var targetCard = db.Cards.FirstOrDefault(c => c.CardNumber == _targetCardNumber);
