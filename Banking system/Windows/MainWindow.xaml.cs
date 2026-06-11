@@ -1,7 +1,15 @@
 ﻿using System;
 using Banking_system.Entity;
 using Banking_system.Models;
+using MaterialDesignThemes.Wpf;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.Data.Sqlite;
@@ -366,13 +374,13 @@ namespace Banking_system.Windows
             Window transferForm = new Window
             {
                 Title = "Новий переказ коштів",
-                Width = 600,
-                Height = 520,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Owner = this,
-                Content = new Banking_system.Views.TransferPage(currentCardNum)
+                Width = 520,  
+                Height = 680, 
+                Background = new BrushConverter().ConvertFrom("#1A1A2E") as Brush, 
+                Content = new Banking_system.Views.TransferPage(currentCardNum) 
             };
-
             transferForm.ShowDialog();
 
             using (var db = new Banking_system.Database.Database())
