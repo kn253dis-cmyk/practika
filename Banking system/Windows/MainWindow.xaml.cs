@@ -1,14 +1,18 @@
-﻿using Banking_system.Entity;
+﻿using System;
+using Banking_system.Entity;
 using Banking_system.Models;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+
 
 namespace Banking_system.Windows
 {
@@ -22,6 +26,7 @@ namespace Banking_system.Windows
         {
             InitializeComponent();
             _currentUser = authenticatedUser;
+            _ = LoadCurrencyRatesAsync();
             LoadUserData(_currentUser);
 
             // Завантажуємо картки користувача з бази
@@ -272,7 +277,10 @@ namespace Banking_system.Windows
                 MessageBox.Show("Ви вже маєте кредитну картку. Немає можливості відкрити більше однієї.", "Обмеження");
                 return;
             }
-
+            if (_currentUser == null || _userCards == null)
+            {
+                return;
+            }
             using (var db = new Banking_system.Database.Database())
             {
                 db.Database.EnsureCreated();
@@ -367,17 +375,11 @@ namespace Banking_system.Windows
 
             transferForm.ShowDialog();
 
-            // Після закриття вікна переказу - оновлюємо баланс картки з бази
             using (var db = new Banking_system.Database.Database())
             {
-                var updatedCard = db.Cards.FirstOrDefault(c => c.CardNumber == currentCardNum);
-                if (updatedCard != null)
-                {
-                    // ВАЖЛИВО: Якщо AbstractCard має захищений (protected) Balance, колеги мусили додати метод SetBalance()
-                    // Або зробити його публічним. Якщо тут буде помилка, зміни на метод.
-                    _userCards[_currentCardIndex].Balance = updatedCard.Balance;
-                    UpdateCardUI();
-                }
+                _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+
+                UpdateCardUI();
             }
         }
 
@@ -391,6 +393,33 @@ namespace Banking_system.Windows
         private void BtnDeposit_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private async Task LoadCurrencyRatesAsync()
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
+                    string jsonResponse = await client.GetStringAsync(url);
+
+                    var allRates = JsonSerializer.Deserialize<List<CurrencyRate>>(jsonResponse);
+
+                    if (allRates != null)
+                    {
+                        var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP","XAU", "XAG" };
+
+                        var filteredRates = allRates.Where(rate => popularCodes.Contains(rate.cc)).ToList();
+
+                        CurrencyGrid.ItemsSource = filteredRates;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Не вдалося оновити курс валют: {ex.Message}", "Помилка мережі", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
     }
 }

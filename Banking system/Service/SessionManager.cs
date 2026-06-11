@@ -29,7 +29,7 @@ namespace Banking_system.Service
         {
             CurrentUser = user;
 
-            if (user.Email == "admin@bank.com")
+            if (user.Email == "admin@gmail.com")
             {
                 CurrentRole = UserRole.Admin;
             }
