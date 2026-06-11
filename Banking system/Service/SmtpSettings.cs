@@ -1,38 +1,58 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
+using System.Windows;
 
 namespace Banking_system.Service
 {
     public class SmtpSettings
     {
-        private string _host = "smtp.gmail.com";
-        private int _port = 587;
-
-        private string _user = "mal4enko2000@gmail.com";
-        private string _password = "ulgpbtpbigurdomh"; 
-
-        private string _senderName = "Національний Банк";
-        private bool _useSsl = true;
-
-        public string Host { get => _host; set => _host = value; }
-        public int Port { get => _port; set => _port = value; }
-        public string User { get => _user; set => _user = value; }
-        public string Password { get => _password; set => _password = value; }
-        public string SenderName { get => _senderName; set => _senderName = value; }
-        public bool UseSsl { get => _useSsl; set => _useSsl = value; }
+        public string Host { get; set; } = "smtp.gmail.com";
+        public int Port { get; set; } = 587;
+        public string User { get; set; } = "пошта@gmail.com";
+        public string Password { get; set; } = "пароль додатка";
+        public string SenderName { get; set; } = "Національний Банк";
+        public bool UseSsl { get; set; } = true;
 
         private static readonly string _filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "smtp_settings.json");
 
         public static SmtpSettings Load()
         {
-            return new SmtpSettings();
+            try
+            {
+                if (!File.Exists(_filePath))
+                {
+                    SmtpSettings defaultSettings = new SmtpSettings();
+                    defaultSettings.Save();
+                    return defaultSettings;
+                }
+
+                string json = File.ReadAllText(_filePath);
+
+                SmtpSettings? settings = JsonSerializer.Deserialize<SmtpSettings>(json);
+
+                return settings ?? new SmtpSettings();  
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Помилка завантаження налаштувань smtp_settings.json: {ex.Message}", "Помилка конфігурації");
+                return new SmtpSettings(); 
+            }
         }
 
         public void Save()
         {
-            string json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_filePath, json);
+            try
+            {
+
+                var options = new JsonSerializerOptions { WriteIndented = true };
+                string jsonString = JsonSerializer.Serialize(this, options);
+                File.WriteAllText(_filePath, jsonString);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Помилка збереження файлу smtp_settings.json: {ex.Message}");
+            }
         }
     }
 }
