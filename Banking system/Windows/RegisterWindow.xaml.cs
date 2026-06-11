@@ -75,7 +75,7 @@ namespace Banking_system.Windows
 
                 if (selectedCard == "Дебетова") newCard = new DebitCard();
                 else if (selectedCard == "Кредитна") newCard = new CreditCard();
-                else if (selectedCard == "Юніорська") newCard = new UniorCard();
+                else if (selectedCard == "Юніорська") newCard = new JuniorCard();
 
                 if (newCard == null) return;
 
@@ -93,8 +93,9 @@ namespace Banking_system.Windows
                 // ВАЖЛИВО: Додаємо картку до колекції користувача
                 newUser.Cards.Add(newCard);
                 db.Users.Add(newUser);
-                db.SaveChanges(); 
+                db.SaveChanges();
 
+                Logger.AppendSystemLog(newUser.Email, $"Користувач успішно зареєструвався в системі. Створено картку: {newCard.CardNumber}");
                 MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newCard.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
