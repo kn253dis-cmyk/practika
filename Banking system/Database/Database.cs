@@ -1,7 +1,9 @@
 ﻿using Banking_system.Entity;
 using Banking_system.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -24,6 +26,12 @@ namespace Banking_system.DataBase
             });
             optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
             optionsBuilder.UseNpgsql(connectionString);
+            */
+
+            // ====================================================================
+            // АКТИВНО: Локальне підключення до бази SQLite 
+            // ====================================================================
+            optionsBuilder.UseSqlite("Data Source=BankingSystem.db");
         }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,7 +42,8 @@ namespace Banking_system.DataBase
                 .HasValue<CreditCard>("Credit")
                 .HasValue<JuniorCard>("Unior");
         }
-        public List<AbstractCard> FindAllCardsByUserId(int userId) =>Cards.Where(c => c.UserId == userId).ToList();
+
+        public List<AbstractCard> FindAllCardsByUserId(int userId) => Cards.Where(c => c.UserId == userId).ToList();
 
         public string HashPassword(string password)
         {
