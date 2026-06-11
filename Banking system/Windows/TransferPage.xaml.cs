@@ -31,7 +31,9 @@ namespace Banking_system.Views
             }
 
 
-            bool isSuccess = BankingOperationService.ExecuteTransfer(_senderCardNumber, receiverCard, amount, purpose);
+           
+            var transaction = new Banking_system.Models.Transactions.TransferTransaction(_senderCardNumber, receiverCard, amount, purpose);
+            bool isSuccess = transaction.Execute();
 
             if (isSuccess)
             {
