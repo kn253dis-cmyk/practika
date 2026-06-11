@@ -31,8 +31,9 @@ namespace Banking_system.Views
                 MessageBox.Show("Будь ласка, введіть коректну суму цифрами!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+            Banking_system.Models.Transactions.TransferTransaction transfer= new Models.Transactions.TransferTransaction( _senderCardNumber, receiverCard, amount, purposeCode);
 
-            bool isSuccess = BankingOperationService.ExecuteTransfer(_senderCardNumber, receiverCard, amount, purposeCode);
+            bool isSuccess = transfer.Execute();
 
             if (isSuccess)
             {
