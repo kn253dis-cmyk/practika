@@ -1,6 +1,7 @@
 ﻿using Banking_system.Entity;
 using Banking_system.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -21,9 +22,10 @@ namespace Banking_system.DataBase
                     maxRetryDelay: TimeSpan.FromSeconds(30), 
                     errorCodesToAdd: null);
             });
+            optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
             optionsBuilder.UseNpgsql(connectionString);
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AbstractCard>()
