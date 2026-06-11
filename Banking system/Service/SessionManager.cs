@@ -70,7 +70,7 @@ if (foundUser != null && foundUser.Password == db.HashPassword(TxtPassword.Passw
     // ЗАПАМ'ЯТОВУЄМО КОРИСТУВАЧА У СЕСІЇ!
     SessionManager.Login(foundUser);
     
-    // Відкриваємо головне вікно програми...
+    // Відкриваємо головне вікно програми..
 }
  
 

@@ -29,10 +29,10 @@ namespace Banking_system
         {
             try
             {
-                using (var db = new Banking_system.Database.Database())
+                using (var db = new Banking_system.DataBase.Database())
                 {
-                    db.Database.EnsureCreated();
 
+                    db.Database.Migrate();
                     // 1. Шукаємо в базі акаунт адміна, який ти зареєструєш сам через форму
                     var adminUser = db.Users
                         .Include(u => u.Cards) // Підвантажуємо його картки з бази
@@ -100,9 +100,9 @@ namespace Banking_system
             try
             {
                 // Підключаємося до БД і шукаємо користувача
-                using (var db = new Banking_system.Database.Database())
+                using (var db = new Banking_system.DataBase.Database())
                 {
-                    db.Database.EnsureCreated();
+                    db.Database.Migrate();
                     string hashPassword = db.HashPassword(password);
                     // Шукаємо збіг по Email та хешованому паролю
                     user = db.Users

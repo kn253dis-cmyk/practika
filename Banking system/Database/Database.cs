@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Banking_system.Database
+namespace Banking_system.DataBase
 {
     internal class Database : DbContext
     {
@@ -16,12 +16,7 @@ namespace Banking_system.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // ====================================================================
-            // ТИМЧАСОВО ЗАКОМЕНТОВАНО: Підключення до хмарної бази Neon PostgreSQL 
-            // (Сервер наразі відхиляє запити або база була видалена)
-            // ====================================================================
-            /*
-            string connectionString = "Host=ep-shiny-snow-ab7wu607-pooler.eu-west-2.aws.neon.tech; Database=neondb; Username=neondb_owner; Password=npg_DCNKer4OZdg3; SSL Mode=VerifyFull; Channel Binding=Require;Timeout=60;Command Timeout=60;";
+            string connectionString = "Host=ep-floral-pine-ab8u8m5f-pooler.eu-west-2.aws.neon.tech; Database=neondb; Username=neondb_owner; Password=npg_5Aagl7zryMWH; SSL Mode=VerifyFull; Channel Binding=Require;Timeout=60;Command Timeout=60;";
             optionsBuilder.UseNpgsql(connectionString, builder =>
             {
                 builder.EnableRetryOnFailure(
@@ -29,6 +24,7 @@ namespace Banking_system.Database
                     maxRetryDelay: TimeSpan.FromSeconds(30), 
                     errorCodesToAdd: null);
             });
+            optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
             optionsBuilder.UseNpgsql(connectionString);
             */
 
@@ -37,7 +33,7 @@ namespace Banking_system.Database
             // ====================================================================
             optionsBuilder.UseSqlite("Data Source=BankingSystem.db");
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AbstractCard>()
