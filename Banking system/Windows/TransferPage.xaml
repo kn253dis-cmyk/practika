@@ -98,8 +98,8 @@
                          materialDesign:TextFieldAssist.HasClearButton="True"
                          materialDesign:HintAssist.HintPaddingBrush="#1A2235"
                          materialDesign:TextFieldAssist.UnderlineBrush="White" 
-                         Padding="15,0,0,25"
-                         Foreground="White" BorderBrush="#BDBDBD" CaretBrush="White" FontSize="16" Margin="0,0,0,25" MaxLength="100"/>
+                         Padding="15,15,35,15"
+                         Foreground="White" BorderBrush="#BDBDBD" CaretBrush="White" FontSize="16" Margin="0,0,0,25" MaxLength="200"/>
 
                 <Button x:Name="BtnSubmitTransfer" Content="ПЕРЕКАЗАТИ" Height="50" FontSize="16" FontWeight="Bold"
                         Background="#0F3460" BorderThickness="0" materialDesign:ButtonAssist.CornerRadius="15" Click="BtnSubmitTransfer_Click"/>

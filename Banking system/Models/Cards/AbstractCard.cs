@@ -1,16 +1,20 @@
-﻿using System;
+﻿using Banking_system.Models.Transactions;
+using System;
+using System.Transactions;
+using System.Windows.Media;
 
 namespace Banking_system.Models
 {
     public abstract class AbstractCard
     {
+        public virtual ICollection<AbstractTransaction> LastTransactions { get; set; } = new List<AbstractTransaction>();
         public int Id { get; set; }
         public int UserId { get; set; }
         public string CardNumber { get; set; } = string.Empty;
         public decimal Balance { get; set; } = 0m;
         public short CVV { get; set; }
         public DateTime ExpirationDate { get; set; }
-
+        
         public AbstractCard() { }
 
         public AbstractCard(string code)
@@ -21,6 +25,31 @@ namespace Banking_system.Models
             CVV = (short)rnd.Next(100, 999);
 
             Logger.Log($"Створено нову картку. Номер: {CardNumber}");
+        }
+
+        public AbstractCard(string cardNumber, decimal balance, short cvv, DateTime expirationDate)
+        {
+            CardNumber = cardNumber;
+            Balance = balance;
+            CVV = cvv;
+            ExpirationDate = expirationDate;
+
+            Logger.Log($"Ініціалізовано картку {CardNumber} з балансом {Balance:C}, CVV: {CVV}, терміном дії до {ExpirationDate:MM/yyyy}");
+        }
+
+        public void Operation(AbstractTransaction transaction)
+        {
+            if (transaction == null) return;
+
+            if (transaction is DepositTransaction) transaction = (DepositTransaction)transaction;
+            else if (transaction is WithdrawTransaction) transaction = (WithdrawTransaction)transaction;
+            else transaction = (TransferTransaction) transaction;
+            using (var db = new DataBase.Database())
+            {
+                db.transactions.Add(transaction);
+                db.SaveChanges();
+            }
+            LastTransactions.Add(transaction);
         }
 
         public short GetCVV() => CVV;
@@ -39,7 +68,6 @@ namespace Banking_system.Models
             Balance += amount;
             Logger.Log($"Картку {CardNumber} поповнено на {amount:C}. Новий баланс: {Balance:C}");
         }
-
         public virtual bool Withdraw(decimal amount)
         {
             if (amount <= 0) return false;
@@ -54,7 +82,6 @@ namespace Banking_system.Models
             Logger.Log($"Відмова ({CardNumber}): Недостатньо коштів для зняття {amount:C}. Баланс: {Balance:C}");
             return false;
         }
-
         protected string GenerateCardNumber(string cardTypeCode)
         {
             string countryCode = "38";
@@ -67,7 +94,6 @@ namespace Banking_system.Models
 
             return first15Digits + checkDigit.ToString();
         }
-
         private int CalculateLuhnCheckDigit(string number)
         {
             int sum = 0;

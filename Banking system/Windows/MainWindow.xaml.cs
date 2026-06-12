@@ -65,10 +65,10 @@ namespace Banking_system.Windows
                 CreditLimitSlider.Value = creditCard.CreditLimit;
                 TxtCreditLimitValue.Text = $"{creditCard.CreditLimit:N0} ₴";
             }
-            else if (currentCard.GetType().Name == "JuniorCard" || currentCard.GetType().Name == "UniorCard")
+            else if (currentCard.GetType().Name == "CurrencyCard" || currentCard.GetType().Name == "CurrencyCard")
             {
-                cardName = "Картка Юніора";
-                Card.Background = GetCardGradient("Junior");
+                cardName = "Валютна карта";
+                Card.Background = GetCardGradient("Currency");
                 CreditLimitPanel.Visibility = Visibility.Collapsed; // Ховаємо повзунок
             }
             else if (currentCard is DebitCard)
@@ -112,7 +112,7 @@ namespace Banking_system.Windows
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#870000"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#3a0002"), 1.0));
                     break;
-                case "Junior":
+                case "Currency":
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#11998E"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#38EF7D"), 1.0));
                     break;
@@ -299,7 +299,7 @@ namespace Banking_system.Windows
             int count = _userCards.Count(card => card.GetType().Name == "JuniorCard" || card.GetType().Name == "UniorCard");
             if (count >= 2)
             {
-                MessageBox.Show("Ви вже маєте 2 карти юніора. Немає можливості відкрити більше.", "Обмеження");
+                MessageBox.Show("Ви вже маєте 2 валютні карти. Немає можливості відкрити більше.", "Обмеження");
                 return;
             }
 
@@ -307,8 +307,7 @@ namespace Banking_system.Windows
             {
                 var newCard = new CurrencyCard
                 {
-                    UserId = _currentUser.ID,
-                    TransactionLimit = 5000m
+                    UserId = _currentUser.ID
                 };
 
                 db.Cards.Add(newCard);
@@ -319,7 +318,7 @@ namespace Banking_system.Windows
             }
 
             UpdateCardUI();
-            MessageBox.Show("Картку Юніора успішно відкрито!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Валютну карту успішно відкрито!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void BtnHistory_Click(object sender, RoutedEventArgs e)
@@ -359,7 +358,7 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                 
+                
                 _userCards = db.FindAllCardsByUserId(_currentUser.ID);
                 UpdateCardUI();
             }
