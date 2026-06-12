@@ -60,7 +60,7 @@ namespace Banking_system.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Banking_system.Models.AbstractCard", b =>
@@ -96,7 +96,7 @@ namespace Banking_system.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Cards", (string)null);
+                    b.ToTable("Cards");
 
                     b.HasDiscriminator<string>("CardType").HasValue("AbstractCard");
 
