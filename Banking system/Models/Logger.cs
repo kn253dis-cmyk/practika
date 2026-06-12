@@ -22,21 +22,27 @@ namespace Banking_system.Models
         {
             AppendLog(userEmail, "General", message, new Dictionary<string, string>());
         }
-        //  основний метод для логування дій конкретного користувача в JSON
+
         public static void AppendLog(string userEmail, string templateName, string text, Dictionary<string, string> data)
         {
             try
             {
                 List<JsonLog.LogEntry> allLogs = ReadAllLogsFromDisk();
+                string transactionId = "TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+
+                if (data != null && !data.ContainsKey("TransactionId"))
+                {
+                    data["TransactionId"] = transactionId;
+                }
 
                 JsonLog.LogEntry newLog = new JsonLog.LogEntry
                 {
-                    Id = "TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
+                    Id = transactionId, 
                     UserEmail = userEmail,
-                    TemplateName = templateName, 
-                    Text = text,                 
+                    TemplateName = templateName,
+                    Text = text,
                     Date = DateTime.Now,
-                    ReceiptData = data          
+                    ReceiptData = data ?? new Dictionary<string, string>()
                 };
 
                 allLogs.Insert(0, newLog);
@@ -79,44 +85,11 @@ namespace Banking_system.Models
                 return new List<JsonLog.LogEntry>();
             }
         }
+    }
+}
 
-        /*
-        ЧАСТИНА ДЛЯ ВІДПРАВНИКА (Списання)
-            var senderReceiptData = new Dictionary<string, string>
-            {
-                { "Amount", amount.ToString("F2") }, // amount - сума переказу (decimal)
-                { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
-                { "Sender", $"{sender.Surname} {sender.Name}" }, // sender - об'єкт User з БД
-                { "SenderCard", sender.CardNumber },
-                { "Receiver", $"{receiver.Surname} {receiver.Name}" }, // receiver - об'єкт User з БД
-                { "ReceiverCard", receiver.CardNumber },
-                { "Purpose", purposeInput } // purposeInput - рядок з текстового поля (наприклад "Повернення боргу")
-            };
 
-            Logger.AppendLog(
-                userEmail: sender.Email,
-                templateName: "TransferReceipt",
-                text: $"Переказ коштів на картку {receiver.CardNumber}: {amount} ₴",
-                data: senderReceiptData
-            );
-
-         ЧАСТИНА ДЛЯ ОТРИМУВАЧА (Зарахування) 
-            var receiverReceiptData = new Dictionary<string, string>
-            {
-                { "Amount", amount.ToString("F2") },
-                { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
-                { "Sender", $"{sender.Surname} {sender.Name}" },
-                { "ReceiverCard", receiver.CardNumber },
-                { "Purpose", purposeInput }
-            };
-
-            Logger.AppendLog(
-                userEmail: receiver.Email, 
-                templateName: "DepositReceipt",
-                text: $"Зарахування від {sender.Surname} {sender.Name}: {amount} ₴",
-                data: receiverReceiptData
-            );
-            
+/*
         
         ДЛЯ ЗНЯТТЯ ГОТІВКИ 
             var withdrawalData = new Dictionary<string, string>
@@ -153,7 +126,3 @@ namespace Banking_system.Models
                 data: loanData
             );
          */
-
-
-    }
-}

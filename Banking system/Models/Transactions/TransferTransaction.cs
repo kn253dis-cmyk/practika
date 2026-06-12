@@ -9,13 +9,16 @@ namespace Banking_system.Models.Transactions
         private readonly string _sourceCardNumber;
         private readonly string _targetCardNumber;
         private readonly string _purpose;
+        private readonly string _comment;
 
-        public TransferTransaction(string sourceCardNumber, string targetCardNumber, decimal amount, string purpose)
+
+        public TransferTransaction(string sourceCardNumber, string targetCardNumber, decimal amount, string purpose, string comment)
             : base(amount)
         {
             _sourceCardNumber = sourceCardNumber;
             _targetCardNumber = targetCardNumber;
             _purpose = purpose;
+            _comment = comment;
         }
 
         public override bool Execute()
@@ -25,7 +28,7 @@ namespace Banking_system.Models.Transactions
                 return false;
             }
 
-            using (var db = new Database.Database())
+            using (var db = new DataBase.Database())
             {
                 var sourceCard = db.Cards.FirstOrDefault(c => c.CardNumber == _sourceCardNumber);
                 var targetCard = db.Cards.FirstOrDefault(c => c.CardNumber == _targetCardNumber);
@@ -46,10 +49,9 @@ namespace Banking_system.Models.Transactions
                 if (isWithdrawn)
                 {
                     targetCard.Deposit(Amount);
-                    db.SaveChanges(); 
+                    db.SaveChanges();
 
                     Logger.Log($"[Транзакція {TransactionId}] Переказ успішно завершено.");
-
 
                     // ЛОГУВАННЯ ДЛЯ ВІДПРАВНИКА
                     var senderReceiptData = new Dictionary<string, string>
@@ -60,7 +62,8 @@ namespace Banking_system.Models.Transactions
                         { "SenderCard", sourceCard.CardNumber },
                         { "Receiver", $"{receiver.Surname} {receiver.Name}" },
                         { "ReceiverCard", targetCard.CardNumber },
-                        { "Purpose", _purpose }
+                        { "Purpose", _purpose },
+                        { "Comment", string.IsNullOrWhiteSpace(_comment) ? "Без коментаря" : _comment }
                     };
 
                     Logger.AppendLog(
@@ -77,7 +80,8 @@ namespace Banking_system.Models.Transactions
                         { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
                         { "Sender", $"{sender.Surname} {sender.Name}" },
                         { "ReceiverCard", targetCard.CardNumber },
-                        { "Purpose", _purpose }
+                        { "Purpose", _purpose },
+                        { "Comment", string.IsNullOrWhiteSpace(_comment) ? "Без коментаря" : _comment }
                     };
 
                     Logger.AppendLog(

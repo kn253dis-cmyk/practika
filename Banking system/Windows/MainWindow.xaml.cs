@@ -1,14 +1,14 @@
-﻿using System;
-using Banking_system.Entity;
+﻿using Banking_system.Entity;
 using Banking_system.Models;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+using MaterialDesignThemes.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -60,7 +60,6 @@ namespace Banking_system.Windows
             string cardName = "Дебетова картка";
 
             // Визначаємо назву та градієнт залежно від типу картки
-            // Визначаємо назву та градієнт залежно від типу картки
             if (currentCard is CreditCard creditCard)
             {
                 cardName = "Кредитна картка";
@@ -82,6 +81,7 @@ namespace Banking_system.Windows
                 Card.Background = GetCardGradient("Debit");
                 CreditLimitPanel.Visibility = Visibility.Collapsed; // Ховаємо повзунок
             }
+
             LoadCardData(currentCard, cardName);
         }
 
@@ -189,6 +189,7 @@ namespace Banking_system.Windows
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
         }
+
         private void CreditLimitSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // Оновлюємо текст під час перетягування повзунка
@@ -202,34 +203,35 @@ namespace Banking_system.Windows
                     creditCard.CreditLimit = (int)e.NewValue;
 
                     // Якщо є підключення до БД, тут можна викликати збереження:
-                    // using (var db = new Banking_system.Database.Database()) { ... db.SaveChanges(); }
+                    // using (var db = new Banking_system.DataBase.DataBase()) { .. db.SaveChanges(); }
                 }
             }
         }
+
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
-{
-    // Запитуємо користувача, чи точно він хоче вийти
-    MessageBoxResult result = MessageBox.Show("Ви впевнені, що хочете вийти з акаунту?", 
-                                              "Підтвердження виходу", 
-                                              MessageBoxButton.YesNo, 
-                                              MessageBoxImage.Question);
-    
-    if (result == MessageBoxResult.Yes)
-    {
-        // Очищаємо дані поточної сесії (якщо у колег створено такий клас)
-        if (Banking_system.Service.SessionManager.CurrentUser != null)
         {
-            //Banking_system.Service.SessionManager.CurrentUser = null;
+            MessageBoxResult result = MessageBox.Show("Ви впевнені, що хочете вийти з акаунту?",
+                                                      "Підтвердження виходу",
+                                                      MessageBoxButton.YesNo,
+                                                      MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                loginWindow loginForm = new loginWindow();
+                loginForm.Show();
+                this.Close();
+            }
         }
 
-        // Відкриваємо стартове вікно авторизації
-        loginWindow loginForm = new loginWindow();
-        loginForm.Show();
-
-        // Закриваємо особистий кабінет
-        this.Close();
-    }
-}
+        private void Ticker_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                Banking_system.Windows.ExchangeWindow exchangeForm = new Banking_system.Windows.ExchangeWindow();
+                exchangeForm.Owner = this;
+                exchangeForm.ShowDialog();
+            }
+        }
 
         // ==========================================
         // СТВОРЕННЯ НОВИХ КАРТОК
@@ -251,19 +253,16 @@ namespace Banking_system.Windows
                 return;
             }
 
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
-                db.Database.EnsureCreated();
+                 
                 var newCard = new DebitCard { UserId = _currentUser.ID };
 
                 db.Cards.Add(newCard);
                 db.SaveChanges();
 
                 _userCards.Add(newCard);
-                _currentCardIndex = _userCards.Count - 1; // Одразу показуємо нову картку
-
-                // Якщо у колег є клас Logger, залишаємо цей рядок:
-                // Logger.LogUserAction(_currentUser.Email, "Створив дебетову картку"); 
+                _currentCardIndex = _userCards.Count - 1;
             }
 
             UpdateCardUI();
@@ -281,9 +280,9 @@ namespace Banking_system.Windows
             {
                 return;
             }
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
-                db.Database.EnsureCreated();
+                 
                 var newCard = new CreditCard
                 {
                     UserId = _currentUser.ID,
@@ -297,6 +296,7 @@ namespace Banking_system.Windows
 
                 _userCards.Add(newCard);
                 _currentCardIndex = _userCards.Count - 1;
+                
             }
 
             UpdateCardUI();
@@ -314,10 +314,10 @@ namespace Banking_system.Windows
                 return;
             }
 
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
-                db.Database.EnsureCreated();
                 // Тут підстав той клас Юніорки, який ви реально використовуєте (JuniorCard або UniorCard)
+                 
                 var newCard = new JuniorCard
                 {
                     UserId = _currentUser.ID,
@@ -341,7 +341,6 @@ namespace Banking_system.Windows
 
         private void BtnHistory_Click(object sender, RoutedEventArgs e)
         {
-            // Отримуємо email з класу колег, якщо він там зберігся
             string safeEmail = Banking_system.Service.SessionManager.CurrentUser?.Email ?? string.Empty;
 
             Window historyForm = new Window
@@ -366,19 +365,19 @@ namespace Banking_system.Windows
             Window transferForm = new Window
             {
                 Title = "Новий переказ коштів",
-                Width = 600,
-                Height = 520,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner,
                 Owner = this,
+                Width = 520,
+                Height = 680,
+                Background = new BrushConverter().ConvertFrom("#1A1A2E") as Brush,
                 Content = new Banking_system.Views.TransferPage(currentCardNum)
             };
-
             transferForm.ShowDialog();
 
-            using (var db = new Banking_system.Database.Database())
+            using (var db = new Banking_system.DataBase.Database())
             {
+                 
                 _userCards = db.FindAllCardsByUserId(_currentUser.ID);
-
                 UpdateCardUI();
             }
         }
@@ -394,12 +393,39 @@ namespace Banking_system.Windows
         {
 
         }
+        private void BtnStatistics_Click(object sender, RoutedEventArgs e)
+        {
+            // Перевіряємо, чи є взагалі картки
+            if (_userCards == null || _userCards.Count == 0 || _currentCardIndex >= _userCards.Count) return;
+
+            // Отримуємо номер поточної обраної картки
+            string currentCardNum = _userCards[_currentCardIndex].GetCardNumber();
+
+            // Відкриваємо наше нове вікно аналітики
+            Banking_system.Windows.StatisticsWindow statsForm = new Banking_system.Windows.StatisticsWindow(currentCardNum);
+            statsForm.Owner = this;
+            statsForm.ShowDialog();
+        }
+
+        // ==========================================
+        // ЗАВАНТАЖЕННЯ КУРСІВ ВАЛЮТ (БРОНЕБІЙНИЙ МЕТОД)
+        // ==========================================
+
+
         private async Task LoadCurrencyRatesAsync()
         {
+            // 1. ОДРАЗУ запускаємо рух запасного тексту, не чекаючи на інтернет
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                StartMarqueeAnimation();
+            });
+
+            // 2. Пробуємо отримати реальні дані від НБУ
             try
             {
                 using (HttpClient client = new HttpClient())
                 {
+                    client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0");
                     string url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
                     string jsonResponse = await client.GetStringAsync(url);
 
@@ -407,19 +433,58 @@ namespace Banking_system.Windows
 
                     if (allRates != null)
                     {
-                        var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP", "XAU", "XAG" };
+                        var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP", "XAU" };
 
-                        var filteredRates = allRates.Where(rate => popularCodes.Contains(rate.cc)).ToList();
+                        var filteredRates = allRates.Where(rate => popularCodes.Contains(rate.cc ?? "")).ToList();
 
-                        CurrencyGrid.ItemsSource = filteredRates;
+                        string tickerText = "";
+                        foreach (var rate in filteredRates)
+                        {
+                            string flag = rate.cc switch
+                            {
+                                "USD" => "🇺🇸",
+                                "EUR" => "🇪🇺",
+                                "GBP" => "🇬🇧",
+                                "PLN" => "🇵🇱",
+                                "XAU" => "🥇",
+                                _ => "🪙"
+                            };
+                            tickerText += $"{flag} {rate.cc}: {rate.rate:F2} ₴   |   ";
+                        }
+
+                        // 3. Якщо дані завантажились успішно — просто підміняємо текст, анімація продовжить йти
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            if (TxtTicker != null && !string.IsNullOrEmpty(tickerText))
+                            {
+                                TxtTicker.Text = tickerText;
+                            }
+                        });
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Не вдалося оновити курс валют: {ex.Message}", "Помилка мережі", MessageBoxButton.OK, MessageBoxImage.Warning);
+                // Якщо інтернету немає, НБУ заблокував запит або виникла помилка — нічого не робимо.
+                // На екрані просто продовжить крутитися наш запасний текст.
             }
         }
 
+        // Окремий метод, який гарантовано штовхає рядок
+        private void StartMarqueeAnimation()
+        {
+            if (TxtTicker == null) return;
+
+            var animation = new System.Windows.Media.Animation.DoubleAnimation
+            {
+                From = 900,       // З'являється справа за межами екрана
+                To = -1500,       // Їде далеко за лівий край
+                Duration = TimeSpan.FromSeconds(20), // Швидкість руху
+                RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever
+            };
+
+            // Анімуємо фізичну координату відносно лівого краю. Це працює завжди.
+            TxtTicker.BeginAnimation(Canvas.LeftProperty, animation);
+        }
     }
 }

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Banking_system.Service;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using Banking_system.Service;
+using System.Windows.Input;
 
 namespace Banking_system.Views
 {
@@ -13,16 +14,14 @@ namespace Banking_system.Views
         {
             InitializeComponent();
             _senderCardNumber = senderCardNumber;
-
-
             TxtSenderCard.Text = _senderCardNumber;
         }
 
         private void BtnSubmitTransfer_Click(object sender, RoutedEventArgs e)
         {
             string receiverCard = TxtReceiverCard.Text.Trim();
-            string purpose = TxtPurpose.Text.Trim();
-
+            string purposeCode = CmbPurposeCode.Text.Trim();
+            string comment = TxtComment.Text;
 
             if (!decimal.TryParse(TxtAmount.Text, out decimal amount))
             {
@@ -30,22 +29,21 @@ namespace Banking_system.Views
                 return;
             }
 
+            Banking_system.Models.Transactions.TransferTransaction transfer = new Models.Transactions.TransferTransaction(_senderCardNumber, receiverCard, amount, purposeCode, comment);
 
-           
-            var transaction = new Banking_system.Models.Transactions.TransferTransaction(_senderCardNumber, receiverCard, amount, purpose);
-            bool isSuccess = transaction.Execute();
+            bool isSuccess = transfer.Execute();
 
             if (isSuccess)
             {
                 MessageBox.Show("Переказ успішно виконано!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
-
-
                 Window.GetWindow(this)?.Close();
             }
             else
             {
                 MessageBox.Show("Не вдалося виконати переказ. Перевірте баланс та номер картки отримувача.", "Помилка переказу", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            MessageBox.Show($"Ініційовано переказ на суму {amount} ₴.\nПризначення: {purposeCode}\nКоментар: {comment}", "Переказ");
         }
     }
 }
