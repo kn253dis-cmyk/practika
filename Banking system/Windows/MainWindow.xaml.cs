@@ -12,10 +12,6 @@ using System.Windows.Media;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace Banking_system.Windows
 {
@@ -39,10 +35,6 @@ namespace Banking_system.Windows
                 UpdateCardUI();
             }
         }
-
-        // ==========================================
-        // ЛОГІКА ВІДОБРАЖЕННЯ ІНТЕРФЕЙСУ
-        // ==========================================
 
         private void UpdateCardUI()
         {
@@ -154,17 +146,13 @@ namespace Banking_system.Windows
             TxtExpiryDate.Text = card.GetExpirationDate().ToString("MM/yy");
         }
 
-        // ==========================================
-        // НАВІГАЦІЯ ТА ВЗАЄМОДІЯ
-        // ==========================================
-
         private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
         {
             int totalItems = _userCards.Count;
             _currentCardIndex--;
 
             if (_currentCardIndex < 0)
-                _currentCardIndex = totalItems; // Переходимо на екран додавання картки 
+                _currentCardIndex = totalItems; 
 
             UpdateCardUI();
         }
@@ -279,10 +267,8 @@ namespace Banking_system.Windows
                 MessageBox.Show("Ви вже маєте кредитну картку. Немає можливості відкрити більше однієї.", "Обмеження");
                 return;
             }
-            if (_currentUser == null || _userCards == null)
-            {
-                return;
-            }
+            if (_currentUser == null || _userCards == null) return;
+            
             using (var db = new Banking_system.DataBase.Database())
             {
                  
@@ -319,9 +305,7 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                // Тут підстав той клас Юніорки, який ви реально використовуєте (JuniorCard або UniorCard)
-                 
-                var newCard = new JuniorCard
+                var newCard = new CurrencyCard
                 {
                     UserId = _currentUser.ID,
                     TransactionLimit = 5000m
@@ -337,10 +321,6 @@ namespace Banking_system.Windows
             UpdateCardUI();
             MessageBox.Show("Картку Юніора успішно відкрито!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-
-        // ==========================================
-        // ІСТОРІЯ, ПЕРЕКАЗИ ТА КЕРУВАННЯ ВІКНОМ
-        // ==========================================
 
         private void BtnHistory_Click(object sender, RoutedEventArgs e)
         {
@@ -410,10 +390,6 @@ namespace Banking_system.Windows
             statsForm.ShowDialog();
         }
 
-        // ==========================================
-        // ЗАВАНТАЖЕННЯ КУРСІВ ВАЛЮТ (БРОНЕБІЙНИЙ МЕТОД)
-        // ==========================================
-
         private async Task LoadCurrencyRatesAsync()
         {
             // 1. ОДРАЗУ запускаємо рух запасного тексту, не чекаючи на інтернет
@@ -422,7 +398,6 @@ namespace Banking_system.Windows
                 StartMarqueeAnimation();
             });
 
-            // 2. Пробуємо отримати реальні дані від НБУ
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -457,17 +432,14 @@ namespace Banking_system.Windows
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             if (TxtTicker != null && !string.IsNullOrEmpty(tickerText))
-                            {
                                 TxtTicker.Text = tickerText;
-                            }
                         });
                     }
                 }
             }
             catch (Exception)
             {
-                // Якщо інтернету немає, НБУ заблокував запит або виникла помилка — нічого не робимо.
-                // На екрані просто продовжить крутитися наш запасний текст.
+               
             }
         }
 
@@ -479,8 +451,8 @@ namespace Banking_system.Windows
             var animation = new System.Windows.Media.Animation.DoubleAnimation
             {
                 From = 900,       // З'являється справа за межами екрана
-                To = -1500,       // Їде далеко за лівий край
-                Duration = TimeSpan.FromSeconds(20), // Швидкість руху
+                To = -1000,       // Їде далеко за лівий край
+                Duration = TimeSpan.FromSeconds(30), // Швидкість руху
                 RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever
             };
 
