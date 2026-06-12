@@ -394,7 +394,6 @@ namespace Banking_system.Windows
         {
 
         }
-
         private async Task LoadCurrencyRatesAsync()
         {
             try
@@ -408,7 +407,7 @@ namespace Banking_system.Windows
 
                     if (allRates != null)
                     {
-                        var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP","XAU", "XAG" };
+                        var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP", "XAU", "XAG" };
 
                         var filteredRates = allRates.Where(rate => popularCodes.Contains(rate.cc)).ToList();
 
@@ -421,5 +420,6 @@ namespace Banking_system.Windows
                 MessageBox.Show($"Не вдалося оновити курс валют: {ex.Message}", "Помилка мережі", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
+
     }
 }

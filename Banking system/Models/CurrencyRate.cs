@@ -6,4 +6,6 @@
         public decimal rate { get; set; } 
         public string cc { get; set; }   
     }
+
+
 }
