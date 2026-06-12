@@ -4,8 +4,8 @@ namespace Banking_system.Models.Transactions
 {
     internal class DepositTransaction : AbstractTransaction
     {
-        private AbstractCard _targetCard;
-
+        private AbstractCard _targetCard = null!;
+        protected DepositTransaction() { }
         public DepositTransaction(AbstractCard targetCard, decimal amount) : base(amount)
         {
             _targetCard = targetCard;
@@ -13,15 +13,17 @@ namespace Banking_system.Models.Transactions
 
         public override bool Execute()
         {
-            try
+            using (var db = new Banking_system.DataBase.Database())
             {
-                _targetCard.Deposit(Amount);
-                Logger.Log($"[Транзакція {TransactionId}] Успішне поповнення. Картка: {_targetCard.CardNumber}. Сума: {Amount:C}.");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Logger.Log($"[Транзакція {TransactionId}] Помилка поповнення: {ex.Message}");
+                var card = db.Cards.FirstOrDefault(c => c.CardNumber == _targetCard.CardNumber);
+                if (card != null)
+                {
+                    card.Deposit(Amount);
+                    card.Operation(this);
+
+                    db.SaveChanges();
+                    return true;
+                }
                 return false;
             }
         }
