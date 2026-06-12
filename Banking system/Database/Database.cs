@@ -43,7 +43,7 @@ namespace Banking_system.DataBase
                 .HasDiscriminator<string>("CardType")
                 .HasValue<DebitCard>("Debit")
                 .HasValue<CreditCard>("Credit")
-                .HasValue<JuniorCard>("Unior");
+                .HasValue<CurrencyCard>("Unior");
         }
 
         public List<AbstractCard> FindAllCardsByUserId(int userId) => Cards.Where(c => c.UserId == userId).ToList();
