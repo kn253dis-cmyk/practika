@@ -6,9 +6,9 @@ namespace Banking_system.Models.Transactions
 {
     internal class TransferTransaction : AbstractTransaction
     {
-        private readonly string _sourceCardNumber;
-        private readonly string _targetCardNumber;
-        private readonly string _purpose;
+        private readonly string _sourceCardNumber = string.Empty;
+        private readonly string _targetCardNumber = string.Empty;
+        private readonly string _purpose = string.Empty;
 
         public TransferTransaction(string sourceCardNumber, string targetCardNumber, decimal amount, string purpose)
             : base(amount)
@@ -17,7 +17,20 @@ namespace Banking_system.Models.Transactions
             _targetCardNumber = targetCardNumber;
             _purpose = purpose;
         }
+        public TransferTransaction(
+            string sourceCardNumber, 
+            string targetCardNumber, 
+            decimal amount , 
+            string purpose , 
+            string transTarget , 
+            string description) 
+        : base(amount , transTarget ,description){
+            _sourceCardNumber = sourceCardNumber;
+            _targetCardNumber = targetCardNumber;
+            _purpose = purpose;
+        }
 
+        protected TransferTransaction() { }
         public override bool Execute()
         {
             if (Service.SessionManager.CurrentUser == null || Amount <= 0 || _sourceCardNumber == _targetCardNumber)
@@ -35,33 +48,30 @@ namespace Banking_system.Models.Transactions
 
                 if (sourceCard == null || targetCard == null || sender == null || receiver == null)
                 {
-                    Logger.AppendSystemLog(Service.SessionManager.CurrentUser.Email, $"Невдала спроба переказу. Невірні реквізити картки.");
+                    Logger.AppendSystemLog(Service.SessionManager.CurrentUser?.Email ?? "Unknown", $"Невдала спроба переказу. Невірні реквізити картки.");
                     return false;
                 }
 
-                Logger.Log($"[Транзакція {TransactionId}] Ініційовано переказ {Amount:C} з картки {_sourceCardNumber} на {_targetCardNumber}.");
-
-                bool isWithdrawn = sourceCard.Withdraw(Amount);
-
-                if (isWithdrawn)
+                // 2. Виконуємо логіку зняття та поповнення
+                if (sourceCard.Withdraw(Amount))
                 {
                     targetCard.Deposit(Amount);
-                    db.SaveChanges(); 
+                    sourceCard.Operation(this);
+                    db.SaveChanges();
 
                     Logger.Log($"[Транзакція {TransactionId}] Переказ успішно завершено.");
 
-
                     // ЛОГУВАННЯ ДЛЯ ВІДПРАВНИКА
                     var senderReceiptData = new Dictionary<string, string>
-                    {
-                        { "Amount", Amount.ToString("F2") },
-                        { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
-                        { "Sender", $"{sender.Surname} {sender.Name}" },
-                        { "SenderCard", sourceCard.CardNumber },
-                        { "Receiver", $"{receiver.Surname} {receiver.Name}" },
-                        { "ReceiverCard", targetCard.CardNumber },
-                        { "Purpose", _purpose }
-                    };
+            {
+                { "Amount", Amount.ToString("F2") },
+                { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
+                { "Sender", $"{sender.Surname} {sender.Name}" },
+                { "SenderCard", sourceCard.CardNumber },
+                { "Receiver", $"{receiver.Surname} {receiver.Name}" },
+                { "ReceiverCard", targetCard.CardNumber },
+                { "Purpose", _purpose }
+            };
 
                     Logger.AppendLog(
                         userEmail: sender.Email,
@@ -72,13 +82,13 @@ namespace Banking_system.Models.Transactions
 
                     // ЛОГУВАННЯ ДЛЯ ОТРИМУВАЧА
                     var receiverReceiptData = new Dictionary<string, string>
-                    {
-                        { "Amount", Amount.ToString("F2") },
-                        { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
-                        { "Sender", $"{sender.Surname} {sender.Name}" },
-                        { "ReceiverCard", targetCard.CardNumber },
-                        { "Purpose", _purpose }
-                    };
+            {
+                { "Amount", Amount.ToString("F2") },
+                { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
+                { "Sender", $"{sender.Surname} {sender.Name}" },
+                { "ReceiverCard", targetCard.CardNumber },
+                { "Purpose", _purpose }
+            };
 
                     Logger.AppendLog(
                         userEmail: receiver.Email,
