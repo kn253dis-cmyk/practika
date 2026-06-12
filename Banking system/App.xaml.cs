@@ -12,5 +12,4 @@ namespace Banking_system
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
     }
-
 }
