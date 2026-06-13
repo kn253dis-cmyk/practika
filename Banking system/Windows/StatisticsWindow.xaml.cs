@@ -26,33 +26,40 @@ namespace Banking_system.Windows
         {
             try
             {
+
                 using (var db = new Banking_system.DataBase.Database())
                 {
                     // УВАГА: Якщо у вашій базі даних таблиця називається не Transactions, 
                     // або властивості транзакцій мають інші назви, зміни їх тут!
 
-                    /* ТИМЧАСОВО ЗАКОМЕНТОВАНО (розкоментуй, коли таблиця транзакцій буде готова):
+                //using (var db = new Banking_system.DataBase.Database())
+                //{
+                //    // УВАГА: Якщо у вашій базі даних таблиця називається не Transactions, 
+                //    // або властивості транзакцій мають інші назви, зміни їх тут!
+
+
+                //    /* ТИМЧАСОВО ЗАКОМЕНТОВАНО (розкоментуй, коли таблиця транзакцій буде готова):
                     
-                    var allTransactions = db.Transactions.Where(t => t.CardNumber == cardNumber).ToList();
+                //    var allTransactions = db.Transactions.Where(t => t.CardNumber == cardNumber).ToList();
 
-                    // Рахуємо доходи (поповнення) та витрати (зняття, перекази іншим)
-                    // Заміни "Amount" та "TransactionType" на ті назви, які ви прописали в AbstractTransaction.cs
-                    decimal totalIncome = allTransactions.Where(t => t.TransactionType == "Deposit").Sum(t => t.Amount);
-                    decimal totalExpense = allTransactions.Where(t => t.TransactionType != "Deposit").Sum(t => t.Amount);
+                //    // Рахуємо доходи (поповнення) та витрати (зняття, перекази іншим)
+                //    // Заміни "Amount" та "TransactionType" на ті назви, які ви прописали в AbstractTransaction.cs
+                //    decimal totalIncome = allTransactions.Where(t => t.TransactionType == "Deposit").Sum(t => t.Amount);
+                //    decimal totalExpense = allTransactions.Where(t => t.TransactionType != "Deposit").Sum(t => t.Amount);
 
-                    // Оновлюємо інтерфейс реальними цифрами
-                    TxtTotalIncome.Text = $"+ {totalIncome:N2} ₴";
-                    TxtTotalExpense.Text = $"- {totalExpense:N2} ₴";
-                    TxtMainBalance.Text = $"{totalExpense:N0} ₴"; // Витрачено за місяць
+                //    // Оновлюємо інтерфейс реальними цифрами
+                //    TxtTotalIncome.Text = $"+ {totalIncome:N2} ₴";
+                //    TxtTotalExpense.Text = $"- {totalExpense:N2} ₴";
+                //    TxtMainBalance.Text = $"{totalExpense:N0} ₴"; // Витрачено за місяць
 
-                    // Розраховуємо прогрес-бари (співвідношення)
-                    decimal totalTurnover = totalIncome + totalExpense;
-                    if (totalTurnover > 0)
-                    {
-                        IncomeProgress.Value = (double)((totalIncome / totalTurnover) * 100);
-                        ExpenseProgress.Value = (double)((totalExpense / totalTurnover) * 100);
-                    }
-                    */
+                //    // Розраховуємо прогрес-бари (співвідношення)
+                //    decimal totalTurnover = totalIncome + totalExpense;
+                //    if (totalTurnover > 0)
+                //    {
+                //        IncomeProgress.Value = (double)((totalIncome / totalTurnover) * 100);
+                //        ExpenseProgress.Value = (double)((totalExpense / totalTurnover) * 100);
+                //    }
+                //    */
                 }
             }
             catch (Exception ex)

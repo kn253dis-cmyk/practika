@@ -19,31 +19,53 @@ namespace Banking_system.Views
 
         private void BtnSubmitTransfer_Click(object sender, RoutedEventArgs e)
         {
-            string receiverCard = TxtReceiverCard.Text.Trim();
-            string purposeCode = CmbPurposeCode.Text.Trim();
-            string comment = TxtComment.Text;
-
-            if (!decimal.TryParse(TxtAmount.Text, out decimal amount))
+            try
             {
-                MessageBox.Show("Будь ласка, введіть коректну суму цифрами!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                if (!decimal.TryParse(TxtAmount.Text, out decimal amount) || amount <= 0)
+                {
+                    MessageBox.Show("Будь ласка, введіть коректну суму цифрами більшу за нуль!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                string receiverCard = TxtReceiverCard.Text.Trim();
+                string purposeCode = CmbPurposeCode.Text.Trim();
+                string comment = TxtComment.Text.Trim();
+
+                if (string.IsNullOrWhiteSpace(receiverCard))
+                {
+                    MessageBox.Show("Будь ласка, введіть номер картки отримувача!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                // Визначаємо призначення платежу
+                string? selectedPurpose = CmbPurposeCode.SelectedItem is ComboBoxItem item
+                    ? item.Content.ToString()
+                    : purposeCode;
+
+                string fullPurpose = $"{selectedPurpose}. Коментар: {comment}";
+
+                // Створюємо транзакцію з правильними 5 параметрами
+                var transfer = new Banking_system.Models.Transactions.TransferTransaction(
+                    _senderCardNumber, receiverCard, amount, selectedPurpose ?? string.Empty, comment);
+
+                bool isSuccess = transfer.Execute();
+
+                // Обробка результату
+                if (isSuccess)
+                {
+                    MessageBox.Show($"Переказ на суму {amount} ₴ успішно виконано!\nПризначення: {fullPurpose}", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Window.GetWindow(this)?.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Не вдалося виконати переказ. Перевірте баланс та номер картки отримувача.", "Помилка переказу", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-
-            Banking_system.Models.Transactions.TransferTransaction transfer = new Models.Transactions.TransferTransaction(_senderCardNumber, receiverCard, amount, purposeCode, comment);
-
-            bool isSuccess = transfer.Execute();
-
-            if (isSuccess)
+            catch (Exception ex)
             {
-                MessageBox.Show("Переказ успішно виконано!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
-                Window.GetWindow(this)?.Close();
+                MessageBox.Show($"Виникла непередбачена помилка під час обробки переказу:\n{ex.Message}", "Системна помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+                Models.Logger.Log($"Помилка в BtnSubmitTransfer_Click: {ex.Message}");
             }
-            else
-            {
-                MessageBox.Show("Не вдалося виконати переказ. Перевірте баланс та номер картки отримувача.", "Помилка переказу", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            MessageBox.Show($"Ініційовано переказ на суму {amount} ₴.\nПризначення: {purposeCode}\nКоментар: {comment}", "Переказ");
         }
     }
 }

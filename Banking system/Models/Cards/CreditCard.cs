@@ -4,30 +4,74 @@ namespace Banking_system.Models
 {
     public class CreditCard : AbstractCard
     {
-        public int CreditLimit { get; set; } = 50000;
-        public string CreditType { get; set; } = "Credit";
-        public DateTime CreditEndDate { get; set; } = DateTime.Now.AddYears(1);
-        public decimal Percentage { get; set; } = 3.5m; 
+        public int CreditLimit { get; set; } = 10000;
+        public string CreditType { get; set; } = "Standard"; // Назва тарифу
+        public decimal InterestRate { get; set; } = 5.0m; // Відсоток
+        public decimal AccruedInterest { get; set; } = 0m; // Окремий рахунок для збереження нарахованих відсотків
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime DueDate { get; set; } = DateTime.Now.AddMonths(1); // Дата погашення боргу 
+        public DateTime LastReminderSentDate { get; set; } = DateTime.Now.AddDays(-30);
+
+        public int MissedPaymentsCount { get; set; } = 0; // Скільки місяців прострочено
+        public bool IsBlocked { get; set; } = false; // Чи заблоковано картку
 
         public CreditCard() : base("30")
         {
-
-            Logger.Log($"Ініціалізовано кредитну картку {CardNumber} з лімітом {CreditLimit:C}.");
+            Logger.Log($"Створено кредитну картку {CardNumber}.");
         }
 
         public override bool Withdraw(decimal amount)
         {
+            if (IsBlocked) return false; 
             if (amount <= 0) return false;
 
-            if (Balance + CreditLimit >= amount)
+
+            decimal currentDebt = Balance < 0 ? Math.Abs(Balance) : 0;
+
+
+            if (currentDebt + AccruedInterest + amount <= CreditLimit)
             {
-                Balance -= amount;
+                Balance -= amount; 
                 Logger.Log($"З кредитної картки {CardNumber} знято {amount:C}. Баланс: {Balance:C}");
                 return true;
             }
 
-            Logger.Log($"Відмова ({CardNumber}): Перевищено кредитний ліміт під час спроби зняти {amount:C}.");
-            return false;
+            return false; 
+        }
+
+
+        public override void Deposit(decimal amount)
+        {
+            if (amount <= 0) return;
+
+            // спочатку поповнення йде на погашення штрафів
+            if (AccruedInterest > 0)
+            {
+                if (amount >= AccruedInterest)
+                {
+                    amount -= AccruedInterest; 
+                    AccruedInterest = 0; 
+                }
+                else
+                {
+                    AccruedInterest -= amount; 
+                    amount = 0; 
+                }
+            }
+
+
+            if (amount > 0)
+            {
+                base.Deposit(amount);
+            }
+
+            if (AccruedInterest == 0 && Balance >= 0)
+            {
+                IsBlocked = false; 
+                MissedPaymentsCount = 0; 
+                DueDate = DateTime.Now.AddMonths(1); 
+            }
         }
     }
 }

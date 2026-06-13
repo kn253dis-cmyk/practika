@@ -3,6 +3,7 @@ using System;
 using Banking_system.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Banking_system.Migrations
 {
     [DbContext(typeof(Database))]
-    partial class DatabaseModelSnapshot : ModelSnapshot
+    [Migration("20260612214750_NewFieldsAdd")]
+    partial class NewFieldsAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -151,10 +154,7 @@ namespace Banking_system.Migrations
                 {
                     b.HasBaseType("Banking_system.Models.AbstractCard");
 
-                    b.Property<decimal>("AccruedInterest")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreditEndDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("CreditLimit")
@@ -164,20 +164,8 @@ namespace Banking_system.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DueDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("InterestRate")
+                    b.Property<decimal>("Percentage")
                         .HasColumnType("numeric");
-
-                    b.Property<bool>("IsBlocked")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("LastReminderSentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("MissedPaymentsCount")
-                        .HasColumnType("integer");
 
                     b.HasDiscriminator().HasValue("Credit");
                 });

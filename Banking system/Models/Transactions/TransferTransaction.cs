@@ -6,11 +6,11 @@ namespace Banking_system.Models.Transactions
 {
     internal class TransferTransaction : AbstractTransaction
     {
-        private readonly string _sourceCardNumber;
-        private readonly string _targetCardNumber;
-        private readonly string _purpose;
-        private readonly string _comment;
-
+        // Залишаємо лише один набір полів з ініціалізацією
+        private readonly string _sourceCardNumber = string.Empty;
+        private readonly string _targetCardNumber = string.Empty;
+        private readonly string _purpose = string.Empty;
+        private readonly string _comment = string.Empty;
 
         public TransferTransaction(string sourceCardNumber, string targetCardNumber, decimal amount, string purpose, string comment)
             : base(amount)
@@ -20,6 +20,23 @@ namespace Banking_system.Models.Transactions
             _purpose = purpose;
             _comment = comment;
         }
+
+        public TransferTransaction(
+            string sourceCardNumber,
+            string targetCardNumber,
+            decimal amount,
+            string purpose,
+            string transTarget,
+            string description)
+        : base(amount, transTarget, description)
+        {
+            _sourceCardNumber = sourceCardNumber;
+            _targetCardNumber = targetCardNumber;
+            _purpose = purpose;
+            _comment = string.Empty; // Ініціалізуємо, щоб уникнути помилки Nullable Reference
+        }
+
+        protected TransferTransaction() { }
 
         public override bool Execute()
         {
@@ -38,17 +55,15 @@ namespace Banking_system.Models.Transactions
 
                 if (sourceCard == null || targetCard == null || sender == null || receiver == null)
                 {
-                    Logger.AppendSystemLog(Service.SessionManager.CurrentUser.Email, $"Невдала спроба переказу. Невірні реквізити картки.");
+                    Logger.AppendSystemLog(Service.SessionManager.CurrentUser?.Email ?? "Unknown", "Невдала спроба переказу. Невірні реквізити картки.");
                     return false;
                 }
 
-                Logger.Log($"[Транзакція {TransactionId}] Ініційовано переказ {Amount:C} з картки {_sourceCardNumber} на {_targetCardNumber}.");
-
-                bool isWithdrawn = sourceCard.Withdraw(Amount);
-
-                if (isWithdrawn)
+                // Виконуємо логіку зняття та поповнення
+                if (sourceCard.Withdraw(Amount))
                 {
                     targetCard.Deposit(Amount);
+                    sourceCard.Operation(this);
                     db.SaveChanges();
 
                     Logger.Log($"[Транзакція {TransactionId}] Переказ успішно завершено.");

@@ -37,10 +37,6 @@ namespace Banking_system.Windows
             }
         }
 
-        // ==========================================
-        // ЛОГІКА ВІДОБРАЖЕННЯ ІНТЕРФЕЙСУ
-        // ==========================================
-
         private void UpdateCardUI()
         {
             // Якщо індекс дорівнює кількості карток, показуємо екран "Додати картку"
@@ -59,27 +55,34 @@ namespace Banking_system.Windows
             AbstractCard currentCard = _userCards[_currentCardIndex];
             string cardName = "Дебетова картка";
 
-            // Визначаємо назву та градієнт залежно від типу картки
+            // Визначаємо назву, градієнт та наявність ліміту залежно від типу картки
             if (currentCard is CreditCard creditCard)
             {
                 cardName = "Кредитна картка";
                 Card.Background = GetCardGradient("Credit");
 
-                // Показуємо повзунок і ставимо його на поточний ліміт картки
-                CreditLimitPanel.Visibility = Visibility.Visible;
-                CreditLimitSlider.Value = creditCard.CreditLimit;
-                TxtCreditLimitValue.Text = $"{creditCard.CreditLimit:N0} ₴";
+                // Показуємо поле ліміту на самій картці та вписуємо значення
+                if (PanelCreditLimit != null)
+                {
+                    PanelCreditLimit.Visibility = Visibility.Visible;
+                    TxtCardCreditLimit.Text = $"{creditCard.CreditLimit:N0} ₴";
+                }
             }
-            else if (currentCard.GetType().Name == "JuniorCard" || currentCard.GetType().Name == "UniorCard")
+            else if (currentCard.GetType().Name == "CurrencyCard" || currentCard.GetType().Name == "JuniorCard")
             {
-                cardName = "Картка Юніора";
-                Card.Background = GetCardGradient("Junior");
-                CreditLimitPanel.Visibility = Visibility.Collapsed; // Ховаємо повзунок
+                cardName = "Валютна карта";
+                Card.Background = GetCardGradient("Currency");
+
+                // Ховаємо поле ліміту для інших карток
+                if (PanelCreditLimit != null) PanelCreditLimit.Visibility = Visibility.Collapsed;
             }
             else if (currentCard is DebitCard)
             {
+                cardName = "Дебетова картка";
                 Card.Background = GetCardGradient("Debit");
-                CreditLimitPanel.Visibility = Visibility.Collapsed; // Ховаємо повзунок
+
+                // Ховаємо поле ліміту
+                if (PanelCreditLimit != null) PanelCreditLimit.Visibility = Visibility.Collapsed;
             }
 
             LoadCardData(currentCard, cardName);
@@ -117,7 +120,7 @@ namespace Banking_system.Windows
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#870000"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#3a0002"), 1.0));
                     break;
-                case "Junior":
+                case "Currency":
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#11998E"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#38EF7D"), 1.0));
                     break;
@@ -151,17 +154,13 @@ namespace Banking_system.Windows
             TxtExpiryDate.Text = card.GetExpirationDate().ToString("MM/yy");
         }
 
-        // ==========================================
-        // НАВІГАЦІЯ ТА ВЗАЄМОДІЯ
-        // ==========================================
-
         private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
         {
             int totalItems = _userCards.Count;
             _currentCardIndex--;
 
             if (_currentCardIndex < 0)
-                _currentCardIndex = totalItems; // Переходимо на екран додавання картки 
+                _currentCardIndex = totalItems; 
 
             UpdateCardUI();
         }
@@ -273,34 +272,24 @@ namespace Banking_system.Windows
         {
             if (_userCards != null && _userCards.Any(c => c is CreditCard))
             {
-                MessageBox.Show("Ви вже маєте кредитну картку. Немає можливості відкрити більше однієї.", "Обмеження");
+                MessageBox.Show("Ви вже маєте кредитну картку. Одночасно можна мати лише одну.", "Обмеження");
                 return;
             }
-            if (_currentUser == null || _userCards == null)
+            if (_currentUser == null) return;
+
+            var planWindow = new CreditPlanWindow(_currentUser);
+            planWindow.Owner = this;
+            planWindow.ShowDialog();
+
+            if (planWindow.IsCardCreated)
             {
-                return;
-            }
-            using (var db = new Banking_system.DataBase.Database())
-            {
-                 
-                var newCard = new CreditCard
+                using (var db = new Banking_system.DataBase.Database())
                 {
-                    UserId = _currentUser.ID,
-                    CreditLimit = 5000,
-                    CreditType = "Standard",
-                    Percentage = 15.5m
-                };
-
-                db.Cards.Add(newCard);
-                db.SaveChanges();
-
-                _userCards.Add(newCard);
-                _currentCardIndex = _userCards.Count - 1;
-                
+                    _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+                    _currentCardIndex = _userCards.Count - 1;
+                }
+                UpdateCardUI();
             }
-
-            UpdateCardUI();
-            MessageBox.Show("Кредитну картку успішно відкрито!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void BtnCreateJunior_Click(object sender, RoutedEventArgs e)
@@ -310,18 +299,15 @@ namespace Banking_system.Windows
             int count = _userCards.Count(card => card.GetType().Name == "JuniorCard" || card.GetType().Name == "UniorCard");
             if (count >= 2)
             {
-                MessageBox.Show("Ви вже маєте 2 карти юніора. Немає можливості відкрити більше.", "Обмеження");
+                MessageBox.Show("Ви вже маєте 2 валютні карти. Немає можливості відкрити більше.", "Обмеження");
                 return;
             }
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                // Тут підстав той клас Юніорки, який ви реально використовуєте (JuniorCard або UniorCard)
-                 
-                var newCard = new JuniorCard
+                var newCard = new CurrencyCard
                 {
-                    UserId = _currentUser.ID,
-                    TransactionLimit = 5000m
+                    UserId = _currentUser.ID
                 };
 
                 db.Cards.Add(newCard);
@@ -332,12 +318,8 @@ namespace Banking_system.Windows
             }
 
             UpdateCardUI();
-            MessageBox.Show("Картку Юніора успішно відкрито!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Валютну карту успішно відкрито!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
         }
-
-        // ==========================================
-        // ІСТОРІЯ, ПЕРЕКАЗИ ТА КЕРУВАННЯ ВІКНОМ
-        // ==========================================
 
         private void BtnHistory_Click(object sender, RoutedEventArgs e)
         {
@@ -376,7 +358,7 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                 
+                
                 _userCards = db.FindAllCardsByUserId(_currentUser.ID);
                 UpdateCardUI();
             }
@@ -407,10 +389,6 @@ namespace Banking_system.Windows
             statsForm.ShowDialog();
         }
 
-        // ==========================================
-        // ЗАВАНТАЖЕННЯ КУРСІВ ВАЛЮТ (БРОНЕБІЙНИЙ МЕТОД)
-        // ==========================================
-
 
         private async Task LoadCurrencyRatesAsync()
         {
@@ -420,7 +398,6 @@ namespace Banking_system.Windows
                 StartMarqueeAnimation();
             });
 
-            // 2. Пробуємо отримати реальні дані від НБУ
             try
             {
                 using (HttpClient client = new HttpClient())
@@ -456,17 +433,14 @@ namespace Banking_system.Windows
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             if (TxtTicker != null && !string.IsNullOrEmpty(tickerText))
-                            {
                                 TxtTicker.Text = tickerText;
-                            }
                         });
                     }
                 }
             }
             catch (Exception)
             {
-                // Якщо інтернету немає, НБУ заблокував запит або виникла помилка — нічого не робимо.
-                // На екрані просто продовжить крутитися наш запасний текст.
+               
             }
         }
 
@@ -478,8 +452,8 @@ namespace Banking_system.Windows
             var animation = new System.Windows.Media.Animation.DoubleAnimation
             {
                 From = 900,       // З'являється справа за межами екрана
-                To = -1500,       // Їде далеко за лівий край
-                Duration = TimeSpan.FromSeconds(20), // Швидкість руху
+                To = -1000,       // Їде далеко за лівий край
+                Duration = TimeSpan.FromSeconds(30), // Швидкість руху
                 RepeatBehavior = System.Windows.Media.Animation.RepeatBehavior.Forever
             };
 

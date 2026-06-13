@@ -126,3 +126,4 @@ namespace Banking_system.Models
                 data: loanData
             );
          */
+
