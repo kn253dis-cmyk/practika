@@ -32,6 +32,7 @@ namespace Banking_system.Windows
                     // УВАГА: Якщо у вашій базі даних таблиця називається не Transactions, 
                     // або властивості транзакцій мають інші назви, зміни їх тут!
 
+
                 //using (var db = new Banking_system.DataBase.Database())
                 //{
                 //    // УВАГА: Якщо у вашій базі даних таблиця називається не Transactions, 
