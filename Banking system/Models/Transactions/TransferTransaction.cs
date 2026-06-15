@@ -33,7 +33,7 @@ namespace Banking_system.Models.Transactions
             _sourceCardNumber = sourceCardNumber;
             _targetCardNumber = targetCardNumber;
             _purpose = purpose;
-            _comment = string.Empty; // Ініціалізуємо, щоб уникнути помилки Nullable Reference
+            _comment = string.Empty; 
         }
 
         protected TransferTransaction() { }

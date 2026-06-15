@@ -63,55 +63,30 @@
                 <TextBlock Text="Категорії витрат у цьому місяці" FontSize="16" FontWeight="SemiBold" Foreground="White" Margin="0,0,0,15"/>
 
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="CategoriesPanel">
-                        <Grid Margin="0,0,0,15">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Background="#2E7D32" Width="40" Height="40" CornerRadius="10">
-                                <materialDesign:PackIcon Kind="Cart" Foreground="White" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="15,0" VerticalAlignment="Center">
-                                <TextBlock Text="Супермаркети" FontSize="15" Foreground="White"/>
-                                <TextBlock Text="25 транзакцій" FontSize="12" Foreground="#888"/>
-                            </StackPanel>
-                            <TextBlock Text="8 450.00 ₴" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Grid.Column="2"/>
-                        </Grid>
+                    <ItemsControl x:Name="CategoriesList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,0,0,15">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
 
-                        <Grid Margin="0,0,0,15">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Background="#E65100" Width="40" Height="40" CornerRadius="10">
-                                <materialDesign:PackIcon Kind="FoodForkDrink" Foreground="White" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="15,0" VerticalAlignment="Center">
-                                <TextBlock Text="Кафе та ресторани" FontSize="15" Foreground="White"/>
-                                <TextBlock Text="12 транзакцій" FontSize="12" Foreground="#888"/>
-                            </StackPanel>
-                            <TextBlock Text="3 200.50 ₴" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Grid.Column="2"/>
-                        </Grid>
+                                    <Border Background="{Binding ColorHex}" Width="40" Height="40" CornerRadius="10">
+                                        <materialDesign:PackIcon Kind="{Binding IconKind}" Foreground="White" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
 
-                        <Grid Margin="0,0,0,15">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Background="#1565C0" Width="40" Height="40" CornerRadius="10">
-                                <materialDesign:PackIcon Kind="PlayCircle" Foreground="White" Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="15,0" VerticalAlignment="Center">
-                                <TextBlock Text="Підписки та сервіси" FontSize="15" Foreground="White"/>
-                                <TextBlock Text="4 транзакції" FontSize="12" Foreground="#888"/>
-                            </StackPanel>
-                            <TextBlock Text="890.00 ₴" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Grid.Column="2"/>
-                        </Grid>
-                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="15,0" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Name}" FontSize="15" Foreground="White"/>
+                                        <TextBlock Text="{Binding CountText}" FontSize="12" Foreground="#888"/>
+                                    </StackPanel>
+
+                                    <TextBlock Text="{Binding TotalText}" FontSize="15" FontWeight="Bold" Foreground="White" VerticalAlignment="Center" Grid.Column="2"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                 </ScrollViewer>
             </StackPanel>
 
