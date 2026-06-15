@@ -546,8 +546,25 @@ namespace Banking_system.Windows
 
         private void BtnDeposit_Click(object sender, RoutedEventArgs e)
         {
+            // Перевіряємо, чи є обрана картка
+            if (_userCards == null || _userCards.Count == 0 || _currentCardIndex >= _userCards.Count) return;
 
+            string currentCardNum = _userCards[_currentCardIndex].GetCardNumber();
+
+            // Відкриваємо вікно та передаємо номер поточної картки у поле
+            Banking_system.Windows.DepositWindow depositForm = new Banking_system.Windows.DepositWindow();
+            depositForm.TxtCardNumber.Text = currentCardNum;
+            depositForm.Owner = this;
+            depositForm.ShowDialog();
+
+            // Оновлюємо дані інтерфейсу (включаючи новий баланс) після закриття вікна
+            using (var db = new Banking_system.DataBase.Database())
+            {
+                _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+                UpdateCardUI();
+            }
         }
+
         private void BtnStatistics_Click(object sender, RoutedEventArgs e)
         {
             // Перевіряємо, чи є взагалі картки

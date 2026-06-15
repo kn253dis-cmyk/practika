@@ -32,13 +32,6 @@ namespace Banking_system.DataBase
             optionsBuilder.ConfigureWarnings(w =>
         w.Ignore(RelationalEventId.PendingModelChangesWarning));
         }
-
-
-        // ====================================================================
-        // АКТИВНО: Локальне підключення до бази SQLite 
-        // ====================================================================
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -48,7 +41,7 @@ namespace Banking_system.DataBase
                 .HasDiscriminator<string>("CardType")
                 .HasValue<DebitCard>("Debit")
                 .HasValue<CreditCard>("Credit")
-                .HasValue<CurrencyCard>("Currency"); // Змінив з Unior на Currency
+                .HasValue<CurrencyCard>("Currency"); 
 
             // 2. Налаштування ієрархії для Транзакцій
             modelBuilder.Entity<AbstractTransaction>()
