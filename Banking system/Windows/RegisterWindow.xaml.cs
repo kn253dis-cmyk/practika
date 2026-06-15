@@ -1,5 +1,5 @@
 ﻿using Banking_system.Entity;
-using Banking_system.Models; 
+using Banking_system.Models;
 using System;
 using System.Linq;
 using System.Windows;
@@ -28,12 +28,11 @@ namespace Banking_system.Windows
         {
             string fullName = TxtFullName.Text.Trim();
             string phone = TxtPhone.Text.Trim();
-            string email = TxtEmail.Text.Trim(); 
+            string email = TxtEmail.Text.Trim();
             string ipn = TxtIpn.Text.Trim();
             string password = TxtPassword.Password;
             string confirmPassword = TxtConfirmPassword.Password;
 
-            
             if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(phone) || string.IsNullOrEmpty(email) ||
                 string.IsNullOrEmpty(ipn) || string.IsNullOrEmpty(password))
             {
@@ -62,23 +61,13 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-
-                //db.Database.Migrate();
                 if (db.Users.Any(u => u.Email == email || u.Ipn == ipn))
                 {
                     MessageBox.Show("Користувач з таким Email або ІПН вже існує!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
-                string? selectedCard = ((ComboBoxItem)CmbCardType.SelectedItem).Content.ToString();
-                AbstractCard? newCard = null;
-
-                if (selectedCard == "Дебетова") newCard = new DebitCard();
-                else if (selectedCard == "Кредитна") newCard = new CreditCard();
-                else if (selectedCard == "Юніорська") newCard = new CurrencyCard();
-
-                if (newCard == null) return;
-
+                // 1. Створюємо користувача та зберігаємо його в БД, щоб отримати ID
                 User newUser = new User
                 {
                     Surname = nameParts[0],
@@ -90,13 +79,57 @@ namespace Banking_system.Windows
                     Password = db.HashPassword(password)
                 };
 
-                // ВАЖЛИВО: Додаємо картку до колекції користувача
-                newUser.Cards.Add(newCard);
                 db.Users.Add(newUser);
-                db.SaveChanges();
+                db.SaveChanges(); // Тепер newUser.ID має реальне значення
 
-                Logger.AppendSystemLog(newUser.Email, $"Користувач успішно зареєструвався в системі. Створено картку: {newCard.CardNumber}");
-                MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newCard.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
+                string? selectedCard = ((ComboBoxItem)CmbCardType.SelectedItem).Content.ToString();
+                string createdCardNumber = "";
+                bool showDefaultSuccessMessage = true;
+
+                // 2. Логіка створення картки залежно від вибору
+                if (selectedCard == "Кредитна")
+                {
+                    // Відкриваємо вікно вибору кредиту, передаючи туди створеного користувача
+                    CreditPlanWindow creditWindow = new CreditPlanWindow(newUser);
+                    creditWindow.ShowDialog(); // Код зупиниться тут, поки вікно не закриється
+
+                    if (!creditWindow.IsCardCreated)
+                    {
+                        // Якщо користувач закрив вікно або відмовився від умов, створюємо дебетову картку
+                        DebitCard defaultCard = new DebitCard { UserId = newUser.ID };
+                        db.Cards.Add(defaultCard);
+                        db.SaveChanges();
+                        createdCardNumber = defaultCard.CardNumber;
+
+                        MessageBox.Show("Оформлення кредиту скасовано. Вам відкрито стандартну Дебетову картку.", "Інформація", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        // Кредит успішно створено (CreditPlanWindow вже показало своє повідомлення успіху)
+                        var creditCard = db.Cards.FirstOrDefault(c => c.UserId == newUser.ID);
+                        createdCardNumber = creditCard?.CardNumber ?? "Невідомо";
+                        showDefaultSuccessMessage = false; // Вимикаємо стандартне повідомлення, щоб не дублювати
+                    }
+                }
+                else
+                {
+                    // Логіка для Дебетової та Юніорської
+                    AbstractCard newCard;
+                    if (selectedCard == "Юніорська") newCard = new CurrencyCard { UserId = newUser.ID }; // Або JuniorCard
+                    else newCard = new DebitCard { UserId = newUser.ID };
+
+                    db.Cards.Add(newCard);
+                    db.SaveChanges();
+                    createdCardNumber = newCard.CardNumber;
+                }
+
+                Logger.AppendSystemLog(newUser.Email, $"Користувач успішно зареєструвався в системі. Створено картку: {createdCardNumber}");
+
+                if (showDefaultSuccessMessage)
+                {
+                    MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {createdCardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
                 this.Close();
             }
         }

@@ -23,53 +23,33 @@ namespace Banking_system.Models
 
         public override bool Withdraw(decimal amount)
         {
-            if (IsBlocked) return false; 
+            if (IsBlocked) return false;
             if (amount <= 0) return false;
 
 
             decimal currentDebt = Balance < 0 ? Math.Abs(Balance) : 0;
 
 
-            if (currentDebt + AccruedInterest + amount <= CreditLimit)
+            if (currentDebt + amount <= CreditLimit)
             {
-                Balance -= amount; 
-                Logger.Log($"З кредитної картки {CardNumber} знято {amount:C}. Баланс: {Balance:C}");
+                Balance -= amount;
+                Logger.Log($"З кредитки {CardNumber} знято {amount:C}. Баланс: {Balance:C}");
                 return true;
             }
 
-            return false; 
+            return false;
         }
-
 
         public override void Deposit(decimal amount)
         {
             if (amount <= 0) return;
 
-            // спочатку поповнення йде на погашення штрафів
-            if (AccruedInterest > 0)
-            {
-                if (amount >= AccruedInterest)
-                {
-                    amount -= AccruedInterest; 
-                    AccruedInterest = 0; 
-                }
-                else
-                {
-                    AccruedInterest -= amount; 
-                    amount = 0; 
-                }
-            }
+            base.Deposit(amount);
 
-
-            if (amount > 0)
+            if (Balance >= 0)
             {
-                base.Deposit(amount);
-            }
-
-            if (AccruedInterest == 0 && Balance >= 0)
-            {
-                IsBlocked = false; 
-                MissedPaymentsCount = 0; 
+                IsBlocked = false;
+                MissedPaymentsCount = 0;
                 DueDate = DateTime.Now.AddMonths(1); 
             }
         }
