@@ -5,7 +5,11 @@
         private AbstractCard _sourceCard = null!;
        
         protected WithdrawTransaction() { }
-        public WithdrawTransaction(AbstractCard sourceCard, decimal amount) : base(amount)=>_sourceCard = sourceCard;
+        public WithdrawTransaction(AbstractCard sourceCard, decimal amount, string targetCategory)
+             : base(amount, targetCategory, "Зняття коштів/Оплата")
+        {
+            _sourceCard = sourceCard;
+        }
         public override bool Execute()
         {
             using (var db = new Banking_system.DataBase.Database())
@@ -16,7 +20,6 @@
                 {
                     card.Operation(this);
                     db.SaveChanges();
-
                     return true;
                 }
                 return false;
