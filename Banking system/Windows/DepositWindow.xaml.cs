@@ -12,20 +12,51 @@ using System.Windows.Shapes;
 
 namespace Banking_system.Windows
 {
-    /// <summary>
-    /// Логика взаимодействия для DepositWindow.xaml
-    /// </summary>
     public partial class DepositWindow : Window
     {
         public DepositWindow()
         {
             InitializeComponent();
+            LoadOperationTypes();
         }
-        /* ЗРОБИ ВІКНО ДЛЯ ВНЕСЕННЯ КОШТІВ НА КАРТКУ. 
-         * МАЄ БУТИ ПОЛЕ ДЛЯ НОМЕРА КАРТИ ЯКУ ПОПОВНЮЄМО 
-         * МАЖ БУТИ ТИП ПОПОВНЕННЯ (З БАНКОМАТУ , ТЕРМІНАЛУ , ЗП , СТИПЕНДІЯ І Т.Д)
-         * МАЄ БУТИ ПОЛЕ ДЛЯ СУМИ ЯКУ ПОПОВНЮЄМО
-         * МАЄ БУТИ КНОПКА ЗНЯТИ ГРОШІ ЯКА ПРОСТО СПИСУЄ ГРОШІ(ІМІТУЮЧИ ЗНЯТТТЯ ГРОШЕЙ З БАНКОМАТУ)
-         */
+
+        private void LoadOperationTypes()
+        {
+            // Список типів поповнення/зняття
+            var types = new List<string> { "З банківської картки", "Через термінал", "Зарплата", "Стипендія", "Готівка" };
+            CmbOperationType.ItemsSource = types;
+        }
+
+        private void BtnDeposit_Click(object sender, RoutedEventArgs e)
+        {
+            // ТУТ ТВОЯ ЛОГІКА ПОПОВНЕННЯ (БАЗА ДАНИХ)
+            if (ValidateInput())
+            {
+                MessageBox.Show($"Ви успішно поповнили картку {TxtCardNumber.Text} на {TxtAmount.Text} грн\nТип: {CmbOperationType.Text}", "Успіх");
+                // TODO: Додати код оновлення балансу в БД
+            }
+        }
+
+        private void BtnWithdraw_Click(object sender, RoutedEventArgs e)
+        {
+            // ТУТ ТВОЯ ЛОГІКА ЗНЯТТЯ (ІМІТАЦІЯ БАНКОМАТУ)
+            if (ValidateInput())
+            {
+                MessageBox.Show($"Кошти ({TxtAmount.Text} грн) було успішно знято через {CmbOperationType.Text}!", "Банкомат");
+                // TODO: Додати код списання грошей в БД
+            }
+        }
+
+        private bool ValidateInput()
+        {
+            if (string.IsNullOrEmpty(TxtCardNumber.Text) || string.IsNullOrEmpty(TxtAmount.Text))
+            {
+                MessageBox.Show("Заповніть всі поля!", "Помилка");
+                return false;
+            }
+            return true;
+        }
+
+        private void BtnClose_Click(object sender, RoutedEventArgs e) => this.Close();
     }
 }
