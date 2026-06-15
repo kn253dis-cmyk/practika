@@ -11,49 +11,35 @@ namespace Banking_system.Service
     public class EmailService
     {
         private readonly string _templatesPath;
+        private readonly SmtpSettings _smtpSettings;
 
         public EmailService()
         {
             _templatesPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "HTMLTemplates", "email_templates.json");
+
+            
+            _smtpSettings = new SmtpSettings("mal4enko2000@gmail.com", "qkzqswykrmrcjffe");
         }
 
         public string PrepareReceiptHtml(string templateName, Dictionary<string, string> data)
         {
             if (!File.Exists(_templatesPath))
-            {
-                throw new FileNotFoundException("Файл з шаблонами квитанцій (email_templates.json) не знайдено.");
-            }
+                throw new FileNotFoundException("Файл з шаблонами квитанцій не знайдено.");
 
             string json = File.ReadAllText(_templatesPath);
-
-            // Налаштування для безпечного та гнучкого читання JSON-файлу
-            var jsonOptions = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-                AllowTrailingCommas = true
-            };
-
-            var templates = JsonSerializer.Deserialize<Dictionary<string, string>>(json, jsonOptions);
+            var templates = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
 
             if (templates == null || !templates.ContainsKey(templateName))
-            {
-                throw new Exception($"Шаблон з назвою '{templateName}' не знайдено у файлі JSON.");
-            }
+                throw new Exception($"Шаблон '{templateName}' не знайдено.");
 
             string html = templates[templateName];
 
-            // Створюємо копію словника з ігноруванням регістру символів (сума/Сума/Amount/amount)
-            var enrichedData = new Dictionary<string, string>(data, StringComparer.OrdinalIgnoreCase);
-
-            // Автоматично додаємо назву банку з конфігурації SMTP, якщо її не передали в логах
-            if (!enrichedData.ContainsKey("BankName"))
+            if (!data.ContainsKey("BankName"))
             {
-                var settings = SmtpSettings.Load();
-                enrichedData["BankName"] = settings.SenderName;
+                data["BankName"] = _smtpSettings.SenderName;
             }
 
-            // Почергово замінюємо всі знайдені плейсхолдери [Ключ] на реальні значення
-            foreach (var item in enrichedData)
+            foreach (var item in data)
             {
                 html = html.Replace($"[{item.Key}]", item.Value);
             }
@@ -64,31 +50,26 @@ namespace Banking_system.Service
         public async Task SendEmailAsync(string targetEmail, string subject, string htmlContent)
         {
             if (string.IsNullOrWhiteSpace(targetEmail))
-            {
                 throw new ArgumentException("Електронна пошта отримувача не вказана.");
-            }
 
-            var settings = SmtpSettings.Load();
-
-            if (string.IsNullOrWhiteSpace(settings.User) || string.IsNullOrWhiteSpace(settings.Password))
-            {
-                throw new InvalidOperationException("Налаштування SMTP не заповнені. Вкажіть пошту та пароль.");
-            }
+            if (string.IsNullOrWhiteSpace(_smtpSettings.Password))
+                throw new InvalidOperationException("Пароль SMTP не вказано у конструкторі EmailService.");
 
             try
             {
-                using (var client = new SmtpClient(settings.Host, settings.Port))
+                using (var client = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port))
                 {
-                    client.EnableSsl = settings.UseSsl;
-                    client.Credentials = new NetworkCredential(settings.User, settings.Password);
+                    client.EnableSsl = _smtpSettings.UseSsl;
+                    client.Credentials = new NetworkCredential(_smtpSettings.User, _smtpSettings.Password);
 
                     var mailMessage = new MailMessage
                     {
-                        From = new MailAddress(settings.User, settings.SenderName),
+                        From = new MailAddress(_smtpSettings.User, _smtpSettings.SenderName),
                         Subject = subject,
                         Body = htmlContent,
                         IsBodyHtml = true
                     };
+
                     mailMessage.To.Add(targetEmail);
 
                     await client.SendMailAsync(mailMessage);

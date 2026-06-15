@@ -105,6 +105,11 @@
                                         <TextBlock x:Name="TxtBalance" Text="15 420.50" FontSize="42" FontWeight="Bold" Foreground="White"/>
                                         <TextBlock Text=" ₴" FontSize="36" FontWeight="Bold" Foreground="#BDBDBD" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
                                     </StackPanel>
+
+                                    <StackPanel x:Name="PanelCreditLimit" Orientation="Horizontal" Visibility="Collapsed" Margin="0,5,0,0">
+                                        <TextBlock Text="Кредитний ліміт: " FontSize="14" Foreground="#A0A0A0"/>
+                                        <TextBlock x:Name="TxtCardCreditLimit" Text="50 000 ₴" FontSize="14" FontWeight="Bold" Foreground="#FFD700"/>
+                                    </StackPanel>
                                 </StackPanel>
 
                                 <Grid Grid.Row="2" VerticalAlignment="Bottom">

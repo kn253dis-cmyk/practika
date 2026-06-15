@@ -14,10 +14,9 @@ namespace Banking_system.Views
         {
             InitializeComponent();
             _senderCardNumber = senderCardNumber;
-
-
             TxtSenderCard.Text = _senderCardNumber;
         }
+
         private void BtnSubmitTransfer_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -38,36 +37,29 @@ namespace Banking_system.Views
                     return;
                 }
 
-                string fullPurpose = $"{purposeCode}. Коментар: {comment}";
-                bool isSuccess = false;
+                // Визначаємо призначення платежу
+                string? selectedPurpose = CmbPurposeCode.SelectedItem is ComboBoxItem item
+                    ? item.Content.ToString()
+                    : purposeCode;
 
-                if (string.IsNullOrWhiteSpace(comment) || string.IsNullOrWhiteSpace(purposeCode))
-                {
-                    var transfer = new Banking_system.Models.Transactions.TransferTransaction(
-                        _senderCardNumber, receiverCard, amount, purposeCode, string.Empty, string.Empty);
+                string fullPurpose = $"{selectedPurpose}. Коментар: {comment}";
 
-                    isSuccess = transfer.Execute();
-                }
-                else
-                {
-                    string? selectedPurpose = CmbPurposeCode.SelectedItem is ComboBoxItem item
-                        ? item.Content.ToString()
-                        : purposeCode;
+                // Створюємо транзакцію з правильними 5 параметрами
+                var transfer = new Banking_system.Models.Transactions.TransferTransaction(
+                    _senderCardNumber, receiverCard, amount, selectedPurpose ?? string.Empty, comment);
 
-                    var transfer = new Banking_system.Models.Transactions.TransferTransaction(
-                        _senderCardNumber, receiverCard, amount, fullPurpose, selectedPurpose, comment);
+                bool isSuccess = transfer.Execute();
 
-                    isSuccess = transfer.Execute();
-                }
-
-                // 4. Обробка результату
+                // Обробка результату
                 if (isSuccess)
                 {
                     MessageBox.Show($"Переказ на суму {amount} ₴ успішно виконано!\nПризначення: {fullPurpose}", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
                     Window.GetWindow(this)?.Close();
                 }
                 else
+                {
                     MessageBox.Show("Не вдалося виконати переказ. Перевірте баланс та номер картки отримувача.", "Помилка переказу", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
