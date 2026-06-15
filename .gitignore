@@ -1,5 +1,3 @@
-# smtp_settings
-smtp_settings.json
 # build output
 bin/
 obj/

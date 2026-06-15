@@ -26,10 +26,18 @@ namespace Banking_system.Windows
         {
             try
             {
+
+                using (var db = new Banking_system.DataBase.Database())
+                {
+                    // УВАГА: Якщо у вашій базі даних таблиця називається не Transactions, 
+                    // або властивості транзакцій мають інші назви, зміни їх тут!
+
+
                 //using (var db = new Banking_system.DataBase.Database())
                 //{
                 //    // УВАГА: Якщо у вашій базі даних таблиця називається не Transactions, 
                 //    // або властивості транзакцій мають інші назви, зміни їх тут!
+
 
                 //    /* ТИМЧАСОВО ЗАКОМЕНТОВАНО (розкоментуй, коли таблиця транзакцій буде готова):
                     
@@ -53,7 +61,7 @@ namespace Banking_system.Windows
                 //        ExpenseProgress.Value = (double)((totalExpense / totalTurnover) * 100);
                 //    }
                 //    */
-                //}
+                }
             }
             catch (Exception ex)
             {

@@ -1,9 +1,12 @@
-﻿using System.Windows;
+﻿using System;
+using System.Linq;
+using System.Windows;
 using Banking_system.Entity;
+using Banking_system.Models;
+using Banking_system.DataBase;
 
 namespace Banking_system.Service
 {
-  
     public enum UserRole
     {
         Client,
@@ -36,6 +39,8 @@ namespace Banking_system.Service
             else
             {
                 CurrentRole = UserRole.Client;
+
+                CheckAndProcessCredits(user.ID);
             }
         }
 
@@ -46,7 +51,6 @@ namespace Banking_system.Service
         }
 
         // СПЕЦІАЛЬНИЙ МЕТОД: Керування видимістю кнопок/сторінок
-
         public static void RequireAdminAccess(UIElement uiElement)
         {
             if (IsAdmin)
@@ -58,35 +62,49 @@ namespace Banking_system.Service
                 uiElement.Visibility = Visibility.Collapsed; // Повністю ховаємо від клієнта
             }
         }
+
+        private static void CheckAndProcessCredits(int userId)
+        {
+            try
+            {
+                using (var db = new Database())
+                {
+                    bool changesMade = false;
+
+                    var creditCards = db.Cards.OfType<CreditCard>().Where(c => c.UserId == userId).ToList();
+
+                    foreach (var card in creditCards)
+                    {
+                        while (card.Balance < 0 && DateTime.Now > card.DueDate)
+                        {
+                            decimal debtAmount = Math.Abs(card.Balance);
+                            decimal penalty = debtAmount * (card.InterestRate / 100m);
+
+                            card.AccruedInterest += penalty;
+
+                            card.MissedPaymentsCount++;
+
+                            if (card.MissedPaymentsCount >= 2)
+                            {
+                                card.IsBlocked = true;
+                            }
+
+                            card.DueDate = card.DueDate.AddMonths(1);
+
+                            changesMade = true;
+                        }
+                    }
+
+                    if (changesMade)
+                    {
+                        db.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Помилка під час автоматичної перевірки кредитів: {ex.Message}");
+            }
+        }
     }
 }
-
-
-
-/*
-ПОТРІБНО ДОДАТИ ДО СТОРІНКИ АВТОРИЗАЦІЇ
-if (foundUser != null && foundUser.Password == db.HashPassword(TxtPassword.Password))
-{
-    // ЗАПАМ'ЯТОВУЄМО КОРИСТУВАЧА У СЕСІЇ!
-    SessionManager.Login(foundUser);
-    
-    // Відкриваємо головне вікно програми..
-}
- 
-
- ЩОБ ДІЗНАТИСЬ ПОТОЧНОГО КОРИСТУВАЧА
- string currentEmail = SessionManager.CurrentUser.Email;
- string currentName = SessionManager.CurrentUser.Name;
- 
-
-
-ДЛЯ ПРИХОВУВАННЯ КНОПОК АДМІНА ВІД КЛІЄНТА
-public ГОЛОВНА СТОРІНКА()
-{
-    InitializeComponent();
-
-    // Якщо увійшов звичайний клієнт — кнопка просто зникне.
-    // Якщо увійшов "admin@bank.com" — кнопка буде видимою.
-    SessionManager.RequireAdminAccess(BtnAdminPanel);
-}
- */
