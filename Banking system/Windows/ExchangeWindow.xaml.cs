@@ -15,7 +15,6 @@ namespace Banking_system.Windows
         public ExchangeWindow()
         {
             InitializeComponent();
-            // Запускаємо завантаження даних асинхронно при відкритті вікна
             _ = LoadExchangeRatesAsync();
         }
 
@@ -35,7 +34,7 @@ namespace Banking_system.Windows
                     {
                         // Відбираємо тільки найважливіші валюти
                         var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP", "XAU", "XAG" };
-                        var filteredRates = allRates.Where(rate => popularCodes.Contains(rate.cc)).ToList();
+                        var filteredRates = allRates.Where(rate => rate.cc != null && popularCodes.Contains(rate.cc)).ToList();
 
                         // Передаємо ці дані прямо в нашу таблицю
                         CurrencyGrid.ItemsSource = filteredRates;

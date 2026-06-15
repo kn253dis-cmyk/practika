@@ -57,8 +57,13 @@ namespace Banking_system.Windows
         private void SelectPlan(MaterialDesignThemes.Wpf.Card selectedCard, int limit, string name, decimal rate, int months)
         {
             CardMicro.BorderThickness = new Thickness(0);
+            CardMicro.BorderBrush = Brushes.Transparent;
+
             CardStandard.BorderThickness = new Thickness(0);
+            CardStandard.BorderBrush = Brushes.Transparent;
+
             CardPremium.BorderThickness = new Thickness(0);
+            CardPremium.BorderBrush = Brushes.Transparent;
 
             selectedCard.BorderThickness = new Thickness(3);
 
