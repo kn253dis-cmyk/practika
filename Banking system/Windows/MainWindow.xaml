@@ -168,7 +168,8 @@
                                             <Separator Background="#334155" Margin="10,0,10,5"/>
                                             <Button Content="💳 Дебетова картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateDebit_Click"/>
                                             <Button Content="🔥 Кредитна картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateCredit_Click"/>
-                                            <Button Content="🌱 Картка Юніора" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateJunior_Click"/>
+                                            <!-- ЗАМІНЕНО НА ВАЛЮТНУ (назву події BtnCreateJunior_Click залишаємо, щоб не ламати C# код) -->
+                                            <Button Content="💵 Валютна картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateJunior_Click"/>
                                         </StackPanel>
                                     </materialDesign:PopupBox>
                                     <TextBlock Text="Відкрити нову картку" FontSize="16" FontWeight="SemiBold" Foreground="White" Margin="0,10,0,0" HorizontalAlignment="Center"/>

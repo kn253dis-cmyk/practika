@@ -115,8 +115,11 @@ namespace Banking_system.Windows
                 {
                     // Логіка для Дебетової та Юніорської
                     AbstractCard newCard;
-                    if (selectedCard == "Юніорська") newCard = new CurrencyCard { UserId = newUser.ID }; // Або JuniorCard
-                    else newCard = new DebitCard { UserId = newUser.ID };
+                 
+                    if (selectedCard == "Валютна")
+                        newCard = new CurrencyCard { UserId = newUser.ID };
+                    else
+                        newCard = new DebitCard { UserId = newUser.ID };
 
                     db.Cards.Add(newCard);
                     db.SaveChanges();
