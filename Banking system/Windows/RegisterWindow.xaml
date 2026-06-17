@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="RegisterWindow" Height="700" Width="450"
+        Title="RegisterWindow" Height="750" Width="450"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -42,6 +42,39 @@
 
                     <TextBox x:Name="TxtIpn" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="ІПН" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
 
+                    <DatePicker x:Name="DpDateOfBirth" Height="50" Margin="0,0,0,10" FontSize="15" VerticalContentAlignment="Center" />
+
+                    <Border BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Background="#1A2235" Margin="0,0,0,10" Height="50">
+                        <ComboBox x:Name="CmbGender" Foreground="White" Background="Transparent" BorderThickness="0" FontSize="15" Padding="15,13" VerticalContentAlignment="Center">
+                            <ComboBox.Template>
+                                <ControlTemplate TargetType="ComboBox">
+                                    <Grid>
+                                        <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
+                                            <ToggleButton.Template>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Grid Background="Transparent">
+                                                        <materialDesign:PackIcon Kind="ChevronDown" Foreground="#BDBDBD" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </ToggleButton.Template>
+                                        </ToggleButton>
+                                        <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" Margin="15,0,30,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
+                                            <Border x:Name="DropDownBorder" Background="#1A2235" BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Margin="0,2,0,0" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                                <ScrollViewer SnapsToDevicePixels="True">
+                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                                </ScrollViewer>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
+                                </ControlTemplate>
+                            </ComboBox.Template>
+                            <ComboBoxItem Content="Оберіть стать..." IsSelected="True" Foreground="#BDBDBD" Background="#1A2235" Padding="15,10" IsEnabled="False"/>
+                            <ComboBoxItem Content="Чоловіча" Foreground="White" Background="#1A2235" Padding="15,10"/>
+                            <ComboBoxItem Content="Жіноча" Foreground="White" Background="#1A2235" Padding="15,10"/>
+                        </ComboBox>
+                    </Border>
+
                     <Border BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Background="#1A2235" Margin="0,0,0,10" Height="50">
                         <ComboBox x:Name="CmbCardType" Foreground="White" Background="Transparent" BorderThickness="0" FontSize="15" Padding="15,13" VerticalContentAlignment="Center">
                             <ComboBox.Template>
@@ -56,9 +89,7 @@
                                                 </ControlTemplate>
                                             </ToggleButton.Template>
                                         </ToggleButton>
-
                                         <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" Margin="15,0,30,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-
                                         <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
                                             <Border x:Name="DropDownBorder" Background="#1A2235" BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Margin="0,2,0,0" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
                                                 <ScrollViewer SnapsToDevicePixels="True">
@@ -69,7 +100,6 @@
                                     </Grid>
                                 </ControlTemplate>
                             </ComboBox.Template>
-
                             <ComboBoxItem Content="Дебетова" IsSelected="True" Foreground="White" Background="#1A2235" Padding="15,10"/>
                             <ComboBoxItem Content="Кредитна" Foreground="White" Background="#1A2235" Padding="15,10"/>
                             <ComboBoxItem Content="Юніорська" Foreground="White" Background="#1A2235" Padding="15,10"/>
