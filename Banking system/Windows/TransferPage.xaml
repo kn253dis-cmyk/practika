@@ -5,106 +5,87 @@
       Title="Переказ коштів">
 
     <Page.Background>
-        <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-            <GradientStop Color="#1A1A2E" Offset="0.0" />
-            <GradientStop Color="#16213E" Offset="0.5" />
-            <GradientStop Color="#0F3460" Offset="1.0" />
-        </LinearGradientBrush>
+        <SolidColorBrush Color="#0F172A"/>
     </Page.Background>
 
     <Grid>
-        <materialDesign:Card UniformCornerRadius="20" Background="#1A2235" 
-                             materialDesign:ElevationAssist.Elevation="Dp8" 
-                             VerticalAlignment="Center" HorizontalAlignment="Center"
-                             Width="450" Padding="20">
+        <Border Background="#1E293B" CornerRadius="25" BorderBrush="#334155" BorderThickness="1" 
+                VerticalAlignment="Center" HorizontalAlignment="Center" Width="460" Padding="30,35">
             <StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,25">
-                    <materialDesign:PackIcon Kind="SwapHorizontalCircle" Width="35" Height="35" Foreground="White" VerticalAlignment="Center"/>
-                    <TextBlock Text="Новий переказ" FontSize="24" FontWeight="Bold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30">
+                    <Border Background="#3B82F6" Width="45" Height="45" CornerRadius="15" Margin="0,0,15,0">
+                        <materialDesign:PackIcon Kind="SwapHorizontal" Width="30" Height="30" Foreground="#0F172A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Переказ коштів" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Швидко та безпечно" FontSize="13" Foreground="#94A3B8"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <TextBox x:Name="TxtSenderCard"
-                         Height="55"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         materialDesign:HintAssist.Hint="Ваша картка (Відправник)"
-                         materialDesign:HintAssist.Background="#1A2235"
-                         materialDesign:HintAssist.Foreground="#BDBDBD"
-                         materialDesign:TextFieldAssist.TextFieldCornerRadius="10"
-                         materialDesign:HintAssist.HintPaddingBrush="#1A2235"
-                         materialDesign:TextFieldAssist.UnderlineBrush="White" 
-                         Padding="15,0,0,0"
-                         Foreground="White" BorderBrush="#BDBDBD" CaretBrush="White" FontSize="16" Margin="0,0,0,15" IsReadOnly="True"/>
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" Padding="15,0"
+                         VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Картка відправника"
+                         materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
+                         materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                         materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                         materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="CreditCardOutline"
+                         Foreground="#CBD5E1" CaretBrush="White" FontSize="16" IsReadOnly="True" Margin="0,0,0,10"/>
+
+                <materialDesign:PackIcon Kind="ArrowDown" Foreground="#334155" Width="24" Height="24" HorizontalAlignment="Center" Margin="0,0,0,10"/>
 
                 <TextBox x:Name="TxtReceiverCard"
-                         Height="55"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         materialDesign:HintAssist.Hint="Номер картки отримувача"
-                         materialDesign:HintAssist.Background="#1A2235"
-                         materialDesign:HintAssist.Foreground="#BDBDBD"
-                         materialDesign:TextFieldAssist.TextFieldCornerRadius="10"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" Padding="15,0"
+                         VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Номер картки отримувача"
+                         materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
+                         materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                         materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                         materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="AccountCreditCardOutline"
                          materialDesign:TextFieldAssist.HasClearButton="True"
-                         materialDesign:HintAssist.HintPaddingBrush="#1A2235"
-                         materialDesign:TextFieldAssist.UnderlineBrush="White" 
-                         Padding="15,0,0,0"
-                         Foreground="White" BorderBrush="#BDBDBD" CaretBrush="White" FontSize="16" Margin="0,0,0,15" MaxLength="19"/>
+                         Foreground="White" CaretBrush="White" FontSize="16" MaxLength="19" Margin="0,0,0,20"/>
 
                 <TextBox x:Name="TxtAmount"
-                         Height="55"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                         materialDesign:HintAssist.Hint="Сума переказу (₴)"
-                         materialDesign:HintAssist.Background="#1A2235"
-                         materialDesign:HintAssist.Foreground="#BDBDBD"
-                         materialDesign:TextFieldAssist.TextFieldCornerRadius="10"
-                         materialDesign:HintAssist.HintPaddingBrush="#1A2235"
-                         materialDesign:TextFieldAssist.UnderlineBrush="White" 
-                         Padding="15,0,0,0"
-                         Foreground="White" BorderBrush="#BDBDBD" CaretBrush="White" FontSize="16" Margin="0,0,0,15"/>
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="60" Padding="15,0"
+                         VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Сума переказу (₴)"
+                         materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
+                         materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                         materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#3B82F6" BorderThickness="2"
+                         materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="CashFast"
+                         Foreground="#38BDF8" FontWeight="Bold" CaretBrush="#38BDF8" FontSize="20" Margin="0,0,0,20"/>
 
                 <ComboBox x:Name="CmbPurposeCode"
-                          Height="55"
-                          Style="{StaticResource MaterialDesignOutlinedComboBox}"
-                          materialDesign:HintAssist.Hint="Код призначення платежу"
-                          materialDesign:HintAssist.Background="#1A2235"
-                          materialDesign:HintAssist.Foreground="#BDBDBD"
-                          materialDesign:TextFieldAssist.TextFieldCornerRadius="10"
-                          materialDesign:HintAssist.HintPaddingBrush="#1A2235"
-                          materialDesign:TextFieldAssist.UnderlineBrush="White" 
-                          Padding="15,0,0,0"
-                          Foreground="White" BorderBrush="#BDBDBD" FontSize="16" Margin="0,0,0,15">
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55" Padding="15,0"
+                          VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Код призначення платежу"
+                          materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
+                          materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                          materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                          Foreground="White" FontSize="15" Margin="0,0,0,20">
                     <ComboBox.Resources>
-                        <Style TargetType="ComboBoxItem">
-                            <Setter Property="Background" Value="#1A2235"/>
-                            <Setter Property="Foreground" Value="White"/>
-                        </Style>
+                        <SolidColorBrush x:Key="MaterialDesignPaper" Color="#1E293B"/>
                     </ComboBox.Resources>
-                    <ComboBoxItem Content="1020 — Переказ особистих коштів" IsSelected="True"/>
-                    <ComboBoxItem Content="1030 — Оплата послуг"/>
-                    <ComboBoxItem Content="1040 — Оплата товарів"/>
-                    <ComboBoxItem Content="1010 — Благодійний внесок"/>
-                    <ComboBoxItem Content="1050 — Погашення кредиту"/>
-                    <ComboBoxItem Content="1090 — Інше призначення"/>
+                    <ComboBoxItem Content="1020 — Переказ особистих коштів" IsSelected="True" Foreground="White"/>
+                    <ComboBoxItem Content="1030 — Оплата послуг" Foreground="White"/>
+                    <ComboBoxItem Content="1040 — Оплата товарів" Foreground="White"/>
+                    <ComboBoxItem Content="1010 — Благодійний внесок" Foreground="White"/>
+                    <ComboBoxItem Content="1050 — Погашення кредиту" Foreground="White"/>
+                    <ComboBoxItem Content="1090 — Інше призначення" Foreground="White"/>
                 </ComboBox>
 
                 <TextBox x:Name="TxtComment"
-                         Height="80"
-                         TextWrapping="Wrap"
-                         VerticalContentAlignment="Top"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="80" Padding="15,12"
+                         TextWrapping="Wrap" VerticalContentAlignment="Top"
                          materialDesign:HintAssist.Hint="Коментар до платежу (необов'язково)"
-                         materialDesign:HintAssist.Background="#1A2235"
-                         materialDesign:HintAssist.Foreground="#BDBDBD"
-                         materialDesign:TextFieldAssist.TextFieldCornerRadius="10"
+                         materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
+                         materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                         materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
                          materialDesign:TextFieldAssist.HasClearButton="True"
-                         materialDesign:HintAssist.HintPaddingBrush="#1A2235"
-                         materialDesign:TextFieldAssist.UnderlineBrush="White" 
-                         Padding="15,15,35,15"
-                         Foreground="White" BorderBrush="#BDBDBD" CaretBrush="White" FontSize="16" Margin="0,0,0,25" MaxLength="200"/>
+                         Foreground="White" CaretBrush="White" FontSize="15" MaxLength="200" Margin="0,0,0,30"/>
 
-                <Button x:Name="BtnSubmitTransfer" Content="ПЕРЕКАЗАТИ" Height="50" FontSize="16" FontWeight="Bold"
-                        Background="#0F3460" BorderThickness="0" materialDesign:ButtonAssist.CornerRadius="15" Click="BtnSubmitTransfer_Click"/>
+                <Button x:Name="BtnSubmitTransfer" Content="НАДІСЛАТИ КОШТИ" Height="55" FontSize="16" FontWeight="Bold"
+                        Background="#3B82F6" BorderThickness="0" Foreground="White" 
+                        materialDesign:ButtonAssist.CornerRadius="12" Click="BtnSubmitTransfer_Click"/>
 
             </StackPanel>
-        </materialDesign:Card>
+        </Border>
     </Grid>
 </Page>
