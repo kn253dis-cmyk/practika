@@ -2,37 +2,57 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Операції з карткою" Height="500" Width="400"
+        Title="Операції з карткою" Height="580" Width="420"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent">
 
-    <Border CornerRadius="20" Background="#141E30" BorderBrush="#38BDF8" BorderThickness="1" Padding="20">
+    <Border CornerRadius="25" Background="#1E293B" BorderBrush="#334155" BorderThickness="1" Padding="30">
         <StackPanel>
-            <TextBlock Text="Операції з карткою" FontSize="20" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30">
+                <materialDesign:PackIcon Kind="WalletOutline" Width="30" Height="30" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                <TextBlock Text="Операції з карткою" FontSize="20" FontWeight="Bold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            </StackPanel>
 
-            <TextBox x:Name="TxtCardNumber" materialDesign:HintAssist.Hint="Номер картки (16 цифр)" 
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="White" 
-                     Margin="0,10" InputScope="Number"/>
+            <TextBox x:Name="TxtCardNumber" 
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" Padding="15,0"
+                     VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Номер картки"
+                     materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                     materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                     materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="CreditCardOutline"
+                     Foreground="White" FontSize="15" Margin="0,0,0,15" IsReadOnly="True"/>
 
-            <ComboBox x:Name="CmbOperationType" materialDesign:HintAssist.Hint="Тип операції" 
-                      Style="{StaticResource MaterialDesignFloatingHintComboBox}" Foreground="White" 
-                      Margin="0,10"/>
+            <ComboBox x:Name="CmbOperationType" 
+                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55" Padding="15,0"
+                      VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Тип операції"
+                      materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                      materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                      Foreground="White" FontSize="15" Margin="0,0,0,15">
+                <ComboBox.Resources>
+                    <SolidColorBrush x:Key="MaterialDesignPaper" Color="#1E293B"/>
+                </ComboBox.Resources>
+            </ComboBox>
 
-            <TextBox x:Name="TxtAmount" materialDesign:HintAssist.Hint="Сума (грн)" 
-                     Style="{StaticResource MaterialDesignFloatingHintTextBox}" Foreground="White" 
-                     Margin="0,10" InputScope="Number"/>
+            <TextBox x:Name="TxtAmount" 
+                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" Padding="15,0"
+                     VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Сума (грн)"
+                     materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                     materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                     materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="Cash"
+                     Foreground="#38BDF8" FontWeight="Bold" FontSize="16" Margin="0,0,0,25" InputScope="Number"/>
 
-            <StackPanel Orientation="Vertical" Margin="0,30,0,0">
+            <StackPanel Orientation="Vertical">
                 <Button x:Name="BtnDeposit" Content="ПОПОВНИТИ" Click="BtnDeposit_Click" 
-                        Style="{StaticResource MaterialDesignRaisedButton}" Background="#388E3C" BorderThickness="0" Margin="0,0,0,10"/>
+                        Height="50" FontSize="15" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="12" 
+                        Background="#10B981" BorderThickness="0" Margin="0,0,0,12"/>
 
                 <Button x:Name="BtnWithdraw" Content="ЗНЯТИ ГРОШІ" Click="BtnWithdraw_Click" 
-                        Style="{StaticResource MaterialDesignRaisedButton}" Background="#D32F2F" BorderThickness="0" Margin="0,0,0,10"/>
+                        Height="50" FontSize="15" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="12" 
+                        Background="#EF4444" BorderThickness="0" Margin="0,0,0,12"/>
 
                 <Button Content="ЗАКРИТИ" Click="BtnClose_Click" 
-                        Style="{StaticResource MaterialDesignFlatButton}" Foreground="#888"/>
+                        Style="{StaticResource MaterialDesignFlatButton}" Foreground="#94A3B8" Margin="0,10,0,0"/>
             </StackPanel>
         </StackPanel>
     </Border>

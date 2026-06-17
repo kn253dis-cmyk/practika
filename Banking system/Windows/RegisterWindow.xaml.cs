@@ -240,8 +240,11 @@ namespace Banking_system.Windows
                 {
                     // Логіка для Дебетової та Валютної
                     AbstractCard newCard;
-                    if (selectedCard == "Валютна") newCard = new CurrencyCard { UserId = newUser.ID }; 
-                    else newCard = new DebitCard { UserId = newUser.ID };
+                 
+                    if (selectedCard == "Валютна")
+                        newCard = new CurrencyCard { UserId = newUser.ID };
+                    else
+                        newCard = new DebitCard { UserId = newUser.ID };
 
                     db.Cards.Add(newCard);
                     db.SaveChanges();
