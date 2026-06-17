@@ -40,7 +40,7 @@ namespace Banking_system.Windows
             }
             catch (FormatException)
             {
-                errorMessage = "Неправильний формат пошти. Переконайтеся, що є символ '@' та вказано правильний домен (наприклад, user@gmail.com).";
+                errorMessage = "Неправильний формат пошти. Переконайтеся, що є символ '@' та вказано правильний домен наприклад: user@gmail.com";
                 return false;
             }
         }
@@ -70,7 +70,7 @@ namespace Banking_system.Windows
                 return true;
             }
 
-            errorMessage = "Введіть коректний український номер телефону (наприклад: +380991234567, 380991234567 або 0991234567).";
+            errorMessage = "Введіть коректний український номер телефону наприклад: +380991234567";
             return false;
         }
 
@@ -98,7 +98,7 @@ namespace Banking_system.Windows
 
             if (expectedControlDigit != actualControlDigit)
             {
-                errorMessage = "ІПН не пройшов математичну перевірку. Схоже, це вигаданий набір цифр.";
+                errorMessage = "ІПН не пройшов математичну перевірку. Схоже, це вигаданий набір цифр!";
                 return false;
             }
 
@@ -111,7 +111,7 @@ namespace Banking_system.Windows
                 // Порівнюємо розшифровану дату з введеними даними
                 if (expectedDate.Date != dateOfBirth.Date)
                 {
-                    errorMessage = $"ІПН належить іншій людині (закодована дата народження {expectedDate.ToShortDateString()} не співпадає з вашою).";
+                    errorMessage = $"ІПН належить іншій людині не співпадає з вашою!.";
                     return false;
                 }
             }
@@ -122,7 +122,7 @@ namespace Banking_system.Windows
 
             if (isIpnMale != isMale)
             {
-                errorMessage = "ІПН належить іншій людині (закодована стать не співпадає).";
+                errorMessage = "ІПН належить іншій людині не співпадає з вашою!.";
                 return false;
             }
 
@@ -144,7 +144,7 @@ namespace Banking_system.Windows
             if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(phone) ||
                 string.IsNullOrEmpty(email) || string.IsNullOrEmpty(ipn) ||
                 string.IsNullOrEmpty(password) || DpDateOfBirth.SelectedDate == null ||
-                selectedGender == "Оберіть стать...")
+                selectedGender == "Оберіть стать")
             {
                 MessageBox.Show("Будь ласка, заповніть усі поля, оберіть дату народження та стать!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -164,7 +164,7 @@ namespace Banking_system.Windows
 
             if (!IsValidEmail(email, out string emailError))
             {
-                MessageBox.Show(emailError, "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(emailError, "Помилка пошти", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
