@@ -21,6 +21,7 @@
                      materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
                      materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
                      materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="CreditCardOutline"
+                     materialDesign:HintAssist.HintPaddingBrush="#1E293B"
                      Foreground="White" FontSize="15" Margin="0,0,0,15" IsReadOnly="True"/>
 
             <ComboBox x:Name="CmbOperationType" 
@@ -28,6 +29,7 @@
                       VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Тип операції"
                       materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
                       materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                      materialDesign:HintAssist.HintPaddingBrush="#1E293B"
                       Foreground="White" FontSize="15" Margin="0,0,0,15">
                 <ComboBox.Resources>
                     <SolidColorBrush x:Key="MaterialDesignPaper" Color="#1E293B"/>
@@ -39,6 +41,7 @@
                      VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Сума (грн)"
                      materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
                      materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                     materialDesign:HintAssist.HintPaddingBrush="#1E293B"
                      materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="Cash"
                      Foreground="#38BDF8" FontWeight="Bold" FontSize="16" Margin="0,0,0,25" InputScope="Number"/>
 

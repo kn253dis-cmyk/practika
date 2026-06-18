@@ -34,6 +34,10 @@
                 </Grid>
             </Border>
 
+            <Button Grid.Row="2" Content="ЗАКРИТИ" Width="120" Height="40" 
+                    Style="{StaticResource MaterialDesignFlatDarkBgButton}" 
+                    Background="#a80907" Foreground="White"
+                    Click="BtnClose_Click"/>
             <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Margin="15,15,15,5">
                 <ItemsControl x:Name="CurrencyGrid">
                     <ItemsControl.ItemTemplate>
@@ -46,17 +50,23 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Border x:Name="BadgeBorder" Width="46" Height="46" CornerRadius="23" Background="#252B40">
+                                    <Border x:Name="BadgeBorder" Grid.Column="0" Width="46" Height="46" CornerRadius="23" Background="#252B40" VerticalAlignment="Center">
                                         <TextBlock x:Name="BadgeText" Text="{Binding cc}" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
 
-                                    <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding txt}" Foreground="White" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" MaxWidth="180"/>
-                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                    <Grid Grid.Column="1" Margin="15,0,10,0" VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Text="{Binding txt}" Foreground="White" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+
+                                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,2,0,0">
                                             <TextBlock Text="1 " Foreground="#808090" FontSize="12"/>
                                             <TextBlock Text="{Binding cc}" Foreground="#38BDF8" FontSize="12" FontWeight="Bold"/>
                                         </StackPanel>
-                                    </StackPanel>
+                                    </Grid>
 
                                     <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
                                         <TextBlock Text="{Binding rate, StringFormat={}{0:F2} ₴}" Foreground="White" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>

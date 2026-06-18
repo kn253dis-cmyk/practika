@@ -74,5 +74,24 @@ namespace Banking_system.DataBase
                 return builder.ToString();
             }
         }
+        public bool TrySaveCardCurrency(string cardNumber, string targetCurrency)
+        {
+            var card = Cards.FirstOrDefault(c => c.CardNumber == cardNumber) as CurrencyCard;
+
+            if (card == null) return false;
+
+            // Якщо у картки вже є встановлена валюта, і вона НЕ збігається з новою — повертаємо false (заборона)
+            if (!string.IsNullOrEmpty(card.CurrencyType) && card.CurrencyType != targetCurrency)
+                return false;
+
+            // Якщо картка ще не мала прив'язаної валюти, фіксуємо її у БД
+            if (string.IsNullOrEmpty(card.CurrencyType))
+            {
+                card.CurrencyType = targetCurrency;
+                SaveChanges(); // Зберігаємо зміни у базі даних
+            }
+
+            return true;
+        }
     }
 }

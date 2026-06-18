@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Banking_system.Pages;
 
 namespace Banking_system.Windows
 {
@@ -56,11 +57,17 @@ namespace Banking_system.Windows
             // Очищаємо колір тексту назви картки (на випадок, якщо попередня картка була заблокована)
             TxtCardType.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
 
+            // Знаходимо кнопку у розмітці
+            var btnCurrencyExchange = this.FindName("BtnCurrencyExchange") as Button;
+
             // 2. Встановлюємо дизайн залежно від типу картки
             if (currentCard is CreditCard creditCard)
             {
                 cardName = "Кредитна картка";
                 Card.Background = GetCardGradient("Credit");
+
+                // ХОВАЄМО кнопку валюти
+                if (btnCurrencyExchange != null) btnCurrencyExchange.Visibility = Visibility.Collapsed;
 
                 // Показуємо панель кредитної інформації та ПОВЗУНОК
                 if (PanelCreditInfo != null)
@@ -71,7 +78,6 @@ namespace Banking_system.Windows
                     // Динамічний стиль для дати боргу
                     if (creditCard.Balance < 0)
                     {
-                        // Якщо є борг — показуємо дату червоним кольором
                         TxtDebtDate.Text = creditCard.DueDate.ToString("dd.MM.yyyy");
                         TxtDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A"));
                         IconDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A"));
@@ -79,7 +85,6 @@ namespace Banking_system.Windows
                     }
                     else
                     {
-                        // Якщо боргу немає — зелений статус
                         TxtDebtDate.Text = "Борг відсутній";
                         TxtDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#38EF7D"));
                         IconDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#38EF7D"));
@@ -96,8 +101,14 @@ namespace Banking_system.Windows
             }
             else if (currentCard.GetType().Name == "CurrencyCard" || currentCard.GetType().Name == "JuniorCard")
             {
-                cardName = currentCard.GetType().Name == "JuniorCard" ? "Картка Юніора" : "Валютна карта";
-                Card.Background = GetCardGradient(currentCard.GetType().Name == "JuniorCard" ? "Junior" : "Currency");
+                bool isCurrencyCard = currentCard.GetType().Name == "CurrencyCard";
+
+                cardName = isCurrencyCard ? "Валютна карта" : "Картка Юніора";
+                Card.Background = GetCardGradient(isCurrencyCard ? "Currency" : "Junior");
+
+                // ПОКАЗУЄМО кнопку тільки для Валютної карти, для Юніора - ховаємо
+                if (btnCurrencyExchange != null)
+                    btnCurrencyExchange.Visibility = isCurrencyCard ? Visibility.Visible : Visibility.Collapsed;
 
                 // ХОВАЄМО кредитну панель і повзунок
                 if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
@@ -109,6 +120,9 @@ namespace Banking_system.Windows
             {
                 cardName = "Дебетова картка";
                 Card.Background = GetCardGradient("Debit");
+
+                // ХОВАЄМО кнопку валюти
+                if (btnCurrencyExchange != null) btnCurrencyExchange.Visibility = Visibility.Collapsed;
 
                 // ХОВАЄМО кредитну панель і повзунок
                 if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
@@ -187,8 +201,55 @@ namespace Banking_system.Windows
             }
 
             TxtExpiryDate.Text = card.GetExpirationDate().ToString("MM/yy");
-        }
 
+            var currencySymbolBlock = (TextBlock)((StackPanel)TxtBalance.Parent).Children[1];
+            if (card is CurrencyCard currCard)
+            {
+                string symbol = currCard.CurrencyType switch
+                {
+                    "USD" => "$",
+                    "EUR" => "€",
+                    "GBP" => "£",
+                    "PLN" => "zł",
+                    "XAU" => "Au",
+                    "XAG" => "Ag",
+                    _ => currCard.CurrencyType
+                };
+                currencySymbolBlock.Text = $" {symbol}";
+            }
+            else
+                currencySymbolBlock.Text = " ₴";
+        }
+        private void BtnCurrencyExchange_Click(object sender, RoutedEventArgs e)
+        {
+            // Перевіряємо, чи існують картки і чи обрана картка коректна
+            if (_userCards == null || _userCards.Count == 0 || _currentCardIndex >= _userCards.Count) return;
+
+            var currentCard = _userCards[_currentCardIndex];
+
+            // Якщо поточна картка - валютна, відкриваємо сторінку обміну
+            if (currentCard is CurrencyCard currencyCard)
+            {
+                Window exchangeForm = new Window
+                {
+                    Title = "Обмін та конвертація валюти",
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Owner = this,
+                    Width = 520,
+                    Height = 720,
+                    Background = new BrushConverter().ConvertFrom("#0F172A") as Brush,
+                    Content = new Banking_system.Pages.CurrencyExchangePage(_currentUser, currencyCard)
+                };
+                exchangeForm.ShowDialog();
+
+                // Оновлюємо дані після закриття вікна обміну
+                using (var db = new Banking_system.DataBase.Database())
+                {
+                    _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+                    UpdateCardUI();
+                }
+            }
+        }
         private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
         {
             int totalItems = _userCards.Count;
@@ -234,13 +295,7 @@ namespace Banking_system.Windows
 
                 // Зберігаємо нове значення в об'єкт картки
                 if (_userCards != null && _userCards.Count > 0 && _currentCardIndex < _userCards.Count && _userCards[_currentCardIndex] is CreditCard creditCard)
-                {
                     creditCard.CreditLimit = (int)e.NewValue;
-                    using (var db = new Banking_system.DataBase.Database()) {
-                        db.Cards.Update(creditCard);
-                        db.SaveChanges();
-                    }
-                }
             }
         }
 
@@ -268,10 +323,6 @@ namespace Banking_system.Windows
                 exchangeForm.ShowDialog();
             }
         }
-
-        // ==========================================
-        // СТВОРЕННЯ НОВИХ КАРТОК
-        // ==========================================
 
         private void BtnCreateCard_Click(object sender, RoutedEventArgs e)
         {
@@ -445,20 +496,15 @@ namespace Banking_system.Windows
                     db.SaveChanges(); // Зберігаємо зсув часу
                 }
 
-                // КРОК 2: Запускаємо перевірку (штраф йде в баланс + відправляється лист)
                 Banking_system.Service.SessionManager.CheckAndProcessCredits(_currentUser.ID);
 
-                // КРОК 3: Примусове оновлення пам'яті програми
-                // Перечитуємо дані з бази, щоб MainWindow отримало змінений баланс та нові дати
                 using (var db = new Banking_system.DataBase.Database())
                 {
                     _userCards = db.FindAllCardsByUserId(_currentUser.ID);
 
                     // Захист від помилки індексу
                     if (_currentCardIndex >= _userCards.Count)
-                    {
                         _currentCardIndex = Math.Max(0, _userCards.Count - 1);
-                    }
                 }
 
                 // КРОК 4: Оновлюємо візуальну картку на екрані
@@ -483,7 +529,7 @@ namespace Banking_system.Windows
                 return;
             }
 
-            int count = _userCards.Count(card => card.GetType().Name == "JuniorCard" || card.GetType().Name == "UniorCard");
+            int count = _userCards.Count(card => card.GetType().Name == "CurrencyCard" || card.GetType().Name == "CurrencyCard");
             if (count >= 2)
             {
                 MessageBox.Show("Ви вже маєте 2 валютні карти. Немає можливості відкрити більше.", "Обмеження");
@@ -492,10 +538,7 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                var newCard = new CurrencyCard
-                {
-                    UserId = _currentUser.ID
-                };
+                var newCard = new CurrencyCard { UserId = _currentUser.ID };
 
                 db.Cards.Add(newCard);
                 db.SaveChanges();
@@ -652,8 +695,6 @@ namespace Banking_system.Windows
 
             }
         }
-
-        // Окремий метод, який гарантовано штовхає рядок
         private void StartMarqueeAnimation()
         {
             if (TxtTicker == null) return;

@@ -111,7 +111,33 @@
                                      materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
                                      Foreground="White" CaretBrush="White" FontSize="14" />
                         </Grid>
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
+                            <DatePicker x:Name="DpDateOfBirth" Grid.Column="0"
+                                        Style="{StaticResource MaterialDesignOutlinedDatePicker}" Height="50" Padding="15,0" 
+                                        VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Дата народження" 
+                                        materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                        materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                        materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                        Foreground="White" FontSize="14"/>
+
+                            <ComboBox x:Name="CmbGender" Grid.Column="2"
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="50" Padding="15,0" 
+                                      VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Стать" 
+                                      materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                      materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                      materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                      Foreground="White" FontSize="14">
+                                <ComboBoxItem Content="Оберіть стать" IsSelected="True" Foreground="#94A3B8" Visibility="Collapsed"/>
+                                <ComboBoxItem Content="Чоловіча" Foreground="White" />
+                                <ComboBoxItem Content="Жіноча" Foreground="White" />
+                            </ComboBox>
+                        </Grid>
                         <ComboBox x:Name="CmbCardType" 
                                   Style="{StaticResource MaterialDesignOutlinedComboBox}" 
                                   Height="50" Padding="15,0" 

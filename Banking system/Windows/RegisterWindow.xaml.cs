@@ -90,7 +90,7 @@ namespace Banking_system.Windows
 
             for (int i = 0; i < 9; i++)
             {
-                sum += (ipn[i] - '0') * coefficients[i]; 
+                sum += (ipn[i] - '0') * coefficients[i];
             }
 
             int expectedControlDigit = (sum % 11) % 10;
@@ -203,8 +203,8 @@ namespace Banking_system.Windows
                     Phone = phone,
                     Email = email,
                     Ipn = ipn,
-                    DateOfBirth = selectedDate.Value, 
-                    IsMale = isMale,                 
+                    DateOfBirth = selectedDate.Value,
+                    IsMale = isMale,
                     Password = db.HashPassword(password)
                 };
 
@@ -218,7 +218,7 @@ namespace Banking_system.Windows
                 if (selectedCard == "Кредитна")
                 {
                     CreditPlanWindow creditWindow = new CreditPlanWindow(newUser);
-                    creditWindow.ShowDialog(); 
+                    creditWindow.ShowDialog();
 
                     if (!creditWindow.IsCardCreated)
                     {
@@ -233,14 +233,14 @@ namespace Banking_system.Windows
                     {
                         var creditCard = db.Cards.FirstOrDefault(c => c.UserId == newUser.ID);
                         createdCardNumber = creditCard?.CardNumber ?? "Невідомо";
-                        showDefaultSuccessMessage = false; 
+                        showDefaultSuccessMessage = false;
                     }
                 }
                 else
                 {
                     // Логіка для Дебетової та Валютної
                     AbstractCard newCard;
-                 
+
                     if (selectedCard == "Валютна")
                         newCard = new CurrencyCard { UserId = newUser.ID };
                     else
