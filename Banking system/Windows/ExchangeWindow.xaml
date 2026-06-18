@@ -45,7 +45,7 @@
 
             <Button Grid.Row="2" Content="ЗАКРИТИ" Width="120" Height="40" 
                     Style="{StaticResource MaterialDesignFlatDarkBgButton}" 
-                    Background="#2A050A" Foreground="White"
+                    Background="#a80907" Foreground="White"
                     Click="BtnClose_Click"/>
         </Grid>
     </Border>

@@ -190,14 +190,14 @@
                     </materialDesign:Card>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="BtnTransfer" Click="BtnTransfer_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,20,0" Background="#1976D2" BorderThickness="0" ToolTip="Переказати на іншу картку" Padding="0">
+                        <Button x:Name="BtnTransfer" Click="BtnTransfer_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,20,0" Background="#2c3569" BorderThickness="2" BorderBrush="#5262ba" ToolTip="Переказати на іншу картку" Padding="0" >
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <materialDesign:PackIcon Kind="SwapHorizontal" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White"/>
                                 <TextBlock Text="ПЕРЕКАЗ" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
                             </StackPanel>
                         </Button>
 
-                        <Button x:Name="BtnDeposit" Click="BtnDeposit_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,20,0" Background="#388E3C" BorderThickness="0" ToolTip="Поповнити поточну картку" Padding="0">
+                        <Button x:Name="BtnDeposit" Click="BtnDeposit_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,20,0" Background="#266e4e" BorderThickness="0" ToolTip="Поповнити поточну картку" Padding="0">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                 <materialDesign:PackIcon Kind="ArrowDownThick" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White"/>
                                 <TextBlock Text="ПОПОВНИТИ" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
