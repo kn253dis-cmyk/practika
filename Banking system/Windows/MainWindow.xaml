@@ -5,219 +5,236 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Особистий кабінет" Height="650" Width="900"
+        Title="Особистий кабінет" Height="700" Width="950"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
-    <Border CornerRadius="20" ClipToBounds="True">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                <GradientStop Color="#101020" Offset="0.0" />
-                <GradientStop Color="#0A152A" Offset="0.5" />
-                <GradientStop Color="#051020" Offset="1.0" />
-            </LinearGradientBrush>
-        </Border.Background>
-
+    <Border CornerRadius="20" ClipToBounds="True" Background="#0F172A" BorderBrush="#334155" BorderThickness="1">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="60"/>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="35"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <Border Background="#1A2235" Grid.Row="0" materialDesign:ElevationAssist.Elevation="Dp4">
-                <Grid>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="20,0,0,0">
-                        <materialDesign:PackIcon Kind="Bank" Width="30" Height="30" Foreground="White" VerticalAlignment="Center"/>
-                        <TextBlock Text="Національний Банк" FontSize="18" FontWeight="Bold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+            <!-- 1. ШАПКА -->
+            <Border Background="#1E293B" Grid.Row="0" BorderBrush="#334155" BorderThickness="0,0,0,1">
+                <Grid Margin="25,0">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <Border Background="#38BDF8" Width="40" Height="40" CornerRadius="12" Margin="0,0,15,0">
+                            <materialDesign:PackIcon Kind="BankOutline" Width="26" Height="26" Foreground="#0F172A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="НАЦІОНАЛЬНИЙ" FontSize="12" Foreground="#94A3B8" FontWeight="SemiBold"/>
+                            <TextBlock Text="БАНК" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,-2,0,0"/>
+                        </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0">
-                        <materialDesign:PackIcon Kind="AccountCircle" Width="26" Height="26" Foreground="#BDBDBD" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="TxtUserName" Text="Олександр Михайлович" FontSize="15" FontWeight="Medium" Foreground="White" Margin="10,0,25,0" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                        <Border Background="#0F172A" CornerRadius="20" Padding="5,5,15,5" Margin="0,0,20,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="AccountCircle" Width="30" Height="30" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                <TextBlock x:Name="TxtUserName" Text="Олександр Михайлович" FontSize="14" FontWeight="SemiBold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Border>
 
-                        <Button x:Name="BtnLogout" Click="BtnLogout_Click" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#BDBDBD" ToolTip="Вийти з акаунта" Margin="0,0,5,0">
+                        <Button x:Name="BtnLogout" Click="BtnLogout_Click" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#94A3B8" ToolTip="Вийти з акаунта" Margin="0,0,5,0" Width="40" Height="40">
                             <materialDesign:PackIcon Kind="Logout" Width="22" Height="22" />
                         </Button>
-                        <Button x:Name="BtnClose" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#BDBDBD" ToolTip="Закрити програму" Click="BtnClose_Click">
-                            <materialDesign:PackIcon Kind="WindowClose" Width="22" Height="22" />
+                        <Button x:Name="BtnClose" Click="BtnClose_Click" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#EF4444" ToolTip="Закрити програму" Width="40" Height="40">
+                            <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
                         </Button>
                     </StackPanel>
                 </Grid>
             </Border>
 
-            <Border Grid.Row="1" Background="#0A152A" Cursor="Hand" MouseLeftButtonDown="Ticker_MouseLeftButtonDown" ToolTip="Двічі клікніть, щоб відкрити повні курси валют">
+            <!-- 2. БІЖУЧИЙ РЯДОК -->
+            <Border Grid.Row="1" Background="#0B1120" Cursor="Hand" MouseLeftButtonDown="Ticker_MouseLeftButtonDown" ToolTip="Двічі клікніть, щоб відкрити курси валют">
                 <Canvas ClipToBounds="True">
-                    <TextBlock x:Name="TxtTicker" Foreground="#FFD700" FontSize="14" FontWeight="SemiBold" 
-                               Canvas.Top="5" Canvas.Left="900" 
+                    <TextBlock x:Name="TxtTicker" Foreground="#F59E0B" FontSize="14" FontWeight="SemiBold" 
+                               Canvas.Top="7" Canvas.Left="950" 
                                Text="🇺🇸 USD: 44.93 ₴   |   🇪🇺 EUR: 51.84 ₴   |   🇬🇧 GBP: 60.04 ₴   |   🇵🇱 PLN: 12.19 ₴   |   🥇 XAU: 183470.31 ₴"/>
                 </Canvas>
             </Border>
 
-            <Grid Grid.Row="2" Margin="30,15,30,10">
+            <!-- 3. ОСНОВНА ОБЛАСТЬ -->
+            <Grid Grid.Row="2" Margin="30,20,30,20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="Мої рахунки та картки" FontSize="24" FontWeight="Bold" Foreground="White" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                <TextBlock Text="Мої рахунки та картки" FontSize="22" FontWeight="Bold" Foreground="White" Margin="0,0,0,15" HorizontalAlignment="Center"/>
 
-                <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,0,0,10">
+                <!-- КАРУСЕЛЬ КАРТОК -->
+                <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <Button x:Name="BtnPrevCard" Grid.Column="0" Click="BtnPrevCard_Click" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Background="#1A2235" BorderBrush="#1A2235" Foreground="White" VerticalAlignment="Center" Margin="0,0,30,0" materialDesign:ElevationAssist.Elevation="Dp4">
+                    <Button x:Name="BtnPrevCard" Grid.Column="0" Click="BtnPrevCard_Click" 
+                            Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Background="#1E293B" BorderBrush="#334155" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,30,0" materialDesign:ElevationAssist.Elevation="Dp0">
                         <materialDesign:PackIcon Kind="ChevronLeft" Width="30" Height="30"/>
                     </Button>
 
-                    <materialDesign:Card Name="Card" Grid.Column="1" UniformCornerRadius="20" materialDesign:ElevationAssist.Elevation="Dp8" MaxWidth="480" MinHeight="260" VerticalAlignment="Center">
+                    <!-- ВИПРАВЛЕНО: Жорстко задано розміри картки для ідеальних пропорцій (480x300) -->
+                    <materialDesign:Card Name="Card" Grid.Column="1" UniformCornerRadius="25" materialDesign:ElevationAssist.Elevation="Dp8" Width="480" Height="300" VerticalAlignment="Center">
                         <materialDesign:Card.Background>
                             <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                                <GradientStop Color="#4A0E1A" Offset="0.0" />
-                                <GradientStop Color="#2A050A" Offset="0.6" />
-                                <GradientStop Color="#1A0000" Offset="1.0" />
+                                <GradientStop Color="#141E30" Offset="0.0" />
+                                <GradientStop Color="#243B55" Offset="1.0" />
                             </LinearGradientBrush>
                         </materialDesign:Card.Background>
 
                         <Grid>
-                            <Grid x:Name="GridCardInfo" Margin="30">
+                            <Grid x:Name="GridCardInfo" Margin="25,20">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
+                                <!-- Верх картки -->
                                 <Grid Grid.Row="0">
-                                    <TextBlock x:Name="TxtCardType" Text="Кредитна картка" FontSize="18" Foreground="#E0E0E0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                    <TextBlock x:Name="TxtCardType" Text="Дебетова картка" FontSize="16" Foreground="#CBD5E1" FontWeight="SemiBold" HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
-                                        <Button x:Name="BtnCloseCard" Click="BtnCloseCard_Click" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#FF4C4C" Width="32" Height="32" Margin="0,-4,10,0" ToolTip="Закрити цю картку" Padding="0">
-                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="24" Height="24"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                        <Button x:Name="BtnCloseCard" Click="BtnCloseCard_Click" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#FCA5A5" Width="32" Height="32" Margin="0,0,15,0" ToolTip="Закрити картку" Padding="0">
+                                            <materialDesign:PackIcon Kind="DeleteOutline" Width="22" Height="22"/>
                                         </Button>
-                                        <materialDesign:PackIcon Kind="ContactlessPayment" Width="35" Height="35" Foreground="White"/>
+                                        <materialDesign:PackIcon Kind="ContactlessPayment" Width="35" Height="35" Foreground="White" Opacity="0.8"/>
                                     </StackPanel>
                                 </Grid>
 
-                                <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,20">
-                                    <TextBlock Text="Доступний залишок" FontSize="14" Foreground="#BDBDBD"/>
+                                <!-- ВИПРАВЛЕНО: Центр картки (Баланс). Зменшено шрифти і відступи, щоб вліз кредитний блок -->
+                                <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,5">
+                                    <TextBlock Text="Доступний залишок" FontSize="13" Foreground="#94A3B8" Margin="0,0,0,2"/>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Name="TxtBalance" Text="15 420.50" FontSize="42" FontWeight="Bold" Foreground="White"/>
-                                        <TextBlock Text=" ₴" FontSize="36" FontWeight="Bold" Foreground="#BDBDBD" VerticalAlignment="Bottom" Margin="0,0,0,2"/>
+                                        <TextBlock x:Name="TxtBalance" Text="0.00" FontSize="42" FontWeight="Bold" Foreground="White"/>
+                                        <TextBlock Text=" ₴" FontSize="32" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Bottom" Margin="0,0,0,6"/>
                                     </StackPanel>
 
+                                    <!-- Кредитна інформація -->
                                     <StackPanel x:Name="PanelCreditInfo" Visibility="Collapsed" Margin="0,10,0,0">
+                                        <Border Background="#000000" Opacity="0.25" CornerRadius="10" Padding="12,8">
+                                            <StackPanel>
+                                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                                    <materialDesign:PackIcon Kind="ChartLineVariant" Foreground="#94A3B8" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="Кредитний ліміт: " FontSize="13" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                                                    <TextBlock x:Name="TxtCardCreditLimit" Text="50 000 ₴" FontSize="13" FontWeight="Bold" Foreground="#F59E0B" VerticalAlignment="Center"/>
+                                                </StackPanel>
 
-                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                                            <materialDesign:PackIcon Kind="ChartLineVariant" Foreground="#A0A0A0" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Кредитний ліміт: " FontSize="14" Foreground="#A0A0A0" VerticalAlignment="Center"/>
-                                            <TextBlock x:Name="TxtCardCreditLimit" Text="50 000 ₴" FontSize="14" FontWeight="Bold" Foreground="#FFD700" VerticalAlignment="Center"/>
-                                        </StackPanel>
-
-                                        <StackPanel Orientation="Horizontal">
-                                            <materialDesign:PackIcon x:Name="IconDebtDate" Kind="CalendarAlert" Foreground="#FF8A8A" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                            <TextBlock Text="Наступний платіж: " FontSize="14" Foreground="#A0A0A0" VerticalAlignment="Center"/>
-                                            <TextBlock x:Name="TxtDebtDate" Text="15.09.2026" FontSize="14" FontWeight="Bold" Foreground="#FF8A8A" VerticalAlignment="Center"/>
-                                        </StackPanel>
-
+                                                <StackPanel Orientation="Horizontal">
+                                                    <materialDesign:PackIcon x:Name="IconDebtDate" Kind="CalendarCheck" Foreground="#38EF7D" Width="16" Height="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                    <TextBlock Text="Статус боргу: " FontSize="13" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                                                    <TextBlock x:Name="TxtDebtDate" Text="Борг відсутній" FontSize="13" FontWeight="Bold" Foreground="#38EF7D" VerticalAlignment="Center"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
                                     </StackPanel>
                                 </StackPanel>
 
+                                <!-- Низ картки -->
                                 <Grid Grid.Row="2" VerticalAlignment="Bottom">
-                                    <StackPanel HorizontalAlignment="Left" Cursor="Hand" Background="Transparent" ToolTip="Натисніть, щоб скопіювати повний номер" MouseLeftButtonDown="TxtCardNumber_MouseLeftButtonDown">
-                                        <TextBlock Text="Номер картки" FontSize="12" Foreground="#BDBDBD"/>
-                                        <TextBlock x:Name="TxtCardNumber" Text="**** **** **** 4123" FontSize="20" Foreground="White" Margin="0,5,0,0" FontFamily="Consolas"/>
+                                    <StackPanel HorizontalAlignment="Left" Cursor="Hand" Background="Transparent" ToolTip="Натисніть, щоб скопіювати" MouseLeftButtonDown="TxtCardNumber_MouseLeftButtonDown">
+                                        <TextBlock Text="НОМЕР КАРТКИ" FontSize="11" Foreground="#94A3B8" />
+                                        <TextBlock x:Name="TxtCardNumber" Text="**** **** **** 0000" FontSize="22" Foreground="White" Margin="0,2,0,0" FontFamily="Consolas"/>
                                     </StackPanel>
                                     <StackPanel HorizontalAlignment="Right">
-                                        <TextBlock Text="Діє до" FontSize="12" Foreground="#BDBDBD"/>
-                                        <TextBlock x:Name="TxtExpiryDate" Text="12/28" FontSize="20" Foreground="White" Margin="0,5,0,0" HorizontalAlignment="Right" FontFamily="Consolas"/>
+                                        <TextBlock Text="ДІЄ ДО" FontSize="11" Foreground="#94A3B8" />
+                                        <TextBlock x:Name="TxtExpiryDate" Text="12/28" FontSize="20" Foreground="White" Margin="0,2,0,0" HorizontalAlignment="Right" FontFamily="Consolas"/>
                                     </StackPanel>
                                 </Grid>
                             </Grid>
 
+                            <!-- ЕКРАН ДОДАВАННЯ НОВОЇ КАРТКИ -->
                             <Grid x:Name="GridAddCard" Visibility="Collapsed">
                                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <materialDesign:PopupBox PlacementMode="BottomAndAlignCentres" StaysOpen="False" HorizontalAlignment="Center">
                                         <materialDesign:PopupBox.ToggleContent>
-                                            <Border Width="75" Height="75" Background="White" CornerRadius="40" Cursor="Hand">
-                                                <materialDesign:PackIcon Kind="PlusBold" Width="40" Height="40" Foreground="#2A050A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Border Width="70" Height="70" Background="#38BDF8" CornerRadius="35" Cursor="Hand">
+                                                <materialDesign:PackIcon Kind="Plus" Width="40" Height="40" Foreground="#0F172A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                             </Border>
                                         </materialDesign:PopupBox.ToggleContent>
-                                        <StackPanel Margin="0,10" Background="#1A2235">
-                                            <TextBlock Text="ОБЕРІТЬ ТИП КАРТКИ" Foreground="#A0A0A0" FontSize="12" FontWeight="Bold" Margin="15,10,15,5" HorizontalAlignment="Center"/>
-                                            <Separator Background="#333" Margin="10,0,10,5"/>
+                                        <StackPanel Margin="0,10" Background="#1E293B">
+                                            <TextBlock Text="ОБЕРІТЬ ТИП КАРТКИ" Foreground="#94A3B8" FontSize="12" FontWeight="Bold" Margin="15,10,15,5" HorizontalAlignment="Center"/>
+                                            <Separator Background="#334155" Margin="10,0,10,5"/>
                                             <Button Content="💳 Дебетова картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateDebit_Click"/>
                                             <Button Content="🔥 Кредитна картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateCredit_Click"/>
-                                            <Button Content="🌱 Картка Юніора" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateJunior_Click"/>
+                                            <!-- ЗАМІНЕНО НА ВАЛЮТНУ (назву події BtnCreateJunior_Click залишаємо, щоб не ламати C# код) -->
+                                            <Button Content="💵 Валютна картка" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" Margin="5" Click="BtnCreateJunior_Click"/>
                                         </StackPanel>
                                     </materialDesign:PopupBox>
-                                    <TextBlock Text="Відкрити нову картку" FontSize="18" FontWeight="Medium" Foreground="White" Margin="0,15,0,0" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="Відкрити нову картку" FontSize="16" FontWeight="SemiBold" Foreground="White" Margin="0,10,0,0" HorizontalAlignment="Center"/>
                                 </StackPanel>
                             </Grid>
                         </Grid>
                     </materialDesign:Card>
 
-                    <Button x:Name="BtnNextCard" Grid.Column="2" Click="BtnNextCard_Click" Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Background="#1A2235" BorderBrush="#1A2235" Foreground="White" VerticalAlignment="Center" Margin="30,0,0,0" materialDesign:ElevationAssist.Elevation="Dp4">
+                    <Button x:Name="BtnNextCard" Grid.Column="2" Click="BtnNextCard_Click" 
+                            Style="{StaticResource MaterialDesignFloatingActionMiniButton}" Background="#1E293B" BorderBrush="#334155" Foreground="#94A3B8" VerticalAlignment="Center" Margin="30,0,0,0" materialDesign:ElevationAssist.Elevation="Dp0">
                         <materialDesign:PackIcon Kind="ChevronRight" Width="30" Height="30"/>
                     </Button>
                 </Grid>
 
-                <StackPanel Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,10,0,10">
-
-                    <materialDesign:Card x:Name="CreditLimitPanel" Visibility="Visible" Width="480" Background="#141E30" materialDesign:ElevationAssist.Elevation="Dp4" UniformCornerRadius="15" Margin="0,0,0,15" Padding="15">
-                        <StackPanel>
-                            <Grid Margin="0,0,0,10">
-                                <TextBlock Text="Встановити кредитний ліміт:" Foreground="#BDBDBD" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                <TextBlock x:Name="TxtCreditLimitValue" Text="15 000 ₴" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            </Grid>
-
-                            <Slider x:Name="CreditLimitSlider" 
-                                    Minimum="500" Maximum="50000" Value="15000" 
-                                    TickFrequency="500" IsSnapToTickEnabled="True"
-                                    TickPlacement="BottomRight"
-                                    Foreground="#FF2D55" 
-                                    Background="White"
-                                    Margin="0,5,0,0"
-                                    ValueChanged="CreditLimitSlider_ValueChanged"/>
-
-                        </StackPanel>
-                    </materialDesign:Card>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button x:Name="BtnTransfer" Click="BtnTransfer_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,20,0" Background="#2c3569" BorderThickness="2" BorderBrush="#5262ba" ToolTip="Переказати на іншу картку" Padding="0" >
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <materialDesign:PackIcon Kind="SwapHorizontal" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White"/>
-                                <TextBlock Text="ПЕРЕКАЗ" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button x:Name="BtnDeposit" Click="BtnDeposit_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignOutlinedButton}" Margin="0,0,20,0" Background="#266e4e" BorderThickness="0" ToolTip="Поповнити поточну картку" Padding="0">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <materialDesign:PackIcon Kind="ArrowDownThick" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White"/>
-                                <TextBlock Text="ПОПОВНИТИ" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button x:Name="BtnHistory" Click="BtnHistory_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="#90CAF9" BorderBrush="#90CAF9" BorderThickness="2" ToolTip="Переглянути історію транзакцій" Padding="0">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <materialDesign:PackIcon Kind="History" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="ІСТОРІЯ" FontSize="15" FontWeight="Bold" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
-                        <Button x:Name="BtnStatistics" Click="BtnStatistics_Click" Width="150" Height="50" materialDesign:ButtonAssist.CornerRadius="10" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="#FFD700" BorderBrush="#FFD700" BorderThickness="2" ToolTip="Переглянути доходи та витрати" Padding="0" Margin="20,0,0,0">
-                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <materialDesign:PackIcon Kind="ChartPie" Width="20" Height="20" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                                <TextBlock Text="СТАТИСТИКА" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
-                            </StackPanel>
-                        </Button>
+                <!-- ПОВЗУНОК ЛІМІТУ -->
+                <materialDesign:Card x:Name="CreditLimitPanel" Grid.Row="2" Visibility="Visible" Width="480" Background="#1E293B" materialDesign:ElevationAssist.Elevation="Dp0" UniformCornerRadius="15" Margin="0,0,0,20" Padding="20,15">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <TextBlock Text="Управління кредитним лімітом:" Foreground="#94A3B8" FontSize="14" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtCreditLimitValue" Text="15 000 ₴" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                        </Grid>
+                        <Slider x:Name="CreditLimitSlider" Minimum="500" Maximum="50000" Value="15000" 
+                                TickFrequency="500" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
+                                Foreground="#38BDF8" Background="White" Margin="0,5,0,0" ValueChanged="CreditLimitSlider_ValueChanged"/>
                     </StackPanel>
-                </StackPanel>
+                </materialDesign:Card>
+
+                <!-- КНОПКИ ДІЙ -->
+                <Grid Grid.Row="3" HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button x:Name="BtnTransfer" Grid.Column="0" Click="BtnTransfer_Click" Width="145" Height="55" materialDesign:ButtonAssist.CornerRadius="12" Margin="0,0,15,0" Background="#3B82F6" BorderThickness="0" ToolTip="Переказати на іншу картку" Padding="0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="SwapHorizontal" Width="22" Height="22" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White"/>
+                            <TextBlock Text="ПЕРЕКАЗ" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="BtnDeposit" Grid.Column="1" Click="BtnDeposit_Click" Width="145" Height="55" materialDesign:ButtonAssist.CornerRadius="12" Margin="0,0,15,0" Background="#10B981" BorderThickness="0" ToolTip="Поповнити поточну картку" Padding="0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="ArrowDownThick" Width="22" Height="22" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White"/>
+                            <TextBlock Text="ПОПОВНИТИ" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="BtnHistory" Grid.Column="2" Click="BtnHistory_Click" Width="145" Height="55" materialDesign:ButtonAssist.CornerRadius="12" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="#94A3B8" BorderBrush="#334155" BorderThickness="2" ToolTip="Переглянути історію" Padding="0" Margin="0,0,15,0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="History" Width="22" Height="22" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="ІСТОРІЯ" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button x:Name="BtnStatistics" Grid.Column="3" Click="BtnStatistics_Click" Width="145" Height="55" materialDesign:ButtonAssist.CornerRadius="12" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="#F59E0B" BorderBrush="#F59E0B" BorderThickness="2" ToolTip="Аналітика витрат" Padding="0">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <materialDesign:PackIcon Kind="ChartPie" Width="22" Height="22" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="АНАЛІТИКА" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
             </Grid>
         </Grid>
     </Border>

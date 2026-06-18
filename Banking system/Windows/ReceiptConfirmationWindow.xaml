@@ -7,48 +7,50 @@
         WindowStartupLocation="CenterOwner" 
         WindowStyle="None" 
         AllowsTransparency="False" 
-        Background="#1A1A2E"
+        Background="#0F172A"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
-    <Border CornerRadius="20" ClipToBounds="True">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                <GradientStop Color="#1A1A2E" Offset="0.0" />
-                <GradientStop Color="#16213E" Offset="0.5" />
-                <GradientStop Color="#0F3460" Offset="1.0" />
-            </LinearGradientBrush>
-        </Border.Background>
-
-        <Grid Margin="20">
+    <Border BorderBrush="#334155" BorderThickness="1">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="0,0,0,15">
-                <TextBlock Text="Перевірка та надсилання квитанції" FontWeight="Bold" FontSize="18" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Border Grid.Row="0" Background="#1E293B" BorderBrush="#334155" BorderThickness="0,0,0,1" Padding="20,15">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                        <materialDesign:PackIcon Kind="ReceiptTextCheckOutline" Width="26" Height="26" Foreground="#38BDF8" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="Електронна квитанція" FontWeight="Bold" FontSize="18" Foreground="White" VerticalAlignment="Center"/>
+                    </StackPanel>
 
-                <Button x:Name="BtnClose" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0" Padding="0" Height="30" Width="30" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#BDBDBD" ToolTip="Закрити" Click="BtnCancel_Click">
-                    <materialDesign:PackIcon Kind="WindowClose" Width="24" Height="24" />
-                </Button>
-            </Grid>
-
-            <Border Grid.Row="1" BorderBrush="#1A2235" BorderThickness="3" Background="#1A1A2E" Margin="0,0,0,20">
-                <wv2:WebView2 x:Name="ReceiptBrowser" />
+                    <Button x:Name="BtnClose" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                            Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#64748B" 
+                            ToolTip="Закрити" Click="BtnCancel_Click" Width="36" Height="36">
+                        <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
+                    </Button>
+                </Grid>
             </Border>
 
-            <materialDesign:Card Grid.Row="2" UniformCornerRadius="15" Background="#1A2235" Padding="25" materialDesign:ElevationAssist.Elevation="Dp4">
-                <StackPanel>
+            <Border Grid.Row="1" Background="#0F172A" Padding="15">
+                <Border BorderBrush="#334155" BorderThickness="1" CornerRadius="8" ClipToBounds="True">
+                    <wv2:WebView2 x:Name="ReceiptBrowser" />
+                </Border>
+            </Border>
 
-                    <TextBox x:Name="TxtEmail" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" 
-                             materialDesign:HintAssist.Hint="Електронна пошта отримувача" 
-                             materialDesign:HintAssist.Background="#1A2235" 
-                             materialDesign:HintAssist.HintPaddingBrush="#1A2235" 
-                             materialDesign:HintAssist.Foreground="#BDBDBD" 
-                             materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
-                             materialDesign:TextFieldAssist.UnderlineBrush="White" 
-                             BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,20" />
+            <Border Grid.Row="2" Background="#1E293B" BorderBrush="#334155" BorderThickness="0,1,0,0" Padding="25">
+                <StackPanel>
+                    <TextBlock Text="Бажаєте надіслати копію на пошту?" FontSize="14" Foreground="#94A3B8" Margin="0,0,0,15"/>
+
+                    <TextBox x:Name="TxtEmail" 
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" Padding="15,0" 
+                             VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Введіть Email отримувача" 
+                             materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                             materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12" 
+                             materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                             materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="EmailOutline"
+                             Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,20" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -57,12 +59,22 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Content="СКАСУВАТИ" Click="BtnCancel_Click" Grid.Column="1" Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="#BDBDBD" BorderBrush="#BDBDBD" materialDesign:ButtonAssist.CornerRadius="10" Width="140" Height="45" Margin="0,0,15,0" Cursor="Hand"/>
+                        <Button Content="СКАСУВАТИ" Click="BtnCancel_Click" Grid.Column="1" 
+                                Style="{StaticResource MaterialDesignOutlinedButton}" Foreground="#94A3B8" BorderBrush="#334155" BorderThickness="2" 
+                                materialDesign:ButtonAssist.CornerRadius="12" Width="140" Height="45" Margin="0,0,15,0" Cursor="Hand"/>
 
-                        <Button x:Name="BtnSend" Content="НАДІСЛАТИ" Click="BtnSend_Click" Grid.Column="2" Background="#00E676" Foreground="#1A1A2E" FontWeight="Bold" BorderThickness="0" materialDesign:ButtonAssist.CornerRadius="10" Width="160" Height="45" Cursor="Hand"/>
+                        <Button x:Name="BtnSend" Click="BtnSend_Click" Grid.Column="2" 
+                                Background="#38BDF8" Foreground="#0F172A" FontWeight="Bold" BorderThickness="0" 
+                                materialDesign:ButtonAssist.CornerRadius="12" Width="160" Height="45" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <materialDesign:PackIcon Kind="SendOutline" Width="18" Height="18" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="#0F172A"/>
+                                <TextBlock Text="НАДІСЛАТИ" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="#0F172A"/>
+                            </StackPanel>
+                        </Button>
                     </Grid>
                 </StackPanel>
-            </materialDesign:Card>
+            </Border>
+
         </Grid>
     </Border>
 </Window>
