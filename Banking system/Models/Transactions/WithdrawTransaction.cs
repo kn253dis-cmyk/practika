@@ -20,6 +20,23 @@
                 {
                     card.Operation(this);
                     db.SaveChanges();
+
+                    // ДОДАНО: Логування для історії транзакцій
+                    var user = db.Users.FirstOrDefault(u => u.ID == card.UserId);
+                    if (user != null)
+                    {
+                        var receiptData = new Dictionary<string, string>
+                {
+                    { "Amount", Amount.ToString("F2") },
+                    { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
+                    { "CardNumber", card.CardNumber },
+                    { "Balance", card.Balance.ToString("F2") },
+                    { "Purpose", string.IsNullOrEmpty(TransactionTarget) ? "Зняття коштів / Оплата" : TransactionTarget },
+                    { "TransactionId", TransactionId.ToString() }
+                };
+                        Banking_system.Models.Logger.AppendLog(user.Email, "WithdrawalReceipt", $"Витрата: {Amount:F2} ₴", receiptData);
+                    }
+
                     return true;
                 }
                 return false;

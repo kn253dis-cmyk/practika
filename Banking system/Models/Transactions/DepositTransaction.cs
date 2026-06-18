@@ -20,8 +20,24 @@ namespace Banking_system.Models.Transactions
                 {
                     card.Deposit(Amount);
                     card.Operation(this);
-
                     db.SaveChanges();
+
+                    // ДОДАНО: Логування для історії транзакцій
+                    var user = db.Users.FirstOrDefault(u => u.ID == card.UserId);
+                    if (user != null)
+                    {
+                        var receiptData = new Dictionary<string, string>
+                {
+                    { "Amount", Amount.ToString("F2") },
+                    { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
+                    { "Sender", "Термінал / Каса" },
+                    { "ReceiverCard", card.CardNumber },
+                    { "Purpose", string.IsNullOrEmpty(TransactionTarget) ? "Поповнення рахунку" : TransactionTarget },
+                    { "TransactionId", TransactionId.ToString() }
+                };
+                        Banking_system.Models.Logger.AppendLog(user.Email, "DepositReceipt", $"Зарахування: {Amount:F2} ₴", receiptData);
+                    }
+
                     return true;
                 }
                 return false;
