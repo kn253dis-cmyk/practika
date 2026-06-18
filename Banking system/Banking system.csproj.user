@@ -5,6 +5,9 @@
     <Compile Update="Windows\CreditPlanWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Windows\CurrencyExchangePage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Windows\DepositWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

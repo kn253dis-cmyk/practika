@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Banking_system.Pages;
 
 namespace Banking_system.Windows
 {
@@ -56,11 +57,17 @@ namespace Banking_system.Windows
             // Очищаємо колір тексту назви картки (на випадок, якщо попередня картка була заблокована)
             TxtCardType.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
 
+            // Знаходимо кнопку у розмітці
+            var btnCurrencyExchange = this.FindName("BtnCurrencyExchange") as Button;
+
             // 2. Встановлюємо дизайн залежно від типу картки
             if (currentCard is CreditCard creditCard)
             {
                 cardName = "Кредитна картка";
                 Card.Background = GetCardGradient("Credit");
+
+                // ХОВАЄМО кнопку валюти
+                if (btnCurrencyExchange != null) btnCurrencyExchange.Visibility = Visibility.Collapsed;
 
                 // Показуємо панель кредитної інформації та ПОВЗУНОК
                 if (PanelCreditInfo != null)
@@ -71,7 +78,6 @@ namespace Banking_system.Windows
                     // Динамічний стиль для дати боргу
                     if (creditCard.Balance < 0)
                     {
-                        // Якщо є борг — показуємо дату червоним кольором
                         TxtDebtDate.Text = creditCard.DueDate.ToString("dd.MM.yyyy");
                         TxtDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A"));
                         IconDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A"));
@@ -79,7 +85,6 @@ namespace Banking_system.Windows
                     }
                     else
                     {
-                        // Якщо боргу немає — зелений статус
                         TxtDebtDate.Text = "Борг відсутній";
                         TxtDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#38EF7D"));
                         IconDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#38EF7D"));
@@ -96,8 +101,14 @@ namespace Banking_system.Windows
             }
             else if (currentCard.GetType().Name == "CurrencyCard" || currentCard.GetType().Name == "JuniorCard")
             {
-                cardName = currentCard.GetType().Name == "JuniorCard" ? "Картка Юніора" : "Валютна карта";
-                Card.Background = GetCardGradient(currentCard.GetType().Name == "JuniorCard" ? "Junior" : "Currency");
+                bool isCurrencyCard = currentCard.GetType().Name == "CurrencyCard";
+
+                cardName = isCurrencyCard ? "Валютна карта" : "Картка Юніора";
+                Card.Background = GetCardGradient(isCurrencyCard ? "Currency" : "Junior");
+
+                // ПОКАЗУЄМО кнопку тільки для Валютної карти, для Юніора - ховаємо
+                if (btnCurrencyExchange != null)
+                    btnCurrencyExchange.Visibility = isCurrencyCard ? Visibility.Visible : Visibility.Collapsed;
 
                 // ХОВАЄМО кредитну панель і повзунок
                 if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
@@ -109,6 +120,9 @@ namespace Banking_system.Windows
             {
                 cardName = "Дебетова картка";
                 Card.Background = GetCardGradient("Debit");
+
+                // ХОВАЄМО кнопку валюти
+                if (btnCurrencyExchange != null) btnCurrencyExchange.Visibility = Visibility.Collapsed;
 
                 // ХОВАЄМО кредитну панель і повзунок
                 if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
@@ -187,8 +201,34 @@ namespace Banking_system.Windows
             }
 
             TxtExpiryDate.Text = card.GetExpirationDate().ToString("MM/yy");
-        }
 
+            var currencySymbolBlock = (TextBlock)((StackPanel)TxtBalance.Parent).Children[1];
+            if (card is CurrencyCard currCard)
+            {
+                string symbol = currCard.CurrencyType switch
+                {
+                    "USD" => "$",
+                    "EUR" => "€",
+                    "GBP" => "£",
+                    "PLN" => "zł",
+                    "XAU" => "Au",
+                    "XAG" => "Ag",
+                    _ => currCard.CurrencyType
+                };
+                currencySymbolBlock.Text = $" {symbol}";
+            }
+            else
+                currencySymbolBlock.Text = " ₴";
+        }
+        private void BtnCurrencyExchange_Click(object sender, RoutedEventArgs e)
+        {
+            if(sender is CurrencyCard)
+            {
+                Banking_system.Windows.ExchangeWindow exchangeForm = new Banking_system.Windows.ExchangeWindow();
+                exchangeForm.Owner = this;
+                exchangeForm.ShowDialog();
+            }
+        }
         private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
         {
             int totalItems = _userCards.Count;
@@ -234,9 +274,7 @@ namespace Banking_system.Windows
 
                 // Зберігаємо нове значення в об'єкт картки
                 if (_userCards != null && _userCards.Count > 0 && _currentCardIndex < _userCards.Count && _userCards[_currentCardIndex] is CreditCard creditCard)
-                {
                     creditCard.CreditLimit = (int)e.NewValue;
-                }
             }
         }
 
@@ -479,10 +517,7 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                var newCard = new CurrencyCard
-                {
-                    UserId = _currentUser.ID
-                };
+                var newCard = new CurrencyCard("USD") { UserId = _currentUser.ID };
 
                 db.Cards.Add(newCard);
                 db.SaveChanges();
