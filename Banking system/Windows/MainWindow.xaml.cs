@@ -150,8 +150,9 @@ namespace Banking_system.Windows
             switch (cardType)
             {
                 case "Credit":
-                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#870000"), 0.0));
-                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#3a0002"), 1.0));
+                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#4A0E1A"), 0.0));
+                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#2A050A"), 0.5));
+                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#1A0000"), 1.0));
                     break;
                 case "Currency":
                 case "Junior": // Додано випадок для юніора
@@ -235,6 +236,10 @@ namespace Banking_system.Windows
                 if (_userCards != null && _userCards.Count > 0 && _currentCardIndex < _userCards.Count && _userCards[_currentCardIndex] is CreditCard creditCard)
                 {
                     creditCard.CreditLimit = (int)e.NewValue;
+                    using (var db = new Banking_system.DataBase.Database()) {
+                        db.Cards.Update(creditCard);
+                        db.SaveChanges();
+                    }
                 }
             }
         }
