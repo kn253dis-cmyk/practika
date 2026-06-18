@@ -34,32 +34,30 @@ namespace Banking_system.Pages
 
         private async Task InitializeDataAsync()
         {
-            // 1. Автоматично підставляємо номер валютної картки
             TxtTargetCard.Text = _currencyCard.CardNumber;
 
-            // 2. Встановлюємо валюту картки як обрану за замовчуванням, якщо вона вже задана
+            // Якщо валюта картки встановлена, вибираємо її і БЛОКУЄМО зміну 
             if (!string.IsNullOrEmpty(_currencyCard.CurrencyType))
             {
                 bool currencyFound = false;
                 foreach (ComboBoxItem item in CboCurrency.Items)
-                {
                     if (item.Content.ToString() == _currencyCard.CurrencyType)
                     {
                         CboCurrency.SelectedItem = item;
                         currencyFound = true;
                         break;
                     }
-                }
 
-                // Якщо валюта картки не входить до списку (наприклад, GBP) - підставляємо перший пункт,
-                // інакше ComboBox лишиться без вибору і курс/сума ніколи не розрахуються
-                if (!currencyFound)
+                if (currencyFound)
+                    CboCurrency.IsEnabled = false; 
+                else
                     CboCurrency.SelectedIndex = 0;
             }
             else
-                CboCurrency.SelectedIndex = 0; // Якщо пуста, ставимо USD
+            {
+                CboCurrency.SelectedIndex = 0;
+            }
 
-            // 3. Завантажуємо картки користувача для списання (тільки гривневі)
             using (var db = new DataBase.Database())
             {
                 var availableCards = db.Cards
@@ -72,13 +70,10 @@ namespace Banking_system.Pages
 
             if (CboSourceCard.Items.Count > 0) CboSourceCard.SelectedIndex = 0;
 
-            // 4. Завантажуємо реальні курси з НБУ - так само, як це робить ExchangeWindow
             await LoadExchangeRatesAsync();
-
             UpdateRate();
         }
 
-        // Завантаження курсів валют з API Нацбанку (ідентично до ExchangeWindow.LoadExchangeRatesAsync)
         private async Task LoadExchangeRatesAsync()
         {
             try
@@ -91,7 +86,6 @@ namespace Banking_system.Pages
             }
             catch (Exception ex)
             {
-                // Якщо НБУ недоступний - лишаємо порожній список, UpdateRate() підставить орієнтовні значення
                 _exchangeRates = new List<CurrencyRate>();
                 MessageBox.Show(
                     $"Не вдалося завантажити актуальний курс НБУ, буде використано орієнтовне значення: {ex.Message}",
@@ -99,7 +93,6 @@ namespace Banking_system.Pages
             }
         }
 
-        // Динамічне отримання курсу валют (тепер бере дані з кешу, завантаженого з НБУ)
         private void UpdateRate()
         {
             if (CboCurrency.SelectedItem is ComboBoxItem selectedItem)
@@ -113,12 +106,15 @@ namespace Banking_system.Pages
                 }
                 else
                 {
-                    // Фолбек-значення, якщо НБУ недоступний або валюти немає у відповіді
+                    // Резервні значення, якщо НБУ недоступний
                     _currentRate = targetCurrency switch
                     {
                         "USD" => 41.30m,
                         "EUR" => 44.50m,
                         "PLN" => 10.20m,
+                        "GBP" => 54.20m,
+                        "XAU" => 108540.30m,
+                        "XAG" => 1250.50m,
                         _ => 1.00m
                     };
                 }
@@ -145,10 +141,10 @@ namespace Banking_system.Pages
                 LblTotalPayable.Text = "0.00";
         }
 
-        private void CboCurrency_SelectionChanged(object sender, SelectionChangedEventArgs e) =>UpdateRate();
+        private void CboCurrency_SelectionChanged(object sender, SelectionChangedEventArgs e) => UpdateRate();
 
-        private void TxtAmount_TextChanged(object sender, TextChangedEventArgs e)=>CalculateTotal();
-        
+        private void TxtAmount_TextChanged(object sender, TextChangedEventArgs e) => CalculateTotal();
+
         private void TxtAmount_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             if (!Regex.IsMatch(e.Text, @"^[0-9,.]$"))
@@ -157,14 +153,12 @@ namespace Banking_system.Pages
                 return;
             }
 
-            if ((e.Text == "." || e.Text == ",") &&(TxtAmount.Text.Contains(".") || TxtAmount.Text.Contains(",")))
+            if ((e.Text == "." || e.Text == ",") && (TxtAmount.Text.Contains(".") || TxtAmount.Text.Contains(",")))
                 e.Handled = true;
         }
 
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
-        {
-            NavigationService.GoBack();
-        }
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)=>Window.GetWindow(this)?.Close();
+
 
         private void BtnConfirmExchange_Click(object sender, RoutedEventArgs e)
         {
@@ -184,6 +178,17 @@ namespace Banking_system.Pages
             string sourceCardNumber = selectedText.Split(' ')[0];
             string targetCurrency = (CboCurrency.SelectedItem as ComboBoxItem).Content.ToString();
 
+            if (!string.IsNullOrEmpty(_currencyCard.CurrencyType) && _currencyCard.CurrencyType != targetCurrency)
+            {
+                MessageBox.Show(
+                    $"Ця картка вже використовується для валюти {_currencyCard.CurrencyType}.\n" +
+                    $"Ви не можете придбати на неї {targetCurrency}! Будь ласка, оберіть іншу картку.",
+                    "Помилка конвертації валют",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
             var exchangeTransaction = new CurrencyExchangeTransaction(
                 sourceCardNumber: sourceCardNumber,
                 targetCardNumber: _currencyCard.CardNumber,
@@ -197,15 +202,22 @@ namespace Banking_system.Pages
             if (success)
             {
                 MessageBox.Show($"Успішно придбано {foreignAmount:F2} {targetCurrency}!", "Операція успішна", MessageBoxButton.OK, MessageBoxImage.Information);
-                NavigationService.GoBack();
+                Window.GetWindow(this)?.Close();
             }
             else
-                MessageBox.Show("Недостатньо коштів на картці списання або сталася помилка.", "Помилка транзакції", MessageBoxButton.OK, MessageBoxImage.Error);
+            {
+                MessageBox.Show(
+                    "Не вдалося виконати операцію. Можливі причини:\n" +
+                    "1. Недостатньо коштів на гривневій картці.\n" +
+                    "2. Невідповідність типу валюти картки у базі даних.",
+                    "Помилка транзакції",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         private void CboSourceCard_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Можна додати додаткову логіку перевірки лімітів карти списання
         }
     }
 }

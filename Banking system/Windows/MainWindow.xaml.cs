@@ -222,11 +222,32 @@ namespace Banking_system.Windows
         }
         private void BtnCurrencyExchange_Click(object sender, RoutedEventArgs e)
         {
-            if(sender is CurrencyCard)
+            // Перевіряємо, чи існують картки і чи обрана картка коректна
+            if (_userCards == null || _userCards.Count == 0 || _currentCardIndex >= _userCards.Count) return;
+
+            var currentCard = _userCards[_currentCardIndex];
+
+            // Якщо поточна картка - валютна, відкриваємо сторінку обміну
+            if (currentCard is CurrencyCard currencyCard)
             {
-                Banking_system.Windows.ExchangeWindow exchangeForm = new Banking_system.Windows.ExchangeWindow();
-                exchangeForm.Owner = this;
+                Window exchangeForm = new Window
+                {
+                    Title = "Обмін та конвертація валюти",
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Owner = this,
+                    Width = 520,
+                    Height = 720,
+                    Background = new BrushConverter().ConvertFrom("#0F172A") as Brush,
+                    Content = new Banking_system.Pages.CurrencyExchangePage(_currentUser, currencyCard)
+                };
                 exchangeForm.ShowDialog();
+
+                // Оновлюємо дані після закриття вікна обміну
+                using (var db = new Banking_system.DataBase.Database())
+                {
+                    _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+                    UpdateCardUI();
+                }
             }
         }
         private void BtnPrevCard_Click(object sender, RoutedEventArgs e)
@@ -508,7 +529,7 @@ namespace Banking_system.Windows
                 return;
             }
 
-            int count = _userCards.Count(card => card.GetType().Name == "JuniorCard" || card.GetType().Name == "UniorCard");
+            int count = _userCards.Count(card => card.GetType().Name == "CurrencyCard" || card.GetType().Name == "CurrencyCard");
             if (count >= 2)
             {
                 MessageBox.Show("Ви вже маєте 2 валютні карти. Немає можливості відкрити більше.", "Обмеження");
@@ -517,7 +538,7 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                var newCard = new CurrencyCard("USD") { UserId = _currentUser.ID };
+                var newCard = new CurrencyCard { UserId = _currentUser.ID };
 
                 db.Cards.Add(newCard);
                 db.SaveChanges();
