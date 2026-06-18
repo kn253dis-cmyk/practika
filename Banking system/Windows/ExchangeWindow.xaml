@@ -2,51 +2,115 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-        Title="Курс валют" Height="450" Width="450"
+        Title="Курс валют" Height="550" Width="420"
         WindowStartupLocation="CenterOwner"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
-    <Border CornerRadius="15" Background="#141E30" BorderBrush="#FFD700" BorderThickness="1">
+    <Border CornerRadius="25" Background="#101525" BorderBrush="#303545" BorderThickness="2" ClipToBounds="True">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                <materialDesign:PackIcon Kind="CashMultiple" Width="24" Height="24" Foreground="#FFD700" Margin="0,0,10,0"/>
-                <TextBlock Text="Актуальний курс валют" FontSize="18" FontWeight="Bold" Foreground="White"/>
-            </StackPanel>
+            <Border Grid.Row="0" Background="#1A2035" Padding="20">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Курси валют НБУ" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Офіційні дані на сьогодні" FontSize="13" Foreground="#808090" Margin="0,4,0,0"/>
+                    </StackPanel>
 
-            <DataGrid x:Name="CurrencyGrid" Grid.Row="1" Margin="20,0,20,0" 
-                      AutoGenerateColumns="False" IsReadOnly="True" 
-                      Background="Transparent" RowBackground="#1A2235" 
-                      AlternatingRowBackground="#101525" Foreground="White"
-                      BorderBrush="#333" BorderThickness="1"
-                      HeadersVisibility="Column" HorizontalGridLinesBrush="#333" VerticalGridLinesBrush="Transparent">
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Background" Value="#FFD700"/>
-                        <Setter Property="Foreground" Value="Black"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
-                        <Setter Property="Padding" Value="10,5"/>
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Код" Binding="{Binding cc}" Width="Auto" FontWeight="Bold"/>
-                    <DataGridTextColumn Header="Назва валюти" Binding="{Binding txt}" Width="*"/>
-                    <DataGridTextColumn Header="Курс (₴)" Binding="{Binding rate, StringFormat={}{0:F2}}" Width="Auto"/>
-                </DataGrid.Columns>
-            </DataGrid>
+                    <Border Grid.Column="1" Background="#202535" Width="50" Height="50" CornerRadius="15">
+                        <materialDesign:PackIcon Kind="Finance" Width="30" Height="30" Foreground="#FFD700" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </Grid>
+            </Border>
 
             <Button Grid.Row="2" Content="ЗАКРИТИ" Width="120" Height="40" 
                     Style="{StaticResource MaterialDesignFlatDarkBgButton}" 
-                    Background="#2A050A" Foreground="White"
+                    Background="#a80907" Foreground="White"
                     Click="BtnClose_Click"/>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" Margin="15,15,15,5">
+                <ItemsControl x:Name="CurrencyGrid">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#1A2035" CornerRadius="15" Margin="0,0,0,12" Padding="15">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border x:Name="BadgeBorder" Grid.Column="0" Width="46" Height="46" CornerRadius="23" Background="#252B40" VerticalAlignment="Center">
+                                        <TextBlock x:Name="BadgeText" Text="{Binding cc}" Foreground="White" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" Margin="15,0,10,0" VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Text="{Binding txt}" Foreground="White" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+
+                                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock Text="1 " Foreground="#808090" FontSize="12"/>
+                                            <TextBlock Text="{Binding cc}" Foreground="#38BDF8" FontSize="12" FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding rate, StringFormat={}{0:F2} ₴}" Foreground="White" FontSize="16" FontWeight="Bold" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding cc}" Value="USD">
+                                    <Setter TargetName="BadgeText" Property="Text" Value="$"/>
+                                    <Setter TargetName="BadgeBorder" Property="Background" Value="#1B5E20"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding cc}" Value="EUR">
+                                    <Setter TargetName="BadgeText" Property="Text" Value="€"/>
+                                    <Setter TargetName="BadgeBorder" Property="Background" Value="#0D47A1"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding cc}" Value="GBP">
+                                    <Setter TargetName="BadgeText" Property="Text" Value="£"/>
+                                    <Setter TargetName="BadgeBorder" Property="Background" Value="#4A148C"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding cc}" Value="PLN">
+                                    <Setter TargetName="BadgeText" Property="Text" Value="zł"/>
+                                    <Setter TargetName="BadgeBorder" Property="Background" Value="#B71C1C"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding cc}" Value="XAU">
+                                    <Setter TargetName="BadgeText" Property="Text" Value="Au"/>
+                                    <Setter TargetName="BadgeBorder" Property="Background" Value="#F57F17"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding cc}" Value="XAG">
+                                    <Setter TargetName="BadgeText" Property="Text" Value="Ag"/>
+                                    <Setter TargetName="BadgeBorder" Property="Background" Value="#7F8C8D"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <Border Grid.Row="2" Background="#1A2035" Padding="15">
+                <Button Content="ЗАКРИТИ" Width="140" Height="40" 
+                        Style="{StaticResource MaterialDesignFlatButton}" 
+                        Foreground="#808090"
+                        Click="BtnClose_Click" HorizontalAlignment="Center"/>
+            </Border>
         </Grid>
     </Border>
 </Window>

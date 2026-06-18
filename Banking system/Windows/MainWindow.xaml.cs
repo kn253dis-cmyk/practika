@@ -13,7 +13,6 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-
 namespace Banking_system.Windows
 {
     public partial class MainWindow : Window
@@ -39,52 +38,86 @@ namespace Banking_system.Windows
 
         private void UpdateCardUI()
         {
-            // Якщо індекс дорівнює кількості карток, показуємо екран "Додати картку"
+            // 1. Перевірка на екран додавання нової картки
             if (_currentCardIndex == _userCards.Count)
             {
                 ShowAddCardUI();
                 return;
             }
 
-            // Інакше показуємо звичайну інформацію про картку
             GridCardInfo.Visibility = Visibility.Visible;
             GridAddCard.Visibility = Visibility.Collapsed;
 
-            if (_userCards.Count == 0) return;
+            if (_userCards == null || _userCards.Count == 0) return;
 
             AbstractCard currentCard = _userCards[_currentCardIndex];
-            string cardName = "Дебетова картка";
+            string cardName = "";
 
-            // Визначаємо назву, градієнт та наявність ліміту залежно від типу картки
+            // Очищаємо колір тексту назви картки (на випадок, якщо попередня картка була заблокована)
+            TxtCardType.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
+
+            // 2. Встановлюємо дизайн залежно від типу картки
             if (currentCard is CreditCard creditCard)
             {
                 cardName = "Кредитна картка";
                 Card.Background = GetCardGradient("Credit");
 
-                // Показуємо поле ліміту на самій картці та вписуємо значення
-                if (PanelCreditLimit != null)
+                // Показуємо панель кредитної інформації та ПОВЗУНОК
+                if (PanelCreditInfo != null)
                 {
-                    PanelCreditLimit.Visibility = Visibility.Visible;
+                    PanelCreditInfo.Visibility = Visibility.Visible;
                     TxtCardCreditLimit.Text = $"{creditCard.CreditLimit:N0} ₴";
+
+                    // Динамічний стиль для дати боргу
+                    if (creditCard.Balance < 0)
+                    {
+                        // Якщо є борг — показуємо дату червоним кольором
+                        TxtDebtDate.Text = creditCard.DueDate.ToString("dd.MM.yyyy");
+                        TxtDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A"));
+                        IconDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF8A8A"));
+                        IconDebtDate.Kind = MaterialDesignThemes.Wpf.PackIconKind.CalendarAlert;
+                    }
+                    else
+                    {
+                        // Якщо боргу немає — зелений статус
+                        TxtDebtDate.Text = "Борг відсутній";
+                        TxtDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#38EF7D"));
+                        IconDebtDate.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#38EF7D"));
+                        IconDebtDate.Kind = MaterialDesignThemes.Wpf.PackIconKind.CalendarCheck;
+                    }
                 }
+
+                // ПОКАЗУЄМО повзунок ліміту
+                var creditLimitPanel = this.FindName("CreditLimitPanel") as UIElement;
+                if (creditLimitPanel != null) creditLimitPanel.Visibility = Visibility.Visible;
+
+                var creditLimitSlider = this.FindName("CreditLimitSlider") as Slider;
+                if (creditLimitSlider != null) creditLimitSlider.Value = creditCard.CreditLimit;
             }
             else if (currentCard.GetType().Name == "CurrencyCard" || currentCard.GetType().Name == "JuniorCard")
             {
-                cardName = "Валютна карта";
-                Card.Background = GetCardGradient("Currency");
+                cardName = currentCard.GetType().Name == "JuniorCard" ? "Картка Юніора" : "Валютна карта";
+                Card.Background = GetCardGradient(currentCard.GetType().Name == "JuniorCard" ? "Junior" : "Currency");
 
-                // Ховаємо поле ліміту для інших карток
-                if (PanelCreditLimit != null) PanelCreditLimit.Visibility = Visibility.Collapsed;
+                // ХОВАЄМО кредитну панель і повзунок
+                if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
+
+                var creditLimitPanel = this.FindName("CreditLimitPanel") as UIElement;
+                if (creditLimitPanel != null) creditLimitPanel.Visibility = Visibility.Collapsed;
             }
             else if (currentCard is DebitCard)
             {
                 cardName = "Дебетова картка";
                 Card.Background = GetCardGradient("Debit");
 
-                // Ховаємо поле ліміту
-                if (PanelCreditLimit != null) PanelCreditLimit.Visibility = Visibility.Collapsed;
+                // ХОВАЄМО кредитну панель і повзунок
+                if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
+
+                var creditLimitPanel = this.FindName("CreditLimitPanel") as UIElement;
+                if (creditLimitPanel != null) creditLimitPanel.Visibility = Visibility.Collapsed;
             }
 
+            // 3. Завантажуємо загальні дані (баланс, номер, дата)
             LoadCardData(currentCard, cardName);
         }
 
@@ -117,10 +150,12 @@ namespace Banking_system.Windows
             switch (cardType)
             {
                 case "Credit":
-                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#870000"), 0.0));
-                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#3a0002"), 1.0));
+                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#4A0E1A"), 0.0));
+                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#2A050A"), 0.5));
+                    gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#1A0000"), 1.0));
                     break;
                 case "Currency":
+                case "Junior": // Додано випадок для юніора
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#11998E"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#38EF7D"), 1.0));
                     break;
@@ -160,7 +195,7 @@ namespace Banking_system.Windows
             _currentCardIndex--;
 
             if (_currentCardIndex < 0)
-                _currentCardIndex = totalItems; 
+                _currentCardIndex = totalItems;
 
             UpdateCardUI();
         }
@@ -192,17 +227,15 @@ namespace Banking_system.Windows
         private void CreditLimitSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             // Оновлюємо текст під час перетягування повзунка
-            if (TxtCreditLimitValue != null)
+            var txtCreditLimitValue = this.FindName("TxtCreditLimitValue") as TextBlock;
+            if (txtCreditLimitValue != null)
             {
-                TxtCreditLimitValue.Text = $"{e.NewValue:N0} ₴";
+                txtCreditLimitValue.Text = $"{e.NewValue:N0} ₴";
 
                 // Зберігаємо нове значення в об'єкт картки
-                if (_userCards != null && _userCards.Count > 0 && _userCards[_currentCardIndex] is CreditCard creditCard)
+                if (_userCards != null && _userCards.Count > 0 && _currentCardIndex < _userCards.Count && _userCards[_currentCardIndex] is CreditCard creditCard)
                 {
                     creditCard.CreditLimit = (int)e.NewValue;
-
-                    // Якщо є підключення до БД, тут можна викликати збереження:
-                    // using (var db = new Banking_system.DataBase.DataBase()) { .. db.SaveChanges(); }
                 }
             }
         }
@@ -232,10 +265,6 @@ namespace Banking_system.Windows
             }
         }
 
-        // ==========================================
-        // СТВОРЕННЯ НОВИХ КАРТОК
-        // ==========================================
-
         private void BtnCreateCard_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Тут відкриватиметься вікно замовлення нової картки.");
@@ -244,6 +273,12 @@ namespace Banking_system.Windows
         private void BtnCreateDebit_Click(object sender, RoutedEventArgs e)
         {
             if (_currentUser == null) return;
+
+            if (Banking_system.Service.SessionManager.IsUserBlacklisted(_currentUser.ID))
+            {
+                MessageBox.Show("Дія заблокована! Ви занесені до Чорного Списку банку через незакритий кредит.", "Відмова в обслуговуванні", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             int count = _userCards.Count(card => card is DebitCard);
             if (count >= 3)
@@ -254,7 +289,6 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                 
                 var newCard = new DebitCard { UserId = _currentUser.ID };
 
                 db.Cards.Add(newCard);
@@ -277,6 +311,12 @@ namespace Banking_system.Windows
             }
             if (_currentUser == null) return;
 
+            if (Banking_system.Service.SessionManager.IsUserBlacklisted(_currentUser.ID))
+            {
+                MessageBox.Show("Дія заблокована! Ви занесені до Чорного Списку банку через незакритий кредит.", "Відмова в обслуговуванні", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             var planWindow = new CreditPlanWindow(_currentUser);
             planWindow.Owner = this;
             planWindow.ShowDialog();
@@ -292,9 +332,143 @@ namespace Banking_system.Windows
             }
         }
 
+
+        private void BtnCloseCard_Click(object sender, RoutedEventArgs e)
+        {
+            if (_userCards == null || _userCards.Count == 0 || _currentCardIndex >= _userCards.Count) return;
+
+            AbstractCard currentCard = _userCards[_currentCardIndex];
+
+            // 1. ПЕРЕВІРКА: Якщо це кредитна картка
+            if (currentCard is CreditCard creditCard)
+            {
+                if (creditCard.Balance < 0 || creditCard.AccruedInterest > 0)
+                {
+                    MessageBox.Show("Неможливо закрити кредитну картку, поки у Вас є непогашений борг або штрафні відсотки. Будь ласка, поповніть рахунок для виходу в нуль.", "Відмова банку", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (creditCard.Balance > 0)
+                {
+                    MessageBox.Show($"На картці залишились Ваші власні кошти ({creditCard.Balance:N2} ₴). Будь ласка, перекажіть їх на інший рахунок перед закриттям.", "Відмова банку", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
+            else
+            {
+                if (currentCard.Balance > 0)
+                {
+                    MessageBox.Show($"На картці є залишок коштів ({currentCard.Balance:N2}). Спочатку виведіть їх на інший рахунок.", "Відмова банку", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+            }
+
+            MessageBoxResult result = MessageBox.Show(
+                $"Ви дійсно бажаєте назавжди закрити картку {currentCard.GetCardNumber()}?\n\nЦю дію неможливо скасувати, історія картки стане недоступною.",
+                "Підтвердження закриття рахунку",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    // Отримуємо номер картки для пошуку в БД
+                    string targetCardNumber = currentCard.GetCardNumber();
+                    using (var db = new Banking_system.DataBase.Database())
+                    {
+                        var cardToDelete = db.Cards.FirstOrDefault(c => c.CardNumber == targetCardNumber);
+
+                        if (cardToDelete != null)
+                        {
+                            db.Cards.Remove(cardToDelete);
+                            db.SaveChanges();
+                        }
+
+                        _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+
+                        if (_currentCardIndex >= _userCards.Count)
+                        {
+                            _currentCardIndex = Math.Max(0, _userCards.Count - 1);
+                        }
+                    }
+
+                    UpdateCardUI();
+                    MessageBox.Show("Картку успішно закрито та видалено з системи.", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Виникла помилка при закритті картки: {ex.Message}", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+        private void BtnTimeTravel_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                // КРОК 1: Зсув часу в базі даних
+                using (var db = new Banking_system.DataBase.Database())
+                {
+                    var creditCards = db.Cards.OfType<CreditCard>().Where(c => c.UserId == _currentUser.ID).ToList();
+
+                    if (creditCards.Count == 0)
+                    {
+                        MessageBox.Show("У Вас немає жодної кредитної картки для тестування.", "Тест", MessageBoxButton.OK, MessageBoxImage.Information);
+                        return;
+                    }
+
+                    // Перевіряємо, чи є хоча б на одній кредитці мінус (бо штраф нараховується тільки на борг)
+                    var cardsWithDebt = creditCards.Where(c => c.Balance < 0).ToList();
+                    if (cardsWithDebt.Count == 0)
+                    {
+                        MessageBox.Show("У Вас немає боргів!\n\nЩоб система нарахувала штраф, спочатку зніміть або перекажіть кошти (щоб баланс став від'ємним), а вже потім натискайте цю кнопку.",
+                                        "Увага", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // Відмотуємо дедлайн тільки для карток з боргом
+                    foreach (var card in cardsWithDebt)
+                    {
+                        // Віднімаємо 1 місяць і 1 день, щоб система точно зафіксувала прострочення
+                        card.DueDate = card.DueDate.AddMonths(-1).AddDays(-1);
+                    }
+
+                    db.SaveChanges(); // Зберігаємо зсув часу
+                }
+
+                Banking_system.Service.SessionManager.CheckAndProcessCredits(_currentUser.ID);
+
+                using (var db = new Banking_system.DataBase.Database())
+                {
+                    _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+
+                    // Захист від помилки індексу
+                    if (_currentCardIndex >= _userCards.Count)
+                        _currentCardIndex = Math.Max(0, _userCards.Count - 1);
+                }
+
+                // КРОК 4: Оновлюємо візуальну картку на екрані
+                UpdateCardUI();
+
+                MessageBox.Show("🕒 Час успішно промотано!\n\nСистема зафіксувала прострочення: штраф додано до Вашого балансу, дату наступного платежу оновлено, а на пошту надіслано лист-нагадування.",
+                                "Машина часу", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Виникла помилка під час симуляції часу: {ex.Message}", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void BtnCreateJunior_Click(object sender, RoutedEventArgs e)
         {
             if (_currentUser == null) return;
+
+            if (Banking_system.Service.SessionManager.IsUserBlacklisted(_currentUser.ID))
+            {
+                MessageBox.Show("Дія заблокована! Ви занесені до Чорного Списку банку через незакритий кредит.", "Відмова в обслуговуванні", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
             int count = _userCards.Count(card => card.GetType().Name == "JuniorCard" || card.GetType().Name == "UniorCard");
             if (count >= 2)
@@ -341,7 +515,11 @@ namespace Banking_system.Windows
         private void BtnTransfer_Click(object sender, RoutedEventArgs e)
         {
             if (_userCards.Count == 0 || _currentCardIndex == _userCards.Count) return;
-
+            if (Banking_system.Service.SessionManager.IsUserBlacklisted(_currentUser.ID))
+            {
+                MessageBox.Show("Дія заблокована! Ви занесені до Чорного Списку банку через незакритий кредит.", "Відмова в обслуговуванні", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             string currentCardNum = _userCards[_currentCardIndex].GetCardNumber();
 
             Window transferForm = new Window
@@ -358,7 +536,7 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-                
+
                 _userCards = db.FindAllCardsByUserId(_currentUser.ID);
                 UpdateCardUI();
             }
@@ -373,8 +551,25 @@ namespace Banking_system.Windows
 
         private void BtnDeposit_Click(object sender, RoutedEventArgs e)
         {
+            // Перевіряємо, чи є обрана картка
+            if (_userCards == null || _userCards.Count == 0 || _currentCardIndex >= _userCards.Count) return;
 
+            string currentCardNum = _userCards[_currentCardIndex].GetCardNumber();
+
+            // Відкриваємо вікно та передаємо номер поточної картки у поле
+            Banking_system.Windows.DepositWindow depositForm = new Banking_system.Windows.DepositWindow();
+            depositForm.TxtCardNumber.Text = currentCardNum;
+            depositForm.Owner = this;
+            depositForm.ShowDialog();
+
+            // Оновлюємо дані інтерфейсу (включаючи новий баланс) після закриття вікна
+            using (var db = new Banking_system.DataBase.Database())
+            {
+                _userCards = db.FindAllCardsByUserId(_currentUser.ID);
+                UpdateCardUI();
+            }
         }
+
         private void BtnStatistics_Click(object sender, RoutedEventArgs e)
         {
             // Перевіряємо, чи є взагалі картки
@@ -388,7 +583,6 @@ namespace Banking_system.Windows
             statsForm.Owner = this;
             statsForm.ShowDialog();
         }
-
 
         private async Task LoadCurrencyRatesAsync()
         {
@@ -410,23 +604,25 @@ namespace Banking_system.Windows
 
                     if (allRates != null)
                     {
-                        var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP", "XAU" };
+                        var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP", "XAU", "XAG" };
 
                         var filteredRates = allRates.Where(rate => popularCodes.Contains(rate.cc ?? "")).ToList();
 
                         string tickerText = "";
                         foreach (var rate in filteredRates)
                         {
-                            string flag = rate.cc switch
+                            // ВИПРАВЛЕНО: Використовуємо символи замість багованих системних прапорів
+                            string symbol = rate.cc switch
                             {
-                                "USD" => "🇺🇸",
-                                "EUR" => "🇪🇺",
-                                "GBP" => "🇬🇧",
-                                "PLN" => "🇵🇱",
-                                "XAU" => "🥇",
-                                _ => "🪙"
+                                "USD" => "$",
+                                "EUR" => "€",
+                                "GBP" => "£",
+                                "PLN" => "zł",
+                                "XAU" => "Au",
+                                "XAG" => "Ag",
+                                _ => "¤"
                             };
-                            tickerText += $"{flag} {rate.cc}: {rate.rate:F2} ₴   |   ";
+                            tickerText += $"{symbol} {rate.cc}: {rate.rate:F2} ₴   |   ";
                         }
 
                         // 3. Якщо дані завантажились успішно — просто підміняємо текст, анімація продовжить йти
@@ -440,11 +636,9 @@ namespace Banking_system.Windows
             }
             catch (Exception)
             {
-               
+
             }
         }
-
-        // Окремий метод, який гарантовано штовхає рядок
         private void StartMarqueeAnimation()
         {
             if (TxtTicker == null) return;

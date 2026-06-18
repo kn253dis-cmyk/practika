@@ -1,5 +1,5 @@
 ﻿using Banking_system.Entity;
-using Banking_system.Models; 
+using Banking_system.Models;
 using System;
 using System.Linq;
 using System.Windows;
@@ -23,27 +23,154 @@ namespace Banking_system.Windows
 
         private void BtnClose_Click(object sender, RoutedEventArgs e) => this.Close();
         private void BtnBackToLogin_Click(object sender, RoutedEventArgs e) => this.Close();
+        private bool IsValidEmail(string email, out string errorMessage)
+        {
+            errorMessage = string.Empty;
 
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                errorMessage = "Пошта не може бути порожньою.";
+                return false;
+            }
+
+            try
+            {
+                var mailAddress = new System.Net.Mail.MailAddress(email);
+                return true;
+            }
+            catch (FormatException)
+            {
+                errorMessage = "Неправильний формат пошти. Переконайтеся, що є символ '@' та вказано правильний домен наприклад: user@gmail.com";
+                return false;
+            }
+        }
+
+        private bool IsValidPhone(string phone, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(phone))
+            {
+                errorMessage = "Номер телефону не може бути порожнім.";
+                return false;
+            }
+
+            string cleanPhone = phone.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+
+            if (cleanPhone.StartsWith("+380") && cleanPhone.Length == 13 && cleanPhone.Substring(1).All(char.IsDigit))
+            {
+                return true;
+            }
+            else if (cleanPhone.StartsWith("380") && cleanPhone.Length == 12 && cleanPhone.All(char.IsDigit))
+            {
+                return true;
+            }
+            else if (cleanPhone.StartsWith("0") && cleanPhone.Length == 10 && cleanPhone.All(char.IsDigit))
+            {
+                return true;
+            }
+
+            errorMessage = "Введіть коректний український номер телефону наприклад: +380991234567";
+            return false;
+        }
+
+        private bool IsValidRealIpn(string ipn, DateTime dateOfBirth, bool isMale, out string errorMessage)
+        {
+            errorMessage = string.Empty;
+
+            if (string.IsNullOrWhiteSpace(ipn) || ipn.Length != 10 || !ipn.All(char.IsDigit))
+            {
+                errorMessage = "ІПН має складатися рівно з 10 цифр.";
+                return false;
+            }
+
+            // Математична перевірка контрольної суми (10-та цифра)
+            int[] coefficients = { -1, 5, 7, 9, 4, 6, 10, 5, 7 };
+            int sum = 0;
+
+            for (int i = 0; i < 9; i++)
+            {
+                sum += (ipn[i] - '0') * coefficients[i];
+            }
+
+            int expectedControlDigit = (sum % 11) % 10;
+            int actualControlDigit = ipn[9] - '0';
+
+            if (expectedControlDigit != actualControlDigit)
+            {
+                errorMessage = "ІПН не пройшов математичну перевірку. Схоже, це вигаданий набір цифр!";
+                return false;
+            }
+
+            // 3. Перевірка дати народження 
+            if (int.TryParse(ipn.Substring(0, 5), out int daysFrom1899))
+            {
+                DateTime baseDate = new DateTime(1899, 12, 31);
+                DateTime expectedDate = baseDate.AddDays(daysFrom1899);
+
+                // Порівнюємо розшифровану дату з введеними даними
+                if (expectedDate.Date != dateOfBirth.Date)
+                {
+                    errorMessage = $"ІПН належить іншій людині не співпадає з вашою!.";
+                    return false;
+                }
+            }
+
+            // Перевірка статі (9-та цифра: непарна = чоловік, парна = жінка)
+            int genderDigit = ipn[8] - '0';
+            bool isIpnMale = (genderDigit % 2 != 0);
+
+            if (isIpnMale != isMale)
+            {
+                errorMessage = "ІПН належить іншій людині не співпадає з вашою!.";
+                return false;
+            }
+
+            return true;
+        }
         private void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
             string fullName = TxtFullName.Text.Trim();
             string phone = TxtPhone.Text.Trim();
-            string email = TxtEmail.Text.Trim(); 
+            string email = TxtEmail.Text.Trim();
             string ipn = TxtIpn.Text.Trim();
             string password = TxtPassword.Password;
             string confirmPassword = TxtConfirmPassword.Password;
 
-            
-            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(phone) || string.IsNullOrEmpty(email) ||
-                string.IsNullOrEmpty(ipn) || string.IsNullOrEmpty(password))
+            DateTime? selectedDate = DpDateOfBirth.SelectedDate;
+            string? selectedGender = ((ComboBoxItem)CmbGender.SelectedItem)?.Content.ToString();
+            bool isMale = selectedGender == "Чоловіча";
+
+            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(phone) ||
+                string.IsNullOrEmpty(email) || string.IsNullOrEmpty(ipn) ||
+                string.IsNullOrEmpty(password) || DpDateOfBirth.SelectedDate == null ||
+                selectedGender == "Оберіть стать")
             {
-                MessageBox.Show("Будь ласка, заповніть усі поля!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Будь ласка, заповніть усі поля, оберіть дату народження та стать!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            if (!email.Contains("@") || !email.Contains("."))
+            if (selectedDate == null)
             {
-                MessageBox.Show("Будь ласка, введіть коректний Email!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Будь ласка, оберіть дату народження в календарі!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!IsValidPhone(phone, out string phoneError))
+            {
+                MessageBox.Show(phoneError, "Помилка телефону", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!IsValidEmail(email, out string emailError))
+            {
+                MessageBox.Show(emailError, "Помилка пошти", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (!IsValidRealIpn(ipn, selectedDate.Value, isMale, out string ipnError))
+            {
+                MessageBox.Show(ipnError, "Помилка ІПН", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -62,22 +189,11 @@ namespace Banking_system.Windows
 
             using (var db = new Banking_system.DataBase.Database())
             {
-
-                //db.Database.Migrate();
                 if (db.Users.Any(u => u.Email == email || u.Ipn == ipn))
                 {
                     MessageBox.Show("Користувач з таким Email або ІПН вже існує!", "Помилка", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
-
-                string? selectedCard = ((ComboBoxItem)CmbCardType.SelectedItem).Content.ToString();
-                AbstractCard? newCard = null;
-
-                if (selectedCard == "Дебетова") newCard = new DebitCard();
-                else if (selectedCard == "Кредитна") newCard = new CreditCard();
-                else if (selectedCard == "Юніорська") newCard = new CurrencyCard();
-
-                if (newCard == null) return;
 
                 User newUser = new User
                 {
@@ -87,16 +203,61 @@ namespace Banking_system.Windows
                     Phone = phone,
                     Email = email,
                     Ipn = ipn,
+                    DateOfBirth = selectedDate.Value,
+                    IsMale = isMale,
                     Password = db.HashPassword(password)
                 };
 
-                // ВАЖЛИВО: Додаємо картку до колекції користувача
-                newUser.Cards.Add(newCard);
                 db.Users.Add(newUser);
                 db.SaveChanges();
 
-                Logger.AppendSystemLog(newUser.Email, $"Користувач успішно зареєструвався в системі. Створено картку: {newCard.CardNumber}");
-                MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {newCard.CardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
+                string? selectedCard = ((ComboBoxItem)CmbCardType.SelectedItem).Content.ToString();
+                string createdCardNumber = "";
+                bool showDefaultSuccessMessage = true;
+
+                if (selectedCard == "Кредитна")
+                {
+                    CreditPlanWindow creditWindow = new CreditPlanWindow(newUser);
+                    creditWindow.ShowDialog();
+
+                    if (!creditWindow.IsCardCreated)
+                    {
+                        DebitCard defaultCard = new DebitCard { UserId = newUser.ID };
+                        db.Cards.Add(defaultCard);
+                        db.SaveChanges();
+                        createdCardNumber = defaultCard.CardNumber;
+
+                        MessageBox.Show("Оформлення кредиту скасовано. Вам відкрито стандартну Дебетову картку.", "Інформація", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        var creditCard = db.Cards.FirstOrDefault(c => c.UserId == newUser.ID);
+                        createdCardNumber = creditCard?.CardNumber ?? "Невідомо";
+                        showDefaultSuccessMessage = false;
+                    }
+                }
+                else
+                {
+                    // Логіка для Дебетової та Валютної
+                    AbstractCard newCard;
+
+                    if (selectedCard == "Валютна")
+                        newCard = new CurrencyCard { UserId = newUser.ID };
+                    else
+                        newCard = new DebitCard { UserId = newUser.ID };
+
+                    db.Cards.Add(newCard);
+                    db.SaveChanges();
+                    createdCardNumber = newCard.CardNumber;
+                }
+
+                Logger.AppendSystemLog(newUser.Email, $"Користувач успішно зареєструвався в системі. Створено картку: {createdCardNumber}");
+
+                if (showDefaultSuccessMessage)
+                {
+                    MessageBox.Show($"Реєстрація успішна!\nВаш номер картки: {createdCardNumber}", "Успіх!", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
                 this.Close();
             }
         }

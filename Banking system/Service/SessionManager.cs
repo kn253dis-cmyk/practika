@@ -63,34 +63,54 @@ namespace Banking_system.Service
             }
         }
 
-        private static void CheckAndProcessCredits(int userId)
+        public static void CheckAndProcessCredits(int userId)
         {
             try
             {
                 using (var db = new Database())
                 {
                     bool changesMade = false;
-
                     var creditCards = db.Cards.OfType<CreditCard>().Where(c => c.UserId == userId).ToList();
 
                     foreach (var card in creditCards)
                     {
                         while (card.Balance < 0 && DateTime.Now > card.DueDate)
                         {
-                            decimal debtAmount = Math.Abs(card.Balance);
-                            decimal penalty = debtAmount * (card.InterestRate / 100m);
+                            decimal interest = Math.Abs(card.Balance) * (card.InterestRate / 100m);
 
-                            card.AccruedInterest += penalty;
+                            card.Balance -= interest;
 
                             card.MissedPaymentsCount++;
+                            card.DueDate = card.DueDate.AddMonths(1); 
+                            changesMade = true;
 
-                            if (card.MissedPaymentsCount >= 2)
+                            var user = db.Users.Find(card.UserId);
+                            if (user != null)
                             {
-                                card.IsBlocked = true;
+                                var receiptData = new Dictionary<string, string>
+                                {
+                                    { "UserName", $"{user.Surname} {user.Name}" },
+                                    { "CardNumber", card.CardNumber },
+                                    { "PlanName", card.CreditType },
+                                    { "CreditLimit", card.CreditLimit.ToString("F2") },
+                                    { "CurrentDebt", Math.Abs(card.Balance).ToString("F2") },
+                                    { "AccruedInterest", interest.ToString("F2") }, 
+                                    { "CreditEndDate", card.DueDate.ToString("dd.MM.yyyy") },
+                                    { "Date", DateTime.Now.ToString("dd.MM.yyyy") }
+                                };
+
+                                Logger.AppendLog(
+                                    userEmail: user.Email,
+                                    templateName: "LoanReminderReceipt",
+                                    text: $"⚠️ Нарахування штрафу за кредитом. Ваш поточний борг: {Math.Abs(card.Balance):N2} ₴",
+                                    data: receiptData
+                                );
                             }
+                        }
 
-                            card.DueDate = card.DueDate.AddMonths(1);
-
+                        if (card.MissedPaymentsCount > 0 && !card.IsBlocked)
+                        {
+                            card.IsBlocked = true;
                             changesMade = true;
                         }
                     }
@@ -103,7 +123,17 @@ namespace Banking_system.Service
             }
             catch (Exception ex)
             {
-                Logger.Log($"Помилка під час автоматичної перевірки кредитів: {ex.Message}");
+                Logger.Log($"Помилка перевірки кредитів: {ex.Message}");
+            }
+        }
+
+
+        public static bool IsUserBlacklisted(int userId)
+        {
+            using (var db = new Database())
+            {
+                return db.Cards.OfType<CreditCard>()
+                    .Any(c => c.UserId == userId && c.IsBlocked);
             }
         }
     }
