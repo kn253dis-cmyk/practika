@@ -20,6 +20,8 @@ namespace Banking_system.Entity
         public string Name { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
         public string MiddleName { get; set; } = string.Empty;
+        public DateTime DateOfBirth { get; set; }
+        public bool IsMale { get; set; }
         public ICollection<AbstractCard> Cards { get; set; } = new List<AbstractCard>();
 
         public User() { }

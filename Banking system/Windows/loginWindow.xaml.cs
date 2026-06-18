@@ -22,40 +22,9 @@ namespace Banking_system
         public loginWindow()
         {
             InitializeComponent();
-            SeedDatabase();
         }
 
-        private void SeedDatabase()
-        {
-            try
-            {
-                using (var db = new Banking_system.DataBase.Database())
-                {
-
-                    db.Database.Migrate();
-                    // 1. Шукаємо в базі акаунт адміна, який ти зареєструєш сам через форму
-                    var adminUser = db.Users
-                        .Include(u => u.Cards) // Підвантажуємо його картки з бази
-                        .FirstOrDefault(u => u.Email == "admin@gmail.com");
-
-                    // 2. Якщо ти його вже створив, і на карті ще 0 грн — нараховуємо кошти один раз
-                    if (adminUser != null && adminUser.Cards != null && adminUser.Cards.Count > 0)
-                    {
-                        var adminCard = adminUser.Cards.First();
-
-                        if (adminCard.Balance == 0m)
-                        {
-                            adminCard.Balance = 50000.00m; // Нараховуємо 50 тисяч для тестів
-                            db.SaveChanges(); // Зберігаємо в базу
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Помилка сідування адміна: {ex.Message}");
-            }
-        }
+        
 
         private void BtnClose_Click(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
 

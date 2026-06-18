@@ -5,90 +5,197 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="RegisterWindow" Height="700" Width="450"
+        Title="Відкриття рахунку" Height="680" Width="950"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
         MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
-    <Border CornerRadius="20" ClipToBounds="True">
-        <Border.Background>
-            <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
-                <GradientStop Color="#1A1A2E" Offset="0.0" />
-                <GradientStop Color="#16213E" Offset="0.5" />
-                <GradientStop Color="#0F3460" Offset="1.0" />
-            </LinearGradientBrush>
-        </Border.Background>
-
+    <Border CornerRadius="20" ClipToBounds="True" Background="#0F172A">
         <Grid>
-            <Button x:Name="BtnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="2" Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#BDBDBD" ToolTip="Закрити" Click="BtnClose_Click">
-                <materialDesign:PackIcon Kind="WindowClose" Width="24" Height="24" />
-            </Button>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1.2*" />
+            </Grid.ColumnDefinitions>
 
-            <materialDesign:Card UniformCornerRadius="20" Background="#1A2235" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="25,20,25,20" Width="360" materialDesign:ElevationAssist.Elevation="Dp8">
+            <Border Grid.Column="0">
+                <Border.Background>
+                    <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
+                        <GradientStop Color="#0F2027" Offset="0.0" />
+                        <GradientStop Color="#203A43" Offset="0.5" />
+                        <GradientStop Color="#2C5364" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
 
-                <StackPanel>
-
-                    <materialDesign:PackIcon Kind="Bank" Width="55" Height="55" HorizontalAlignment="Center" Foreground="White" Margin="0,0,0,5" />
-                    <TextBlock Text="Національний Банк" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center" Foreground="White" Margin="0,0,0,2" />
-                    <TextBlock Text="Відкриття рахунку" FontSize="14" HorizontalAlignment="Center" Foreground="#A0A0A0" Margin="0,0,0,15" />
-
-                    <TextBox x:Name="TxtFullName" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="ПІБ" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
-
-                    <TextBox x:Name="TxtPhone" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Телефон" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
-
-                    <TextBox x:Name="TxtEmail" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Email" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:TextFieldAssist.HasClearButton="True" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
-
-                    <TextBox x:Name="TxtIpn" Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="ІПН" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
-
-                    <Border BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Background="#1A2235" Margin="0,0,0,10" Height="50">
-                        <ComboBox x:Name="CmbCardType" Foreground="White" Background="Transparent" BorderThickness="0" FontSize="15" Padding="15,13" VerticalContentAlignment="Center">
-                            <ComboBox.Template>
-                                <ControlTemplate TargetType="ComboBox">
-                                    <Grid>
-                                        <ToggleButton x:Name="ToggleButton" Grid.Column="2" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press">
-                                            <ToggleButton.Template>
-                                                <ControlTemplate TargetType="ToggleButton">
-                                                    <Grid Background="Transparent">
-                                                        <materialDesign:PackIcon Kind="ChevronDown" Foreground="#BDBDBD" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                                    </Grid>
-                                                </ControlTemplate>
-                                            </ToggleButton.Template>
-                                        </ToggleButton>
-
-                                        <ContentPresenter x:Name="ContentSite" IsHitTestVisible="False" Content="{TemplateBinding SelectionBoxItem}" Margin="15,0,30,0" VerticalAlignment="Center" HorizontalAlignment="Left" />
-
-                                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
-                                            <Border x:Name="DropDownBorder" Background="#1A2235" BorderBrush="#BDBDBD" BorderThickness="1" CornerRadius="10" Margin="0,2,0,0" MinWidth="{TemplateBinding ActualWidth}" MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                                <ScrollViewer SnapsToDevicePixels="True">
-                                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
-                                                </ScrollViewer>
-                                            </Border>
-                                        </Popup>
-                                    </Grid>
-                                </ControlTemplate>
-                            </ComboBox.Template>
-
-                            <ComboBoxItem Content="Дебетова" IsSelected="True" Foreground="White" Background="#1A2235" Padding="15,10"/>
-                            <ComboBoxItem Content="Кредитна" Foreground="White" Background="#1A2235" Padding="15,10"/>
-                            <ComboBoxItem Content="Юніорська" Foreground="White" Background="#1A2235" Padding="15,10"/>
-                        </ComboBox>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="30">
+                    <Border Background="Transparent" BorderBrush="#38BDF8" BorderThickness="2" CornerRadius="20" Padding="15" HorizontalAlignment="Center" Margin="0,0,0,20">
+                        <materialDesign:PackIcon Kind="CreditCardCheckOutline" Width="70" Height="70" Foreground="#38BDF8" />
                     </Border>
 
-                    <PasswordBox x:Name="TxtPassword" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Пароль" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,10" />
+                    <TextBlock Text="Національний" FontSize="32" FontWeight="Light" Foreground="White" HorizontalAlignment="Center"/>
+                    <TextBlock Text="БАНК" FontSize="38" FontWeight="Bold" Foreground="#38BDF8" HorizontalAlignment="Center" Margin="0,-5,0,30"/>
 
-                    <PasswordBox x:Name="TxtConfirmPassword" Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Height="50" Padding="10,5" VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Підтвердження" materialDesign:HintAssist.Background="#1A2235" materialDesign:HintAssist.HintPaddingBrush="#1A2235" materialDesign:HintAssist.Foreground="#BDBDBD" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" materialDesign:TextFieldAssist.UnderlineBrush="White" BorderBrush="#BDBDBD" Foreground="White" CaretBrush="White" FontSize="15" Margin="0,0,0,15" />
-
-                    <Button x:Name="BtnRegister" Content="ЗАРЕЄСТРУВАТИСЯ" Height="45" FontSize="16" FontWeight="Bold" materialDesign:ButtonAssist.CornerRadius="10" Margin="0,0,0,10" Click="BtnRegister_Click" />
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="Вже є рахунок?" Foreground="#A0A0A0" VerticalAlignment="Center" />
-                        <Button x:Name="BtnBackToLogin" Content="Увійти" Style="{StaticResource MaterialDesignFlatButton}" Foreground="White" FontWeight="Bold" Padding="5,0,0,0" Height="Auto" Click="BtnBackToLogin_Click"/>
+                    <StackPanel Margin="0,0,0,15">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="#38BDF8" Width="20" Height="20" Margin="0,0,10,0"/>
+                            <TextBlock Text="Безкоштовне відкриття" Foreground="#E2E8F0" FontSize="15" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="#38BDF8" Width="20" Height="20" Margin="0,0,10,0"/>
+                            <TextBlock Text="Кешбек на всі покупки" Foreground="#E2E8F0" FontSize="15" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <materialDesign:PackIcon Kind="CheckCircleOutline" Foreground="#38BDF8" Width="20" Height="20" Margin="0,0,10,0"/>
+                            <TextBlock Text="Перекази без комісій" Foreground="#E2E8F0" FontSize="15" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </StackPanel>
-
                 </StackPanel>
-            </materialDesign:Card>
+            </Border>
+
+            <Border Grid.Column="1" Background="#1E293B" Padding="40,20">
+                <Grid>
+                    <Button x:Name="BtnClose" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="-20,-10,0,0" 
+                            Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#64748B" ToolTip="Закрити" Click="BtnClose_Click">
+                        <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
+                    </Button>
+
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Створити акаунт" FontSize="26" FontWeight="Bold" Foreground="White" Margin="0,0,0,5" />
+                        <TextBlock Text="Заповніть дані для відкриття рахунку" FontSize="14" Foreground="#94A3B8" Margin="0,0,0,25" />
+
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="TxtFullName" Grid.Column="0"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="15,0" 
+                                     VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="ПІБ (через пробіл)" 
+                                     materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                     materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                     materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                     Foreground="White" CaretBrush="White" FontSize="14"/>
+
+                            <TextBox x:Name="TxtPhone" Grid.Column="2"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="15,0" 
+                                     VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Номер телефону" 
+                                     materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                     materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                     materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                     Foreground="White" CaretBrush="White" FontSize="14" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="TxtEmail" Grid.Column="0"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="15,0" 
+                                     VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Email адреса" 
+                                     materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                     materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                     materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                     Foreground="White" CaretBrush="White" FontSize="14"/>
+
+                            <TextBox x:Name="TxtIpn" Grid.Column="2"
+                                     Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="50" Padding="15,0" 
+                                     VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="ІПН (10 цифр)" 
+                                     materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                     materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                     materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                     Foreground="White" CaretBrush="White" FontSize="14" />
+                        </Grid>
+                        <Grid Margin="0,0,0,15">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <DatePicker x:Name="DpDateOfBirth" Grid.Column="0"
+                                        Style="{StaticResource MaterialDesignOutlinedDatePicker}" Height="50" Padding="15,0" 
+                                        VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Дата народження" 
+                                        materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                        materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                        materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                        Foreground="White" FontSize="14"/>
+
+                            <ComboBox x:Name="CmbGender" Grid.Column="2"
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="50" Padding="15,0" 
+                                      VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Стать" 
+                                      materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                      materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                      materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                      Foreground="White" FontSize="14">
+                                <ComboBoxItem Content="Оберіть стать" IsSelected="True" Foreground="#94A3B8" Visibility="Collapsed"/>
+                                <ComboBoxItem Content="Чоловіча" Foreground="White" />
+                                <ComboBoxItem Content="Жіноча" Foreground="White" />
+                            </ComboBox>
+                        </Grid>
+                        <ComboBox x:Name="CmbCardType" 
+                                  Style="{StaticResource MaterialDesignOutlinedComboBox}" 
+                                  Height="50" Padding="15,0" 
+                                  VerticalContentAlignment="Center" 
+                                  materialDesign:HintAssist.Hint="Оберіть тип першої картки" 
+                                  materialDesign:HintAssist.Background="#1E293B" 
+                                  materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                  materialDesign:HintAssist.Foreground="#94A3B8" 
+                                  materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                  materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" 
+                                  BorderBrush="#334155" 
+                                  Foreground="White" FontSize="14" Margin="0,0,0,20">
+
+                            <ComboBox.Resources>
+                                <SolidColorBrush x:Key="MaterialDesignPaper" Color="#1E293B"/>
+                            </ComboBox.Resources>
+
+                            <ComboBoxItem Content="Дебетова" IsSelected="True" Foreground="White" />
+                            <ComboBoxItem Content="Кредитна" Foreground="White" />
+                            <ComboBoxItem Content="Юніорська" Foreground="White" />
+                        </ComboBox>
+
+                        <Grid Margin="0,0,0,25">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <PasswordBox x:Name="TxtPassword" Grid.Column="0"
+                                         Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Height="50" Padding="15,0" 
+                                         VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Придумайте пароль" 
+                                         materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                         materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                         materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                         Foreground="White" CaretBrush="White" FontSize="14"/>
+
+                            <PasswordBox x:Name="TxtConfirmPassword" Grid.Column="2"
+                                         Style="{StaticResource MaterialDesignOutlinedPasswordBox}" Height="50" Padding="15,0" 
+                                         VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Повторіть пароль" 
+                                         materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                         materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="10" 
+                                         materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                         Foreground="White" CaretBrush="White" FontSize="14"/>
+                        </Grid>
+
+                        <Button x:Name="BtnRegister" Content="ВІДКРИТИ РАХУНОК" Height="50" FontSize="16" FontWeight="Bold" 
+                                materialDesign:ButtonAssist.CornerRadius="10" Background="#38BDF8" BorderThickness="0" 
+                                Foreground="#0F172A" Margin="0,0,0,20" Click="BtnRegister_Click" />
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                            <TextBlock Text="Вже є рахунок?" Foreground="#94A3B8" VerticalAlignment="Center" />
+                            <Button x:Name="BtnBackToLogin" Content="Увійти" Style="{StaticResource MaterialDesignFlatButton}" 
+                                    Foreground="#38BDF8" FontWeight="Bold" Padding="5,0,0,0" Height="Auto" Click="BtnBackToLogin_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Border>
         </Grid>
     </Border>
 </Window>
