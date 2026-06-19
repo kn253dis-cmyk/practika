@@ -78,51 +78,46 @@ namespace Banking_system.Windows
         {
             errorMessage = string.Empty;
 
+            // 1. Базова валідація
             if (string.IsNullOrWhiteSpace(ipn) || ipn.Length != 10 || !ipn.All(char.IsDigit))
             {
                 errorMessage = "ІПН має складатися рівно з 10 цифр.";
                 return false;
             }
 
-            // Математична перевірка контрольної суми (10-та цифра)
+            // 2. Математична перевірка (контрольна цифра)
             int[] coefficients = { -1, 5, 7, 9, 4, 6, 10, 5, 7 };
             int sum = 0;
-
             for (int i = 0; i < 9; i++)
             {
                 sum += (ipn[i] - '0') * coefficients[i];
             }
-
             int expectedControlDigit = (sum % 11) % 10;
-            int actualControlDigit = ipn[9] - '0';
-
-            if (expectedControlDigit != actualControlDigit)
+            if (expectedControlDigit != (ipn[9] - '0'))
             {
-                errorMessage = "ІПН не пройшов математичну перевірку. Схоже, це вигаданий набір цифр!";
+                errorMessage = "ІПН не пройшов математичну перевірку (вигаданий номер).";
                 return false;
             }
 
-            // 3. Перевірка дати народження 
-            if (int.TryParse(ipn.Substring(0, 5), out int daysFrom1899))
-            {
-                DateTime baseDate = new DateTime(1899, 12, 31);
-                DateTime expectedDate = baseDate.AddDays(daysFrom1899);
+            // 3. Перевірка дати народження з виправленням помилки Excel
+            int daysFrom1899 = int.Parse(ipn.Substring(0, 5));
+            int daysToSubtract = daysFrom1899 > 59 ? 1 : 0;
+            DateTime expectedDate = new DateTime(1899, 12, 31).AddDays(daysFrom1899 - daysToSubtract);
 
-                // Порівнюємо розшифровану дату з введеними даними
-                if (expectedDate.Date != dateOfBirth.Date)
-                {
-                    errorMessage = $"ІПН належить іншій людині не співпадає з вашою!.";
-                    return false;
-                }
+            if (expectedDate.Year != dateOfBirth.Year ||
+                expectedDate.Month != dateOfBirth.Month ||
+                expectedDate.Day != dateOfBirth.Day)
+            {
+                errorMessage = $"ІПН не співпадає з датою народження! В ІПН зашифровано: {expectedDate:dd.MM.yyyy}, а ви вказали: {dateOfBirth:dd.MM.yyyy}";
+                return false;
             }
 
-            // Перевірка статі (9-та цифра: непарна = чоловік, парна = жінка)
+            // 4. Перевірка статі
             int genderDigit = ipn[8] - '0';
             bool isIpnMale = (genderDigit % 2 != 0);
-
             if (isIpnMale != isMale)
             {
-                errorMessage = "ІПН належить іншій людині не співпадає з вашою!.";
+                errorMessage = "ІПН не співпадає зі статтю, обраною у формі.";
                 return false;
             }
 

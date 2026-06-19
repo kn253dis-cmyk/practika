@@ -22,6 +22,7 @@ namespace Banking_system.Entity
         public string MiddleName { get; set; } = string.Empty;
         public DateTime DateOfBirth { get; set; }
         public bool IsMale { get; set; }
+        public bool IsBlacklisted { get; set; } = false;
         public ICollection<AbstractCard> Cards { get; set; } = new List<AbstractCard>();
 
         public User() { }
