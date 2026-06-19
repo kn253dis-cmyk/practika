@@ -16,7 +16,10 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
+            <Button x:Name="BtnClose_click" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" 
+                    Style="{StaticResource MaterialDesignIconForegroundButton}" Foreground="#64748B" ToolTip="Закрити" Click="BtnCancel_Click">
+                <materialDesign:PackIcon Kind="Close" Width="24" Height="24" />
+            </Button>
             <StackPanel Grid.Row="0" Margin="0,30,0,10">
                 <TextBlock Text="КРЕДИТНІ ПЛАНИ" FontSize="26" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center"/>
                 <TextBlock Text="Оберіть ідеальні умови кредитування для ваших потреб" FontSize="14" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,5,0,0"/>
@@ -55,7 +58,7 @@
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                             <materialDesign:PackIcon Kind="CalendarClockOutline" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0" Width="18" Height="18"/>
-                            <TextBlock Text="Пільговий період: " Foreground="#94A3B8" FontSize="13"/>
+                            <TextBlock Text="Кількість місяців: " Foreground="#94A3B8" FontSize="13"/>
                             <TextBlock Text="1 міс." Foreground="White" FontWeight="SemiBold" FontSize="13"/>
                         </StackPanel>
 
@@ -87,7 +90,7 @@
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                                 <materialDesign:PackIcon Kind="CalendarClockOutline" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0" Width="18" Height="18"/>
-                                <TextBlock Text="Пільговий період: " Foreground="#94A3B8" FontSize="13"/>
+                                <TextBlock Text="Кількість місяців: " Foreground="#94A3B8" FontSize="13"/>
                                 <TextBlock Text="3 міс." Foreground="White" FontWeight="SemiBold" FontSize="13"/>
                             </StackPanel>
 
@@ -115,7 +118,7 @@
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
                             <materialDesign:PackIcon Kind="CalendarClockOutline" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0" Width="18" Height="18"/>
-                            <TextBlock Text="Пільговий період: " Foreground="#94A3B8" FontSize="13"/>
+                            <TextBlock Text="Кількість місяців: " Foreground="#94A3B8" FontSize="13"/>
                             <TextBlock Text="6 міс." Foreground="White" FontWeight="SemiBold" FontSize="13"/>
                         </StackPanel>
 
@@ -140,8 +143,8 @@
                             <materialDesign:PackIcon Kind="ShieldAlertOutline" Foreground="#FCA5A5" Margin="0,0,10,0" VerticalAlignment="Center" Width="22" Height="22"/>
                             <TextBlock Text="Увага: Правила користування кредитними коштами" FontWeight="Bold" FontSize="15" Foreground="#FCA5A5" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <TextBlock Text="За 3 дні до закінчення пільгового періоду Ви отримаєте нагадування на Email. У разі прострочення платежу нараховуватиметься штраф згідно з обраним планом." TextWrapping="Wrap" Foreground="#F87171" FontSize="13" Margin="0,0,0,8" LineHeight="20"/>
-                        <TextBlock Text="Ігнорування боргу більше 2-х місяців призведе до АВТОМАТИЧНОГО БЛОКУВАННЯ КАРТКИ." TextWrapping="Wrap" FontWeight="Bold" Foreground="#EF4444" FontSize="13"/>
+                        <TextBlock Text="Кредит надається строком вказаним в плані. Кожного місяця нараховуватимуться відсотки відповідно до вказаного в плані. За несплату кредиту до вказаного терміну його дії, Вас буде додано до чорного списку." TextWrapping="Wrap" Foreground="#F87171" FontSize="13" Margin="0,0,0,8" LineHeight="20"/>
+                        <TextBlock Text="За декілька днів до закінчення терміну дії кредиту Ви отримаєте нагадування на Email. Банк не бере відповідальності за непроінформованість про необхідність закриття кредиту, усі Ваші рахунки будуть заблоковані до моменту погашення боргу з нарахованими відсотками." TextWrapping="Wrap" FontWeight="Bold" Foreground="#EF4444" FontSize="13"/>
 
                         <CheckBox x:Name="ChkAgreement" Content="Я повністю розумію умови та погоджуюсь з ними" Foreground="#E2E8F0" FontSize="14" FontWeight="Bold" Margin="0,20,0,0" Cursor="Hand"/>
                     </StackPanel>
