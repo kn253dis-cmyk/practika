@@ -13,41 +13,49 @@
 
     <Grid>
         <Border Background="#1E293B" CornerRadius="25" BorderBrush="#334155" BorderThickness="1" 
-                VerticalAlignment="Center" HorizontalAlignment="Center" Width="460" Padding="30,35">
+                VerticalAlignment="Center" HorizontalAlignment="Center" Width="480" Padding="30,35">
             <StackPanel>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,30">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,25">
                     <Border Background="#38BDF8" Width="45" Height="45" CornerRadius="15" Margin="0,0,15,0">
                         <materialDesign:PackIcon Kind="SwapHorizontalBold" Width="30" Height="30" Foreground="#0F172A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Обмін валют" FontSize="22" FontWeight="Bold" Foreground="White"/>
-                        <TextBlock Text="Швидка конвертація" FontSize="13" Foreground="#94A3B8"/>
+                        <TextBlock x:Name="TxtTitle" Text="Купівля валюти" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Швидка конвертація за курсом НБУ" FontSize="13" Foreground="#94A3B8"/>
                     </StackPanel>
                 </StackPanel>
 
-                <ComboBox x:Name="CboSourceCard"
+                <ComboBox x:Name="CboTopCard"
                           Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55" Padding="15,0"
-                          VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Картка списання (Гривнева)"
+                          VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Списання (Гривнева картка)"
                           materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
                           materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
                           materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
-                          Foreground="White" FontSize="15" Margin="0,0,0,15" SelectionChanged="CboSourceCard_SelectionChanged">
+                          Foreground="White" FontSize="15" Margin="0,0,0,0">
                     <ComboBox.Resources>
                         <SolidColorBrush x:Key="MaterialDesignPaper" Color="#1E293B"/>
                     </ComboBox.Resources>
                 </ComboBox>
 
-                <materialDesign:PackIcon Kind="ArrowDown" Foreground="#334155" Width="24" Height="24" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                <Button x:Name="BtnSwapDirection" Style="{StaticResource MaterialDesignFloatingActionMiniButton}"
+                        Background="#0F172A" BorderBrush="#38BDF8" BorderThickness="1" 
+                        Width="40" Height="40" HorizontalAlignment="Center" Margin="0,-12,0,-12" Panel.ZIndex="1"
+                        Click="BtnSwapDirection_Click" ToolTip="Змінити напрямок обміну (Купівля/Продаж)" Cursor="Hand">
+                    <materialDesign:PackIcon x:Name="IconSwap" Kind="SwapVerticalBold" Foreground="#38BDF8" Width="22" Height="22"/>
+                </Button>
 
-                <TextBox x:Name="TxtTargetCard"
-                         Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" Padding="15,0"
-                         VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Валютна картка зарахування"
-                         materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
-                         materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
-                         materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
-                         materialDesign:TextFieldAssist.HasLeadingIcon="True" materialDesign:TextFieldAssist.LeadingIcon="CreditCardOutline"
-                         Foreground="#CBD5E1" CaretBrush="White" FontSize="15" IsReadOnly="True" Margin="0,0,0,20"/>
+                <ComboBox x:Name="CboBottomCard"
+                          Style="{StaticResource MaterialDesignOutlinedComboBox}" Height="55" Padding="15,0"
+                          VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Зарахування (Валютна картка)"
+                          materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
+                          materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
+                          materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155"
+                          Foreground="White" FontSize="15" Margin="0,0,0,20">
+                    <ComboBox.Resources>
+                        <SolidColorBrush x:Key="MaterialDesignPaper" Color="#1E293B"/>
+                    </ComboBox.Resources>
+                </ComboBox>
 
                 <Grid Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -76,7 +84,7 @@
 
                     <TextBox x:Name="TxtAmount" Grid.Column="2"
                              Style="{StaticResource MaterialDesignOutlinedTextBox}" Height="55" Padding="15,0"
-                             VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Сума покупки"
+                             VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Сума у валюті"
                              materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B"
                              materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12"
                              materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#38BDF8" BorderThickness="2"
@@ -97,7 +105,7 @@
                         <Separator Background="#334155" Margin="0,0,0,10"/>
 
                         <Grid>
-                            <TextBlock Text="До сплати:" FontSize="15" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Left"/>
+                            <TextBlock x:Name="LblTotalText" Text="До сплати:" FontSize="15" FontWeight="SemiBold" Foreground="White" HorizontalAlignment="Left"/>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                 <TextBlock x:Name="LblTotalPayable" Text="0.00" FontSize="16" FontWeight="Bold" Foreground="#EF4444"/>
                                 <TextBlock Text=" ₴" FontSize="16" FontWeight="Bold" Foreground="#94A3B8"/>
@@ -116,12 +124,12 @@
                     <Button x:Name="BtnCancel" Grid.Column="0" Content="СКАСУВАТИ" Click="BtnCancel_Click" 
                             Height="50" FontSize="14" FontWeight="Bold" Foreground="#94A3B8"
                             Style="{StaticResource MaterialDesignOutlinedButton}" BorderBrush="#334155" BorderThickness="2"
-                            materialDesign:ButtonAssist.CornerRadius="12"/>
+                            materialDesign:ButtonAssist.CornerRadius="12" Cursor="Hand"/>
 
-                    <Button x:Name="BtnConfirmExchange" Grid.Column="2" Content="ПІДТВЕРДИТИ" Click="BtnConfirmExchange_Click" 
+                    <Button x:Name="BtnConfirmExchange" Grid.Column="2" Content="КУПИТИ" Click="BtnConfirmExchange_Click" 
                             Height="50" FontSize="14" FontWeight="Bold" Foreground="#0F172A"
                             Background="#38BDF8" BorderThickness="0"
-                            materialDesign:ButtonAssist.CornerRadius="12"/>
+                            materialDesign:ButtonAssist.CornerRadius="12" Cursor="Hand"/>
                 </Grid>
 
             </StackPanel>
