@@ -92,12 +92,12 @@ namespace Banking_system.Windows
                     }
                 }
 
-                // ПОКАЗУЄМО повзунок ліміту
-                var creditLimitPanel = this.FindName("CreditLimitPanel") as UIElement;
-                if (creditLimitPanel != null) creditLimitPanel.Visibility = Visibility.Visible;
+                //// ПОКАЗУЄМО повзунок ліміту
+                //var creditLimitPanel = this.FindName("CreditLimitPanel") as UIElement;
+                //if (creditLimitPanel != null) creditLimitPanel.Visibility = Visibility.Visible;
 
-                var creditLimitSlider = this.FindName("CreditLimitSlider") as Slider;
-                if (creditLimitSlider != null) creditLimitSlider.Value = creditCard.CreditLimit;
+                //var creditLimitSlider = this.FindName("CreditLimitSlider") as Slider;
+                //if (creditLimitSlider != null) creditLimitSlider.Value = creditCard.CreditLimit;
             }
             else if (currentCard.GetType().Name == "CurrencyCard" || currentCard.GetType().Name == "JuniorCard")
             {
@@ -138,6 +138,7 @@ namespace Banking_system.Windows
         private void ShowAddCardUI()
         {
             GridCardInfo.Visibility = Visibility.Collapsed;
+            BtnCurrencyExchange.Visibility = Visibility.Collapsed;
             GridAddCard.Visibility = Visibility.Visible;
 
             // Спеціальний темний градієнт для екрану додавання картки
@@ -285,19 +286,19 @@ namespace Banking_system.Windows
                             MessageBoxImage.Information);
         }
 
-        private void CreditLimitSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            // Оновлюємо текст під час перетягування повзунка
-            var txtCreditLimitValue = this.FindName("TxtCreditLimitValue") as TextBlock;
-            if (txtCreditLimitValue != null)
-            {
-                txtCreditLimitValue.Text = $"{e.NewValue:N0} ₴";
+        //private void CreditLimitSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        //{
+        //    // Оновлюємо текст під час перетягування повзунка
+        //    var txtCreditLimitValue = this.FindName("TxtCreditLimitValue") as TextBlock;
+        //    if (txtCreditLimitValue != null)
+        //    {
+        //        txtCreditLimitValue.Text = $"{e.NewValue:N0} ₴";
 
-                // Зберігаємо нове значення в об'єкт картки
-                if (_userCards != null && _userCards.Count > 0 && _currentCardIndex < _userCards.Count && _userCards[_currentCardIndex] is CreditCard creditCard)
-                    creditCard.CreditLimit = (int)e.NewValue;
-            }
-        }
+        //        // Зберігаємо нове значення в об'єкт картки
+        //        if (_userCards != null && _userCards.Count > 0 && _currentCardIndex < _userCards.Count && _userCards[_currentCardIndex] is CreditCard creditCard)
+        //            creditCard.CreditLimit = (int)e.NewValue;
+        //    }
+        //}
 
         private void BtnLogout_Click(object sender, RoutedEventArgs e)
         {
