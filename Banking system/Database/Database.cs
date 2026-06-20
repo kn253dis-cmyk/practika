@@ -29,8 +29,7 @@ namespace Banking_system.DataBase
                     maxRetryDelay: TimeSpan.FromSeconds(30),
                     errorCodesToAdd: null);
             });
-            optionsBuilder.ConfigureWarnings(w =>
-        w.Ignore(RelationalEventId.PendingModelChangesWarning));
+            optionsBuilder.ConfigureWarnings(w =>w.Ignore(RelationalEventId.PendingModelChangesWarning));
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -87,6 +87,7 @@ namespace Banking_system.Models
             {
                 IsBlocked = true;
                 result.Action = CardAction.Blocked;
+                return result;
             }
 
             // НАРАХУВАННЯ ВІДСОТКІВ
