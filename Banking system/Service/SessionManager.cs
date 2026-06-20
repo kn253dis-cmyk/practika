@@ -5,6 +5,7 @@ using Banking_system.Entity;
 using Banking_system.Models;
 using Banking_system.DataBase;
 
+
 namespace Banking_system.Service
 {
     public enum UserRole
@@ -67,50 +68,105 @@ namespace Banking_system.Service
         {
             try
             {
-                using (var db = new Database())
+                using (var db = new Banking_system.DataBase.Database())
                 {
+                    var user = db.Users.Find(userId);
+                    if (user == null) return;
+
                     bool changesMade = false;
                     var creditCards = db.Cards.OfType<CreditCard>().Where(c => c.UserId == userId).ToList();
 
+                    var emailService = new Banking_system.Service.EmailService();
+
                     foreach (var card in creditCards)
                     {
-                        while (card.Balance < 0 && DateTime.Now > card.DueDate)
+                        var result = card.ProcessRoutine();
+
+                        if (result.Action == CardAction.SendWarning)
                         {
-                            decimal interest = Math.Abs(card.Balance) * (card.InterestRate / 100m);
-
-                            card.Balance -= interest;
-
-                            card.MissedPaymentsCount++;
-                            card.DueDate = card.DueDate.AddMonths(1); 
-                            changesMade = true;
-
-                            var user = db.Users.Find(card.UserId);
-                            if (user != null)
+                            var receiptData = new Dictionary<string, string>
                             {
-                                var receiptData = new Dictionary<string, string>
-                                {
-                                    { "UserName", $"{user.Surname} {user.Name}" },
-                                    { "CardNumber", card.CardNumber },
-                                    { "PlanName", card.CreditType },
-                                    { "CreditLimit", card.CreditLimit.ToString("F2") },
-                                    { "CurrentDebt", Math.Abs(card.Balance).ToString("F2") },
-                                    { "AccruedInterest", interest.ToString("F2") }, 
-                                    { "CreditEndDate", card.DueDate.ToString("dd.MM.yyyy") },
-                                    { "Date", DateTime.Now.ToString("dd.MM.yyyy") }
-                                };
+                                { "UserName", $"{user.Surname} {user.Name}" },
+                                { "CardNumber", card.CardNumber },
+                                { "PlanName", card.CreditType },
+                                { "CreditLimit", card.CreditLimit.ToString("F2") },
+                                { "CurrentDebt", Math.Abs(card.Balance).ToString("F2") },
+                                { "AccruedInterest", "0.00" },
+                                { "CreditEndDate", card.DueDate.ToString("dd.MM.yyyy") },
+                                { "Date", DateTime.Now.ToString("dd.MM.yyyy") }
+                            };
 
-                                Logger.AppendLog(
-                                    userEmail: user.Email,
-                                    templateName: "LoanReminderReceipt",
-                                    text: $"⚠️ Нарахування штрафу за кредитом. Ваш поточний борг: {Math.Abs(card.Balance):N2} ₴",
-                                    data: receiptData
-                                );
-                            }
+                            Logger.AppendLog(
+                                userEmail: user.Email,
+                                templateName: "LoanReminderReceipt",
+                                text: $"⚠️ Увага! До нарахування відсотків залишилось менше 7 днів. Залишилось місяців за планом: {result.MonthsLeft}.",
+                                data: receiptData
+                            );
+
+                            string htmlContent = emailService.PrepareReceiptHtml("LoanReminderReceipt", receiptData);
+                            Task.Run(() => emailService.SendEmailAsync(user.Email, "Увага! Наближається платіж за кредитом", htmlContent));
+
+                            changesMade = true;
                         }
-
-                        if (card.MissedPaymentsCount > 0 && !card.IsBlocked)
+                        else if (result.Action == CardAction.InterestApplied)
                         {
-                            card.IsBlocked = true;
+                            var receiptData = new Dictionary<string, string>
+                            {
+                                { "UserName", $"{user.Surname} {user.Name}" },
+                                { "CardNumber", card.CardNumber },
+                                { "PlanName", card.CreditType },
+                                { "CreditLimit", card.CreditLimit.ToString("F2") },
+                                { "CurrentDebt", Math.Abs(card.Balance).ToString("F2") },
+                                { "AccruedInterest", result.InterestAmount.ToString("F2") },
+                                { "CreditEndDate", card.DueDate.ToString("dd.MM.yyyy") },
+                                { "Date", DateTime.Now.ToString("dd.MM.yyyy") }
+                            };
+
+                            Logger.AppendLog(
+                                userEmail: user.Email,
+                                templateName: "LoanReminderReceipt",
+                                text: $"⚠️ Нараховано відсотки. Ваш поточний борг: {Math.Abs(card.Balance):N2} ₴",
+                                data: receiptData
+                            );
+
+                            string htmlContent = emailService.PrepareReceiptHtml("LoanReminderReceipt", receiptData);
+                            Task.Run(() => emailService.SendEmailAsync(user.Email, "Нараховано відсотки за кредитною лінією", htmlContent));
+
+                            changesMade = true;
+                        }
+                        else if (result.Action == CardAction.Blacklisted)
+                        {
+                            if (!user.IsBlacklisted)
+                            {
+                                user.IsBlacklisted = true;
+                                Logger.Log($"Користувач {user.Email} потрапив до Чорного списку банку.");
+                            }
+                            changesMade = true;
+                        }
+                        else if (result.Action == CardAction.Blocked)
+                        {
+                            var receiptData = new Dictionary<string, string>
+                            {
+                                { "UserName", $"{user.Surname} {user.Name}" },
+                                { "CardNumber", card.CardNumber },
+                                { "PlanName", card.CreditType },
+                                { "CreditLimit", card.CreditLimit.ToString("F2") },
+                                { "CurrentDebt", Math.Abs(card.Balance).ToString("F2") },
+                                { "AccruedInterest", "0.00" }, 
+                                { "CreditEndDate", card.TermEndDate.AddMonths(1).ToString("dd.MM.yyyy") },
+                                { "Date", DateTime.Now.ToString("dd.MM.yyyy") }
+                            };
+
+                            Logger.AppendLog(
+                                userEmail: user.Email,
+                                templateName: "LoanReminderReceipt",
+                                text: $"⛔ Ваш кредитний план завершився. У Вас є 1 місяць (до {card.TermEndDate.AddMonths(1):dd.MM.yyyy}) для погашення боргу, інакше Вас буде внесено до Чорного списку.",
+                                data: receiptData
+                            );
+
+                            string htmlContent = emailService.PrepareReceiptHtml("LoanReminderReceipt", receiptData);
+                            Task.Run(() => emailService.SendEmailAsync(user.Email, "⛔ Картку заблоковано! Останнє попередження", htmlContent));
+
                             changesMade = true;
                         }
                     }
@@ -127,13 +183,12 @@ namespace Banking_system.Service
             }
         }
 
-
         public static bool IsUserBlacklisted(int userId)
         {
             using (var db = new Database())
             {
-                return db.Cards.OfType<CreditCard>()
-                    .Any(c => c.UserId == userId && c.IsBlocked);
+                var user = db.Users.Find(userId);
+                return user != null && user.IsBlacklisted;
             }
         }
     }

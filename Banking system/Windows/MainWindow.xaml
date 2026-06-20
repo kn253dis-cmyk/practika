@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Особистий кабінет" Height="700" Width="950"
+        Title="Особистий кабінет" Height="700" Width="1024" MinWidth="980"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         AllowsTransparency="True"
@@ -30,6 +30,16 @@
                             <TextBlock Text="НАЦІОНАЛЬНИЙ" FontSize="12" Foreground="#94A3B8" FontWeight="SemiBold"/>
                             <TextBlock Text="БАНК" FontSize="20" FontWeight="Bold" Foreground="White" Margin="0,-2,0,0"/>
                         </StackPanel>
+
+                        <Button x:Name="BtnTimeTravel" Click="BtnTimeTravel_Click" 
+                                Background="#FF9800" BorderThickness="0" Foreground="White" 
+                                Margin="20,0,0,0" ToolTip="QA Тест: Поетапна симуляція часу для кредитів"
+                                materialDesign:ButtonAssist.CornerRadius="8" Height="30" Padding="10,0">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="ClockFast" VerticalAlignment="Center" Margin="0,0,5,0" Width="16" Height="16"/>
+                                <TextBlock Text="ТЕСТ ЧАСУ" VerticalAlignment="Center" FontWeight="Bold" FontSize="12"/>
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -66,7 +76,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Text="Мої рахунки та картки" FontSize="22" FontWeight="Bold" Foreground="White" Margin="0,0,0,15" HorizontalAlignment="Center"/>
+                <TextBlock Text="Мої рахунки та картки" FontSize="22" FontWeight="Bold" Foreground="White" Margin="0,0,0,15" HorizontalAlignment="Center"/>
 
                 <Grid Grid.Row="1" VerticalAlignment="Center" Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -181,20 +191,30 @@
                                 <TextBlock x:Name="TxtCreditLimitValue" Text="15 000 ₴" Foreground="White" FontWeight="Bold" FontSize="16" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             </Grid>
                             <Slider x:Name="CreditLimitSlider" Minimum="500" Maximum="50000" Value="15000" 
-                    TickFrequency="500" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
-                    Foreground="#38BDF8" Background="White" Margin="0,5,0,0" ValueChanged="CreditLimitSlider_ValueChanged"/>
+                                    TickFrequency="500" IsSnapToTickEnabled="True" TickPlacement="BottomRight"
+                                    Foreground="#38BDF8" Background="White" Margin="0,5,0,0" ValueChanged="CreditLimitSlider_ValueChanged"/>
                         </StackPanel>
                     </materialDesign:Card>
 
                     <Button x:Name="BtnCurrencyExchange" 
-            Content="Купити / Продати валюту" 
-            Visibility="Collapsed" 
-            Width="480"
-            Click="BtnCurrencyExchange_Click"
-            Margin="0,0,0,20"
-            Style="{StaticResource MaterialDesignRaisedButton}" 
-            Background="#FF2196F3" 
-            BorderBrush="{x:Null}"/>
+                            Visibility="Collapsed" 
+                            Width="480" Height="50"
+                            Click="BtnCurrencyExchange_Click"
+                            Margin="0,0,0,20"
+                            materialDesign:ButtonAssist.CornerRadius="12"
+                            BorderThickness="1" BorderBrush="#334155"
+                            Cursor="Hand">
+                        <Button.Background>
+                            <LinearGradientBrush EndPoint="1,1" StartPoint="0,0">
+                                <GradientStop Color="#1E293B" Offset="0.0" />
+                                <GradientStop Color="#0F172A" Offset="1.0" />
+                            </LinearGradientBrush>
+                        </Button.Background>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <materialDesign:PackIcon Kind="SwapHorizontalCircle" Width="24" Height="24" Foreground="#38BDF8" Margin="0,0,10,0"/>
+                            <TextBlock Text="Обмін валют" FontSize="16" FontWeight="SemiBold" Foreground="White" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
                 <Grid Grid.Row="3" HorizontalAlignment="Center">
@@ -212,10 +232,10 @@
                         </StackPanel>
                     </Button>
 
-                    <Button x:Name="BtnDeposit" Grid.Column="1" Click="BtnDeposit_Click" Width="145" Height="55" materialDesign:ButtonAssist.CornerRadius="12" Margin="0,0,15,0" Background="#10B981" BorderThickness="0" ToolTip="Поповнити поточну картку" Padding="0">
+                    <Button x:Name="BtnDeposit" Grid.Column="1" Click="BtnDeposit_Click" Width="145" Height="55" materialDesign:ButtonAssist.CornerRadius="12" Margin="0,0,15,0" Background="#10B981" BorderThickness="0" ToolTip="Поповнити або зняти кошти" Padding="0">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <materialDesign:PackIcon Kind="ArrowDownThick" Width="22" Height="22" Margin="0,0,8,0" VerticalAlignment="Center" Foreground="White"/>
-                            <TextBlock Text="ПОПОВНИТИ" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
+                            <TextBlock Text="ГОТІВКА" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="White"/>
                         </StackPanel>
                     </Button>
 

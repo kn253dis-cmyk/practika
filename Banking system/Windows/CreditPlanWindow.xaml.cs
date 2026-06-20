@@ -105,7 +105,9 @@ namespace Banking_system.Windows
                         CreditLimit = _selectedLimit,
                         CreditType = _selectedPlanName,
                         InterestRate = _selectedRate,
-                        DueDate = DateTime.Now.AddMonths(_selectedMonths)
+                        PlanDurationMonths = _selectedMonths,
+                        DueDate = DateTime.Now.AddMonths(1), 
+                        TermEndDate = DateTime.Now.AddMonths(_selectedMonths) 
                     };
 
                     db.Cards.Add(newCard);

@@ -1,7 +1,12 @@
 ﻿<Page x:Class="Banking_system.Views.TransactionHistoryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      mc:Ignorable="d"
+      d:DesignHeight="600" d:DesignWidth="850"
+      MinWidth="750"
       Title="Історія транзакцій" Background="#0F172A"
       TextOptions.TextFormattingMode="Display" 
       TextOptions.TextRenderingMode="ClearType"
@@ -15,15 +20,49 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,15">
-                <Border Background="#1E293B" Width="40" Height="40" CornerRadius="12" Margin="0,0,15,0">
-                    <materialDesign:PackIcon Kind="History" Width="26" Height="26" Foreground="#38BDF8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Border>
-                <StackPanel VerticalAlignment="Center">
-                    <TextBlock Text="Історія транзакцій" FontSize="22" FontWeight="Bold" Foreground="White"/>
-                    <TextBlock Text="Усі ваші операції та перекази" FontSize="13" Foreground="#94A3B8"/>
+            <Grid Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <Border Background="#1E293B" Width="40" Height="40" CornerRadius="12" Margin="0,0,15,0">
+                        <materialDesign:PackIcon Kind="History" Width="26" Height="26" Foreground="#38BDF8" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Історія транзакцій" FontSize="22" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Усі ваші операції та перекази" FontSize="13" Foreground="#94A3B8"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+
+                    <DatePicker x:Name="DpSearchDate" Width="170" Height="45" Margin="0,0,8,0"
+                                Style="{StaticResource MaterialDesignOutlinedDatePicker}" Padding="15,0" 
+                                VerticalContentAlignment="Center" materialDesign:HintAssist.Hint="Пошук за датою" 
+                                materialDesign:HintAssist.Background="#1E293B" materialDesign:HintAssist.HintPaddingBrush="#1E293B" 
+                                materialDesign:HintAssist.Foreground="#94A3B8" materialDesign:TextFieldAssist.TextFieldCornerRadius="12" 
+                                materialDesign:TextFieldAssist.UnderlineBrush="#38BDF8" BorderBrush="#334155" 
+                                Foreground="White" FontSize="14"
+                                SelectedDateChanged="DpSearchDate_SelectedDateChanged"/>
+
+                    <Button x:Name="BtnClearDate" Click="BtnClearDate_Click" 
+                            Style="{StaticResource MaterialDesignIconForegroundButton}" 
+                            Foreground="#EF4444" Width="35" Height="45" Padding="0" 
+                            Visibility="Collapsed" Margin="0,0,8,0" ToolTip="Скинути дату пошуку">
+                        <materialDesign:PackIcon Kind="Close" Width="22" Height="22"/>
+                    </Button>
+
+                    <Button x:Name="BtnToggleSort" Click="BtnToggleSort_Click"
+                            Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
+                            Background="#1E293B" BorderBrush="#334155" Foreground="#38BDF8"
+                            Width="45" Height="45" ToolTip="Спочатку нові"
+                            materialDesign:ButtonAssist.CornerRadius="12">
+                        <materialDesign:PackIcon x:Name="IconSort" Kind="ArrowDown" Width="24" Height="24"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
 
             <Border Background="#1E293B" CornerRadius="12" Padding="15,12" BorderBrush="#334155" BorderThickness="1">
                 <StackPanel Orientation="Horizontal">
