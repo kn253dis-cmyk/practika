@@ -1,5 +1,7 @@
 ﻿using Banking_system.DataBase;
+using Banking_system.Models;
 using Banking_system.Models.Transactions;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +63,12 @@ namespace Banking_system.Windows
                         MessageBox.Show("Картку не знайдено!", "Помилка");
                         return;
                     }
+                    if (card is CurrencyCard)
+                    {
+                        MessageBox.Show("Поповнення валютної картки не підтримується. Будь ласка, використовуйте гривневу картку для поповнення.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
 
                     var depositTx = new DepositTransaction(card, amount);
                     if (depositTx.Execute())
@@ -74,13 +82,13 @@ namespace Banking_system.Windows
             }
         }
 
+
         private void BtnWithdraw_Click(object sender, RoutedEventArgs e)
         {
             if (ValidateInput())
             {
                 string selectedCategory = CmbOperationType.Text;
 
-                // ПЕРЕВІРКА: Чи не намагається користувач зняти кошти через категорію поповнення
                 if (_depositOnlyCategories.Contains(selectedCategory))
                 {
                     MessageBox.Show($"Категорія '{selectedCategory}' призначена лише для поповнення!\nБудь ласка, оберіть категорію для витрат.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -99,12 +107,18 @@ namespace Banking_system.Windows
                         return;
                     }
 
+                    if (card is CurrencyCard)
+                    {
+                        MessageBox.Show("Витрати з валютної картки не підтримуються. Будь ласка, використовуйте гривневу картку для витрат.", "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
 
                     if (card is Banking_system.Models.CreditCard creditCard && creditCard.IsBlocked)
                     {
                         MessageBox.Show("Ця кредитна картка заблокована за прострочення боргу! Ви не можете робити з неї витрати чи знімати готівку.",
                                         "Рахунок заблоковано", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return; 
+                        return;
                     }
 
                     bool hasActiveDebts = db.Cards.OfType<Banking_system.Models.CreditCard>()
@@ -114,7 +128,7 @@ namespace Banking_system.Windows
                     {
                         MessageBox.Show("Ваші активи тимчасово заморожені через наявність простроченого кредиту!\n\nЩоб розблокувати витрати (кафе, супермаркети тощо), будь ласка, погасіть заборгованість.",
                                         "Активи заморожено", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return; 
+                        return;
                     }
 
 
@@ -125,9 +139,7 @@ namespace Banking_system.Windows
                         this.Close();
                     }
                     else
-                    {
                         MessageBox.Show("Недостатньо коштів на картці!", "Помилка");
-                    }
                 }
             }
         }
