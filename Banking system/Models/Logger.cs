@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Windows;
 
 namespace Banking_system.Models
 {
@@ -12,44 +11,75 @@ namespace Banking_system.Models
     {
         private static readonly string LogFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bank_logs.json");
 
+        // --- НОВЕ: Кеш у пам'яті та об'єкт для синхронізації потоків ---
+        private static List<JsonLog.LogEntry>? _cachedLogs = null;
+        private static readonly object _lock = new object();
 
         public static void Log(string message)
         {
-
             System.Diagnostics.Debug.WriteLine($"[Card System]: {message}");
         }
+
         public static void LogUserAction(string userEmail, string message)
         {
             AppendLog(userEmail, "General", message, new Dictionary<string, string>());
+        }
+
+        // Внутрішній метод: завантажує логи з диска ЛИШЕ один раз при першому зверненні
+        private static void EnsureLogsLoaded()
+        {
+            if (_cachedLogs == null)
+            {
+                if (File.Exists(LogFilePath))
+                {
+                    try
+                    {
+                        string jsonContent = File.ReadAllText(LogFilePath);
+                        _cachedLogs = JsonSerializer.Deserialize<List<JsonLog.LogEntry>>(jsonContent) ?? new List<JsonLog.LogEntry>();
+                    }
+                    catch
+                    {
+                        _cachedLogs = new List<JsonLog.LogEntry>();
+                    }
+                }
+                else
+                {
+                    _cachedLogs = new List<JsonLog.LogEntry>();
+                }
+            }
         }
 
         public static void AppendLog(string userEmail, string templateName, string text, Dictionary<string, string> data)
         {
             try
             {
-                List<JsonLog.LogEntry> allLogs = ReadAllLogsFromDisk();
-                string transactionId = "TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
-
-                if (data != null && !data.ContainsKey("TransactionId"))
+                lock (_lock)
                 {
-                    data["TransactionId"] = transactionId;
+                    EnsureLogsLoaded(); 
+
+                    string transactionId = "TXN-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+
+                    if (data != null && !data.ContainsKey("TransactionId"))
+                    {
+                        data["TransactionId"] = transactionId;
+                    }
+
+                    JsonLog.LogEntry newLog = new JsonLog.LogEntry
+                    {
+                        Id = transactionId,
+                        UserEmail = userEmail,
+                        TemplateName = templateName,
+                        Text = text,
+                        Date = DateTime.Now,
+                        ReceiptData = data ?? new Dictionary<string, string>()
+                    };
+
+                    _cachedLogs!.Insert(0, newLog);
+
+                    var options = new JsonSerializerOptions { WriteIndented = true };
+                    string jsonString = JsonSerializer.Serialize(_cachedLogs, options);
+                    File.WriteAllText(LogFilePath, jsonString);
                 }
-
-                JsonLog.LogEntry newLog = new JsonLog.LogEntry
-                {
-                    Id = transactionId, 
-                    UserEmail = userEmail,
-                    TemplateName = templateName,
-                    Text = text,
-                    Date = DateTime.Now,
-                    ReceiptData = data ?? new Dictionary<string, string>()
-                };
-
-                allLogs.Insert(0, newLog);
-
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string jsonString = JsonSerializer.Serialize(allLogs, options);
-                File.WriteAllText(LogFilePath, jsonString);
             }
             catch (Exception ex)
             {
@@ -59,71 +89,16 @@ namespace Banking_system.Models
 
         public static void AppendSystemLog(string userEmail, string text)
         {
-        
             AppendLog(userEmail, "SystemLog", text, new Dictionary<string, string>());
         }
 
         public static List<JsonLog.LogEntry> ReadUserLogs(string userEmail)
         {
-            var allLogs = ReadAllLogsFromDisk();
-
-            return allLogs.Where(log => log.UserEmail == userEmail).ToList();
-        }
-
-        private static List<JsonLog.LogEntry> ReadAllLogsFromDisk()
-        {
-            if (!File.Exists(LogFilePath)) return new List<JsonLog.LogEntry>();
-
-            try
+            lock (_lock)
             {
-                string jsonContent = File.ReadAllText(LogFilePath);
-                List<JsonLog.LogEntry>? list = JsonSerializer.Deserialize<List<JsonLog.LogEntry>>(jsonContent);
-                return list ?? new List<JsonLog.LogEntry>();
-            }
-            catch
-            {
-                return new List<JsonLog.LogEntry>();
+                EnsureLogsLoaded(); 
+                return _cachedLogs!.Where(log => log.UserEmail == userEmail).ToList();
             }
         }
     }
 }
-
-
-/*
-        
-        ДЛЯ ЗНЯТТЯ ГОТІВКИ 
-            var withdrawalData = new Dictionary<string, string>
-            {
-                { "Amount", amount.ToString("F2") }, // amount - сума зняття
-                { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
-                { "CardNumber", user.CardNumber }, // user - поточний об'єкт User
-                { "Balance", currentBalance.ToString("F2") }, // currentBalance - залишок після зняття (decimal)
-                { "Purpose", "Зняття готівки" }
-            };
-
-            Logger.AppendLog(
-                userEmail: user.Email,
-                templateName: "WithdrawalReceipt",
-                text: $"Зняття готівки: {amount} ₴",
-                data: withdrawalData
-            );
-
-        ДЛЯ ОФОРМЛЕННЯ КРЕДИТУ
-            var loanData = new Dictionary<string, string>
-            {
-                { "Amount", loanAmount.ToString("F2") }, // loanAmount - сума кредиту
-                { "Date", DateTime.Now.ToString("dd.MM.yyyy HH:mm") },
-                { "CardNumber", user.CardNumber },
-                { "Percentage", "3.5" }, // Відсоток (можна брати з властивості CreditCard.Percentage)
-                { "CreditEndDate", DateTime.Now.AddYears(1).ToString("dd.MM.yyyy") }, // Дата закінчення дії (або з CreditCard.CreditEndDate)
-                { "CreditLimit", creditLimit.ToString("F2") } // Встановлений ліміт (з CreditCard.CreditLimit)
-            };
-
-            Logger.AppendLog(
-                userEmail: user.Email,
-                templateName: "LoanReceipt",
-                text: $"Оформлено кредит: {loanAmount} ₴",
-                data: loanData
-            );
-         */
-
