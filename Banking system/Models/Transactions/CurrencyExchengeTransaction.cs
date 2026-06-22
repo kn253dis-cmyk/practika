@@ -22,7 +22,6 @@ namespace Banking_system.Models.Transactions
         protected CurrencyExchangeTransaction() { }
         public override bool Execute()
         {
-            // Перевірка на коректність даних
             if (Amount <= 0 || _exchangeRate <= 0 || _sourceCardNumber == _targetCardNumber) return false;
 
             using (var db = new DataBase.Database())
@@ -38,23 +37,19 @@ namespace Banking_system.Models.Transactions
                     return false;
                 }
 
-                // Розраховуємо еквівалент у гривнях (Amount береться з AbstractTransaction)
                 decimal amountInUah = Amount * _exchangeRate;
 
-                // 1. ПРОДАЖ ВАЛЮТИ: Валютна картка -> Гривнева (Дебетова)
+
                 if (sourceCard is CurrencyCard sourceCurrencyCard && targetCard is DebitCard)
                 {
-                    // Перевірка, чи відповідає валюта транзакції валюті картки
                     if (!string.IsNullOrEmpty(sourceCurrencyCard.CurrencyType) && sourceCurrencyCard.CurrencyType != _currencyCode)
                     {
                         Logger.Log($"[Транзакція {TransactionId}] Помилка: Спроба продати {_currencyCode} з картки типу {sourceCurrencyCard.CurrencyType}.");
                         return false;
                     }
 
-                    // Знімаємо валюту
                     if (sourceCurrencyCard.Withdraw(Amount))
                     {
-                        // Зараховуємо гривні
                         targetCard.Deposit(amountInUah);
                         db.SaveChanges();
 
@@ -69,27 +64,22 @@ namespace Banking_system.Models.Transactions
                     }
                 }
 
-                // 2. КУПІВЛЯ ВАЛЮТИ: Гривнева картка (Дебетова) -> Валютна
                 else if (sourceCard is DebitCard && targetCard is CurrencyCard targetCurrencyCard)
                 {
-                    // КРИТИЧНА ПЕРЕВІРКА: чи не намагаються купити іншу валюту на цю картку
                     if (!string.IsNullOrEmpty(targetCurrencyCard.CurrencyType) && targetCurrencyCard.CurrencyType != _currencyCode)
                     {
                         Logger.Log($"[Транзакція {TransactionId}] Відхилено: Спроба зарахувати {_currencyCode} на картку, яка вже прив'язана до {targetCurrencyCard.CurrencyType}.");
-                        return false; // Жорстка заборона
+                        return false; 
                     }
 
-                    // Знімаємо гривні
                     if (sourceCard.Withdraw(amountInUah))
                     {
-                        // ЯКЩО КАРТКА НОВА І БЕЗ ВАЛЮТИ - НАЗАВЖДИ ПРИВ'ЯЗУЄМО ЇЙ ТИП ВАЛЮТИ
                         if (string.IsNullOrEmpty(targetCurrencyCard.CurrencyType))
                         {
                             targetCurrencyCard.CurrencyType = _currencyCode;
                             Logger.Log($"[Транзакція {TransactionId}] Валютній картці {targetCurrencyCard.CardNumber} встановлено тип валюти: {_currencyCode}.");
                         }
 
-                        // Зараховуємо валюту
                         targetCurrencyCard.Deposit(Amount);
                         db.SaveChanges();
 
@@ -112,7 +102,6 @@ namespace Banking_system.Models.Transactions
             }
         }
 
-        // Приватний метод для генерації електронної квитанції для Історії Транзакцій
         private void LogExchangeReceipt(string email, string operationName, decimal amountForeign, decimal amountUah, string source, string target)
         {
             var receiptData = new Dictionary<string, string>

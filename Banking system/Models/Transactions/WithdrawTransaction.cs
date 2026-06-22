@@ -21,7 +21,6 @@
                     card.Operation(this);
                     db.SaveChanges();
 
-                    // ДОДАНО: Логування для історії транзакцій
                     var user = db.Users.FirstOrDefault(u => u.ID == card.UserId);
                     if (user != null)
                     {

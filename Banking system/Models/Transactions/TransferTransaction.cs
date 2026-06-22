@@ -6,7 +6,6 @@ namespace Banking_system.Models.Transactions
 {
     internal class TransferTransaction : AbstractTransaction
     {
-        // Залишаємо лише один набір полів з ініціалізацією
         private readonly string _sourceCardNumber = string.Empty;
         private readonly string _targetCardNumber = string.Empty;
         private readonly string _purpose = string.Empty;
@@ -59,7 +58,6 @@ namespace Banking_system.Models.Transactions
                     return false;
                 }
 
-                // Виконуємо логіку зняття та поповнення
                 if (sourceCard.Withdraw(Amount))
                 {
                     targetCard.Deposit(Amount);

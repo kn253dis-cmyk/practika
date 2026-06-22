@@ -29,7 +29,6 @@ namespace Banking_system.Windows
             _ = LoadCurrencyRatesAsync();
             LoadUserData(_currentUser);
 
-            // Завантажуємо картки користувача з бази
             if (_currentUser.Cards != null)
             {
                 _userCards = _currentUser.Cards.ToList();
@@ -39,7 +38,6 @@ namespace Banking_system.Windows
 
         private void UpdateCardUI()
         {
-            // 1. Перевірка на екран додавання нової картки
             if (_currentCardIndex == _userCards.Count)
             {
                 ShowAddCardUI();
@@ -54,28 +52,22 @@ namespace Banking_system.Windows
             AbstractCard currentCard = _userCards[_currentCardIndex];
             string cardName = "";
 
-            // Очищаємо колір тексту назви картки (на випадок, якщо попередня картка була заблокована)
             TxtCardType.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0"));
 
-            // Знаходимо кнопку у розмітці
             var btnCurrencyExchange = this.FindName("BtnCurrencyExchange") as Button;
 
-            // 2. Встановлюємо дизайн залежно від типу картки
             if (currentCard is CreditCard creditCard)
             {
                 cardName = "Кредитна картка";
                 Card.Background = GetCardGradient("Credit");
 
-                // ХОВАЄМО кнопку валюти
                 if (btnCurrencyExchange != null) btnCurrencyExchange.Visibility = Visibility.Collapsed;
 
-                // Показуємо панель кредитної інформації та ПОВЗУНОК
                 if (PanelCreditInfo != null)
                 {
                     PanelCreditInfo.Visibility = Visibility.Visible;
                     TxtCardCreditLimit.Text = $"{creditCard.CreditLimit:N0} ₴";
 
-                    // Динамічний стиль для дати боргу
                     if (creditCard.Balance < 0)
                     {
                         TxtDebtDate.Text = creditCard.DueDate.ToString("dd.MM.yyyy");
@@ -106,11 +98,9 @@ namespace Banking_system.Windows
                 cardName = isCurrencyCard ? "Валютна карта" : "Картка Юніора";
                 Card.Background = GetCardGradient(isCurrencyCard ? "Currency" : "Junior");
 
-                // ПОКАЗУЄМО кнопку тільки для Валютної карти, для Юніора - ховаємо
                 if (btnCurrencyExchange != null)
                     btnCurrencyExchange.Visibility = isCurrencyCard ? Visibility.Visible : Visibility.Collapsed;
 
-                // ХОВАЄМО кредитну панель і повзунок
                 if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
 
                 var creditLimitPanel = this.FindName("CreditLimitPanel") as UIElement;
@@ -121,17 +111,14 @@ namespace Banking_system.Windows
                 cardName = "Дебетова картка";
                 Card.Background = GetCardGradient("Debit");
 
-                // ХОВАЄМО кнопку валюти
                 if (btnCurrencyExchange != null) btnCurrencyExchange.Visibility = Visibility.Collapsed;
 
-                // ХОВАЄМО кредитну панель і повзунок
                 if (PanelCreditInfo != null) PanelCreditInfo.Visibility = Visibility.Collapsed;
 
                 var creditLimitPanel = this.FindName("CreditLimitPanel") as UIElement;
                 if (creditLimitPanel != null) creditLimitPanel.Visibility = Visibility.Collapsed;
             }
 
-            // 3. Завантажуємо загальні дані (баланс, номер, дата)
             LoadCardData(currentCard, cardName);
         }
 
@@ -141,7 +128,6 @@ namespace Banking_system.Windows
             BtnCurrencyExchange.Visibility = Visibility.Collapsed;
             GridAddCard.Visibility = Visibility.Visible;
 
-            // Спеціальний темний градієнт для екрану додавання картки
             LinearGradientBrush gradient = new LinearGradientBrush
             {
                 StartPoint = new Point(0, 0),
@@ -170,7 +156,7 @@ namespace Banking_system.Windows
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#1A0000"), 1.0));
                     break;
                 case "Currency":
-                case "Junior": // Додано випадок для юніора
+                case "Junior": 
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#11998E"), 0.0));
                     gradient.GradientStops.Add(new GradientStop((Color)ColorConverter.ConvertFromString("#38EF7D"), 1.0));
                     break;
@@ -223,12 +209,10 @@ namespace Banking_system.Windows
         }
         private void BtnCurrencyExchange_Click(object sender, RoutedEventArgs e)
         {
-            // Перевіряємо, чи існують картки і чи обрана картка коректна
             if (_userCards == null || _userCards.Count == 0 || _currentCardIndex >= _userCards.Count) return;
 
             var currentCard = _userCards[_currentCardIndex];
 
-            // Якщо поточна картка - валютна, відкриваємо сторінку обміну
             if (currentCard is CurrencyCard currencyCard)
             {
                 Window exchangeForm = new Window
@@ -243,7 +227,6 @@ namespace Banking_system.Windows
                 };
                 exchangeForm.ShowDialog();
 
-                // Оновлюємо дані після закриття вікна обміну
                 using (var db = new Banking_system.DataBase.Database())
                 {
                     _userCards = db.FindAllCardsByUserId(_currentUser.ID);
@@ -420,11 +403,8 @@ namespace Banking_system.Windows
 
             AbstractCard currentCard = _userCards[_currentCardIndex];
 
-            // 1. ПЕРЕВІРКА: Якщо це кредитна картка
             if (currentCard is CreditCard creditCard)
             {
-                // Оскільки всі відсотки тепер нараховуються прямо в баланс,
-                // перевірка на мінусовий баланс одночасно перевіряє і тіло кредиту, і штрафи
                 if (creditCard.Balance < 0)
                 {
                     MessageBox.Show("Неможливо закрити кредитну картку, поки у Вас є непогашений борг. Будь ласка, поповніть рахунок для виходу в нуль.", "Відмова банку", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -456,7 +436,6 @@ namespace Banking_system.Windows
             {
                 try
                 {
-                    // Отримуємо номер картки для пошуку в БД
                     string targetCardNumber = currentCard.GetCardNumber();
                     using (var db = new Banking_system.DataBase.Database())
                     {
@@ -502,38 +481,34 @@ namespace Banking_system.Windows
 
                     foreach (var card in cards)
                     {
-                        // ЕТАП 1: Перевірка попередження (за 7 днів)
                         if (card.LastWarningSentDate == DateTime.MinValue)
                         {
-                            card.DueDate = DateTime.Now.AddDays(5); // Штучно робимо 5 днів до платежу
+                            card.DueDate = DateTime.Now.AddDays(5);
                             MessageBox.Show("ЕТАП 1: Час зсунуто.\nДо платежу залишилося 5 днів. Зараз система має надіслати лист-попередження на вашу пошту.", "QA Тест - Крок 1", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
-                        // ЕТАП 2: Нарахування штрафу
                         else if (card.InterestAppliedCount < card.PlanDurationMonths)
                         {
-                            card.DueDate = DateTime.Now.AddDays(-1); // Штучно робимо прострочення на 1 день
+                            card.DueDate = DateTime.Now.AddDays(-1);
                             MessageBox.Show("ЕТАП 2: Час зсунуто.\nПлатіж прострочено. Зараз система нарахує штраф (додасть до мінуса) та надішле квитанцію.", "QA Тест - Крок 2", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
-                        // ЕТАП 3: Блокування картки (кінець терміну плану)
                         else if (!card.IsBlocked)
                         {
-                            card.TermEndDate = DateTime.Now.AddDays(-1); // План закінчився вчора
+                            card.TermEndDate = DateTime.Now.AddDays(-1);
                             MessageBox.Show("ЕТАП 3: Час зсунуто.\nКредитний план повністю завершився. Зараз картка буде заблокована.", "QA Тест - Крок 3", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
-                        // ЕТАП 4: Чорний список (минув 1 місяць після блокування)
                         else
                         {
-                            card.TermEndDate = DateTime.Now.AddMonths(-1).AddDays(-1); // Пройшов місяць з кінця плану
+                            card.TermEndDate = DateTime.Now.AddMonths(-1).AddDays(-1); 
                             MessageBox.Show("ЕТАП 4: Час зсунуто.\nМинув 1 місяць після завершення плану. Зараз на ваш профіль буде накладено перманентний бан (Чорний список).", "QA Тест - Крок 4", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     }
                     db.SaveChanges();
                 }
 
-                // 2. Запускаємо банківські перевірки
+
                 Banking_system.Service.SessionManager.CheckAndProcessCredits(_currentUser.ID);
 
-                // 3. Оновлюємо інтерфейс
+
                 using (var db = new Banking_system.DataBase.Database())
                 {
                     _userCards = db.FindAllCardsByUserId(_currentUser.ID);
