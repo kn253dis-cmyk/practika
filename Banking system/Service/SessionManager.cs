@@ -16,19 +16,12 @@ namespace Banking_system.Service
 
     public static class SessionManager
     {
-        // Поточний авторизований користувач
         public static User? CurrentUser { get; private set; }
-
-        // Роль поточного користувача
         public static UserRole CurrentRole { get; private set; }
-
-        // Швидка перевірка: чи увійшов хтось у систему?
         public static bool IsLoggedIn => CurrentUser != null;
-
-        // Швидка перевірка: чи є поточний користувач Адміном?
         public static bool IsAdmin => CurrentRole == UserRole.Admin;
 
-        // Метод для входу в систему
+
         public static void Login(User user)
         {
             CurrentUser = user;
@@ -52,17 +45,17 @@ namespace Banking_system.Service
         }
 
         // СПЕЦІАЛЬНИЙ МЕТОД: Керування видимістю кнопок/сторінок
-        public static void RequireAdminAccess(UIElement uiElement)
-        {
-            if (IsAdmin)
-            {
-                uiElement.Visibility = Visibility.Visible; // Показуємо адміну
-            }
-            else
-            {
-                uiElement.Visibility = Visibility.Collapsed; // Повністю ховаємо від клієнта
-            }
-        }
+        //public static void RequireAdminAccess(UIElement uiElement)
+        //{
+        //    if (IsAdmin)
+        //    {
+        //        uiElement.Visibility = Visibility.Visible; // Показуємо адміну
+        //    }
+        //    else
+        //    {
+        //        uiElement.Visibility = Visibility.Collapsed; // Повністю ховаємо від клієнта
+        //    }
+        //}
 
         public static void CheckAndProcessCredits(int userId)
         {

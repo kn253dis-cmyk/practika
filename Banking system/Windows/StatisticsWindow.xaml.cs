@@ -27,7 +27,7 @@ namespace Banking_system.Windows
     {
         public Brush ColorBrush { get; set; }
         public Geometry Geometry { get; set; }
-        public string ToolTipText { get; set; } // НОВЕ: Текст підказки
+        public string ToolTipText { get; set; } 
     }
 
     public partial class StatisticsWindow : Window
@@ -60,7 +60,7 @@ namespace Banking_system.Windows
                         var allTransactions = card.LastTransactions.ToList();
 
                         decimal totalIncome = allTransactions.Where(t => t is DepositTransaction).Sum(t => t.Amount);
-                        // Загальні витрати (і покупки, і перекази)
+
                         decimal totalExpense = allTransactions.Where(t => t is WithdrawTransaction || t is TransferTransaction).Sum(t => t.Amount);
 
                         TxtTotalIncome.Text = $"+ {totalIncome:N2} ₴";
@@ -78,16 +78,14 @@ namespace Banking_system.Windows
                             ExpenseProgress.Value = 0;
                         }
 
-                        // === ГРУПУВАННЯ ЗА КАТЕГОРІЯМИ (ВИПРАВЛЕНО) ===
-                        // Беремо всі витратні операції (і зняття, і перекази)
                         var expenseTransactions = allTransactions.Where(t => t is WithdrawTransaction || t is TransferTransaction).ToList();
 
                         var categoryStats = expenseTransactions
                             .GroupBy(t =>
                             {
-                                // Якщо це переказ, даємо окрему категорію
+
                                 if (t is TransferTransaction) return "Перекази іншим";
-                                // Інакше дивимось на ціль транзакції
+
                                 return string.IsNullOrWhiteSpace(t.TransactionTarget) ? "Інше" : t.TransactionTarget;
                             })
                             .Select(g =>
@@ -96,7 +94,6 @@ namespace Banking_system.Windows
                                 string icon = "Cash";
                                 string color = "#7F8C8D";
 
-                                // Призначаємо кольори та іконки
                                 if (categoryName == "Перекази іншим") { icon = "SwapHorizontal"; color = "#9C27B0"; }
                                 else if (categoryName.Contains("Супермаркети")) { icon = "Cart"; color = "#2E7D32"; }
                                 else if (categoryName.Contains("Кафе")) { icon = "FoodForkDrink"; color = "#E65100"; }
@@ -145,7 +142,6 @@ namespace Banking_system.Windows
 
                 double sweepAngle = (stat.Percentage / 100.0) * 360.0;
 
-                // ВАЖЛИВО: Захист від бага WPF (якщо 100%, малюємо 359.99)
                 if (sweepAngle >= 360) sweepAngle = 359.99;
 
                 double startAngleRad = (currentAngle - 90) * Math.PI / 180.0;
@@ -165,7 +161,6 @@ namespace Banking_system.Windows
                 {
                     Geometry = pathGeometry,
                     ColorBrush = (Brush)new BrushConverter().ConvertFrom(stat.ColorHex),
-                    // Формуємо красивий текст підказки
                     ToolTipText = $"{stat.Name}\n{stat.Total:N2} ₴ ({stat.Percentage:F1}%)"
                 });
 

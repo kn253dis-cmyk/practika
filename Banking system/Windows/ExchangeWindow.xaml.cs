@@ -6,7 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Banking_system.Models; // Підключаємо моделі, де лежить CurrencyRate
+using Banking_system.Models; 
 
 namespace Banking_system.Windows
 {
@@ -27,16 +27,13 @@ namespace Banking_system.Windows
                     string url = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
                     string jsonResponse = await client.GetStringAsync(url);
 
-                    // Перетворюємо JSON від Нацбанку в список об'єктів CurrencyRate
                     var allRates = JsonSerializer.Deserialize<List<CurrencyRate>>(jsonResponse);
 
                     if (allRates != null)
                     {
-                        // Відбираємо тільки найважливіші валюти
                         var popularCodes = new List<string> { "USD", "EUR", "PLN", "GBP", "XAU", "XAG" };
                         var filteredRates = allRates.Where(rate => rate.cc != null && popularCodes.Contains(rate.cc)).ToList();
 
-                        // Передаємо ці дані прямо в нашу таблицю
                         CurrencyGrid.ItemsSource = filteredRates;
                     }
                 }
