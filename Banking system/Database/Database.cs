@@ -35,27 +35,24 @@ namespace Banking_system.DataBase
         {
             base.OnModelCreating(modelBuilder);
 
-            // 1. Налаштування ієрархії для Карток
             modelBuilder.Entity<AbstractCard>()
                 .HasDiscriminator<string>("CardType")
                 .HasValue<DebitCard>("Debit")
                 .HasValue<CreditCard>("Credit")
                 .HasValue<CurrencyCard>("Currency"); 
 
-            // 2. Налаштування ієрархії для Транзакцій
             modelBuilder.Entity<AbstractTransaction>()
                 .HasDiscriminator<string>("TransactionType")
                 .HasValue<DepositTransaction>("Deposit")
-                .HasValue<WithdrawTransaction>("Withdraw") // Або WithdrawalTransaction залежно від вашої назви
+                .HasValue<WithdrawTransaction>("Withdraw") 
                 .HasValue<TransferTransaction>("Transfer")
                 .HasValue<CurrencyExchangeTransaction>("Exchange");
 
-            // 3. Явне налаштування зв'язку: Одна Картка має Багато Транзакцій
             modelBuilder.Entity<AbstractCard>()
-                .HasMany(c => c.LastTransactions) // Починаємо з Картки (у неї є колекція)
+                .HasMany(c => c.LastTransactions) 
                 .WithOne()                       
                 .HasForeignKey("CardId")         
-                .OnDelete(DeleteBehavior.Cascade);// При видаленні картки, видаляються її транзакції
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
 
@@ -79,15 +76,13 @@ namespace Banking_system.DataBase
 
             if (card == null) return false;
 
-            // Якщо у картки вже є встановлена валюта, і вона НЕ збігається з новою — повертаємо false (заборона)
             if (!string.IsNullOrEmpty(card.CurrencyType) && card.CurrencyType != targetCurrency)
                 return false;
 
-            // Якщо картка ще не мала прив'язаної валюти, фіксуємо її у БД
             if (string.IsNullOrEmpty(card.CurrencyType))
             {
                 card.CurrencyType = targetCurrency;
-                SaveChanges(); // Зберігаємо зміни у базі даних
+                SaveChanges(); 
             }
 
             return true;

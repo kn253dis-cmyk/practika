@@ -78,14 +78,14 @@ namespace Banking_system.Windows
         {
             errorMessage = string.Empty;
 
-            // 1. Базова валідація
+            // Базова валідація
             if (string.IsNullOrWhiteSpace(ipn) || ipn.Length != 10 || !ipn.All(char.IsDigit))
             {
                 errorMessage = "ІПН має складатися рівно з 10 цифр.";
                 return false;
             }
 
-            // 2. Математична перевірка (контрольна цифра)
+            // Математична перевірка (контрольна цифра)
             int[] coefficients = { -1, 5, 7, 9, 4, 6, 10, 5, 7 };
             int sum = 0;
             for (int i = 0; i < 9; i++)
@@ -99,7 +99,7 @@ namespace Banking_system.Windows
                 return false;
             }
 
-            // 3. Перевірка дати народження з виправленням помилки Excel
+            // Перевірка дати народження з виправленням помилки Excel
             int daysFrom1899 = int.Parse(ipn.Substring(0, 5));
             int daysToSubtract = daysFrom1899 > 59 ? 1 : 0;
             DateTime expectedDate = new DateTime(1899, 12, 31).AddDays(daysFrom1899 - daysToSubtract);
@@ -112,7 +112,7 @@ namespace Banking_system.Windows
                 return false;
             }
 
-            // 4. Перевірка статі
+            // Перевірка статі
             int genderDigit = ipn[8] - '0';
             bool isIpnMale = (genderDigit % 2 != 0);
             if (isIpnMale != isMale)
@@ -233,7 +233,6 @@ namespace Banking_system.Windows
                 }
                 else
                 {
-                    // Логіка для Дебетової та Валютної
                     AbstractCard newCard;
 
                     if (selectedCard == "Валютна")

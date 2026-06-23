@@ -21,12 +21,12 @@ namespace Banking_system.Models
 
         public int PlanDurationMonths { get; set; } = 3;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime TermEndDate { get; set; } // Коли закінчується дія плану
-        public DateTime DueDate { get; set; } // Дата наступного штрафу
+        public DateTime TermEndDate { get; set; } 
+        public DateTime DueDate { get; set; } 
         public DateTime LastWarningSentDate { get; set; } = DateTime.MinValue;
 
         public int MissedPaymentsCount { get; set; } = 0;
-        public int InterestAppliedCount { get; set; } = 0; // Скільки разів нарахували штраф
+        public int InterestAppliedCount { get; set; } = 0; 
         public bool IsBlocked { get; set; } = false;
 
         public CreditCard() : base("30")

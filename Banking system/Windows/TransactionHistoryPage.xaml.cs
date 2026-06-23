@@ -13,10 +13,8 @@ namespace Banking_system.Views
     {
         private readonly string _currentUserEmail;
 
-        // Зберігаємо оригінальний список завантажених транзакцій
         private List<JsonLog.LogEntry> _allTransactions;
 
-        // Стан кнопки сортування (за замовчуванням true = спочатку нові)
         private bool _isSortDescending = true;
 
         public TransactionHistoryPage(string userEmail)
@@ -39,7 +37,7 @@ namespace Banking_system.Views
                 _allTransactions = new List<JsonLog.LogEntry>();
             }
 
-            ApplyFilterAndSort(); // Застосовуємо відображення одразу при завантаженні
+            ApplyFilterAndSort(); 
         }
 
 

@@ -11,7 +11,6 @@ namespace Banking_system.Windows
 {
     public partial class DepositWindow : Window
     {
-        // Окремі списки категорій для перевірки
         private readonly List<string> _withdrawOnlyCategories = new List<string>
         {
             "Зняття готівки", "Супермаркети", "Кафе та ресторани", "Підписки та сервіси", "Аптеки", "Транспорт"
@@ -30,7 +29,6 @@ namespace Banking_system.Windows
 
         private void LoadOperationTypes()
         {
-            // Об'єднуємо всі категорії в один список для ComboBox + додаємо нейтральну "Інше"
             var allTypes = new List<string>();
             allTypes.AddRange(_depositOnlyCategories);
             allTypes.AddRange(_withdrawOnlyCategories);

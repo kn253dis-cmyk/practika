@@ -10,8 +10,6 @@ namespace Banking_system.Models
     public static class Logger
     {
         private static readonly string LogFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bank_logs.json");
-
-        // --- НОВЕ: Кеш у пам'яті та об'єкт для синхронізації потоків ---
         private static List<JsonLog.LogEntry>? _cachedLogs = null;
         private static readonly object _lock = new object();
 
@@ -25,7 +23,6 @@ namespace Banking_system.Models
             AppendLog(userEmail, "General", message, new Dictionary<string, string>());
         }
 
-        // Внутрішній метод: завантажує логи з диска ЛИШЕ один раз при першому зверненні
         private static void EnsureLogsLoaded()
         {
             if (_cachedLogs == null)

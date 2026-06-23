@@ -1,2 +1,302 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram /> 
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="Banking_system.loginWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAIAAAAAAAAAAAACAAAAAAABAAAAAAAAAA=</HashCode>
+      <FileName>Windows\loginWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.App" Collapsed="true">
+    <Position X="10.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>App.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.DataBase.Database" Collapsed="true">
+    <Position X="10.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAQAEAAAAAAAAIAAIEAAAAAAAAAAACAAAgAA=</HashCode>
+      <FileName>DataBase\Database.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Entity.User" Collapsed="true">
+    <Position X="17.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAgAAAAAAQAAQIBACQgAACAAAAIAAAIAA=</HashCode>
+      <FileName>Entity\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Migrations.InitialCreate" Collapsed="true">
+    <Position X="10.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20260612082848_InitialCreate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Migrations.FixTransactionsKeyAndRelationship" Collapsed="true">
+    <Position X="8.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20260612204924_FixTransactionsKeyAndRelationship.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Migrations.NewFieldsAdd" Collapsed="true">
+    <Position X="10.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20260612214750_NewFieldsAdd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Migrations.AddCreditCardAccruedInterest" Collapsed="true">
+    <Position X="8.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20260613160618_AddCreditCardAccruedInterest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Migrations.NewFieldAdd" Collapsed="true">
+    <Position X="8.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20260618095934_NewFieldAdd.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Migrations.UpdateCreditLogic" Collapsed="true">
+    <Position X="15.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAI=</HashCode>
+      <FileName>Migrations\20260619124336_UpdateCreditLogic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Migrations.DatabaseModelSnapshot" Collapsed="true">
+    <Position X="12" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>Migrations\DatabaseModelSnapshot.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.AbstractCard" Collapsed="true">
+    <Position X="13" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAQCAIAAAAAiAAAAAAgCAAgEQAAAAAIAIAEAAAAAAAI=</HashCode>
+      <FileName>Models\Cards\AbstractCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.CardProcessResult" Collapsed="true">
+    <Position X="12" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAACAAAAAAAAAAQ=</HashCode>
+      <FileName>Models\Cards\CreditCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.CreditCard" Collapsed="true">
+    <Position X="10.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAEgAAAABCAAACQAAAAEAAEIAgQAAAAAAAEAAAI=</HashCode>
+      <FileName>Models\Cards\CreditCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.CurrencyCard" Collapsed="true">
+    <Position X="13" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAQAAAA=</HashCode>
+      <FileName>Models\Cards\CurrencyCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.DebitCard" Collapsed="true">
+    <Position X="15.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Cards\DebitCard.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.CurrencyRate" Collapsed="true">
+    <Position X="8.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAEEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\CurrencyRate.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.JsonLog" Collapsed="true">
+    <Position X="12" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\JsonLog.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.Logger" Collapsed="true">
+    <Position X="13.75" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAggAAAAgAAAAAAAAAAoAgAAAAAAACAAAgAA=</HashCode>
+      <FileName>Models\Logger.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.Transactions.AbstractTransaction" Collapsed="true">
+    <Position X="13" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAgAAQAACAAAACAAAAAAAABAAAAAAAAAgA=</HashCode>
+      <FileName>Models\Transactions\AbstractTransaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.Transactions.CurrencyExchangeTransaction" Collapsed="true">
+    <Position X="9.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAAEAABQAQAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Transactions\CurrencyExchengeTransaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.Transactions.DepositTransaction" Collapsed="true">
+    <Position X="12" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Transactions\DepositTransaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.Transactions.TransferTransaction" Collapsed="true">
+    <Position X="14.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAEAAAABQAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\Transactions\TransferTransaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Models.Transactions.WithdrawTransaction" Collapsed="true">
+    <Position X="16.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Models\Transactions\WithdrawTransaction.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Service.EmailService" Collapsed="true">
+    <Position X="15.5" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAQAAAAAAAAAgAAAAAAAAAAAAAAQIAAAA=</HashCode>
+      <FileName>Service\EmailService.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Service.SessionManager" Collapsed="true">
+    <Position X="17.25" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAIACAAAAAAAAIAIASAAAAAAAAAASAAAAAAA=</HashCode>
+      <FileName>Service\SessionManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Service.SmtpSettings" Collapsed="true">
+    <Position X="8.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAABAAAAAAAAAAAAAAAAAAAACAAACAACAAAAAAAgAAA=</HashCode>
+      <FileName>Service\SmtpSettings.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Windows.CreditPlanWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADQAABAABIAAAAAEAgAAABAAAAACAAAAABAEAAAAA=</HashCode>
+      <FileName>Windows\CreditPlanWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Windows.DepositWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAIAAACAgAAAAAEAAAAAAAgEAAAAAAAAA=</HashCode>
+      <FileName>Windows\DepositWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Windows.ExchangeWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Windows\ExchangeWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Windows.MainWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AOgAAAAABCAKJAAIQEAAAAIAEoAAAIAAAAgDCSgAAEA=</HashCode>
+      <FileName>Windows\MainWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Windows.RegisterWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="15.5" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAgAAAAAAAIBAAAAAAAAAAAAAAAAAAAAABABAAACAA=</HashCode>
+      <FileName>Windows\RegisterWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Windows.CategoryStat" Collapsed="true">
+    <Position X="13.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAQQAAgAYAACAAAgAAAAAAA=</HashCode>
+      <FileName>Windows\StatisticsWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Windows.PieSegment" Collapsed="true">
+    <Position X="12" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAECAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Windows\StatisticsWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Banking_system.Windows.StatisticsWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="10.25" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAIAAAAAAAAAAAAAgABAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\StatisticsWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Pages.CurrencyExchangePage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="17.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAACAAAAAAgAACQBEAgACgACAAAKAAAAAAQEAFAhA=</HashCode>
+      <FileName>Windows\CurrencyExchangePage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Views.ReceiptConfirmationWindow" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.75" Y="9.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAAAICAAAAAAAAAIQAAAAAAgAAAAAAEAAAAA=</HashCode>
+      <FileName>Windows\ReceiptConfirmationWindow.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Views.TransactionHistoryPage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="12" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAgAAgAAgAAAAAAIJAIAACAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\TransactionHistoryPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Banking_system.Views.TransferPage" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="13.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Windows\TransferPage.xaml.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Enum Name="Banking_system.Models.CardAction" Collapsed="true">
+    <Position X="8.5" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAABAAAAAgAAAAAABAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Models\Cards\CreditCard.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Banking_system.Service.UserRole" Collapsed="true">
+    <Position X="10.25" Y="11.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
+      <FileName>Service\SessionManager.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

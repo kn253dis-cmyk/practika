@@ -13,7 +13,6 @@ namespace Banking_system.Windows
         private User _currentUser;
         public bool IsCardCreated { get; private set; } = false;
 
-        // Змінні для збереження вибору клієнта
         private int _selectedLimit = 0;
         private string _selectedPlanName = "";
         private decimal _selectedRate = 0;

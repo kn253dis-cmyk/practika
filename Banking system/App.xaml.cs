@@ -8,7 +8,6 @@ namespace Banking_system
     {
         public App()
         {
-            // Цей рядок каже PostgreSQL приймати DateTime.Now без помилок
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
     }
