@@ -37,20 +37,19 @@ namespace Banking_system.Views
                     return;
                 }
 
-                // Визначаємо призначення платежу
+
                 string? selectedPurpose = CmbPurposeCode.SelectedItem is ComboBoxItem item
                     ? item.Content.ToString()
                     : purposeCode;
 
                 string fullPurpose = $"{selectedPurpose}. Коментар: {comment}";
 
-                // Створюємо транзакцію з правильними 5 параметрами
                 var transfer = new Banking_system.Models.Transactions.TransferTransaction(
                     _senderCardNumber, receiverCard, amount, selectedPurpose ?? string.Empty, comment);
 
                 bool isSuccess = transfer.Execute();
 
-                // Обробка результату
+
                 if (isSuccess)
                 {
                     MessageBox.Show($"Переказ на суму {amount} ₴ успішно виконано!\nПризначення: {fullPurpose}", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);

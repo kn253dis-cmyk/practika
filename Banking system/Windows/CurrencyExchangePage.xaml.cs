@@ -228,7 +228,6 @@ namespace Banking_system.Pages
 
             try
             {
-                // Надійна логіка транзакції з базою даних, яка гарантовано працює і для продажу, і для купівлі
                 using (var db = new Banking_system.DataBase.Database())
                 {
                     var uahCardNum = isBuying ? sourceCardStr : targetCardStr;
